@@ -17,14 +17,6 @@ class IndexController extends Controller{
 	}
 
 	/**
-	 * 广告播放完成回调
-	 */
-	public function palied(Request $request){
-		$arr 			= [];
-		return $this->success($arr);
-	}
-
-	/**
 	 * 分类列表信息
 	 */
 	public function cate(Request $request){

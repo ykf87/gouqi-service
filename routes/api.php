@@ -21,6 +21,9 @@ Route::group([
 ], function(){
     Route::get('config', 'IndexController@config')->name('config');
     Route::get('cate', 'IndexController@cate')->name('cate');
+    Route::get('list', 'IndexController@list')->name('list');
+    Route::get('info', 'IndexController@cate')->name('info');
+	Route::get('sigin', 'Users\UserController@sigin')->name('sigin');
 
     // 需要权限认证的请求
     Route::group([
@@ -29,7 +32,11 @@ Route::group([
 	    'middleware'    => ['jwt'],
 	    'as'            => 'user.'
 	], function(){
-	    Route::get('sigin', 'UserController@sigin')->name('sigin');
 	    Route::post('logoin', 'UserController@login')->name('login');
+	    Route::post('reset', 'UserController@reset')->name('reset');
+	    Route::get('watch', 'UserController@watch')->name('watch');
+	    Route::get('history', 'UserController@history')->name('history');
+	    Route::get('heart', 'UserController@heart')->name('heart');
+	    Route::post('palied', 'UserController@palied')->name('palied');
 	});
 });

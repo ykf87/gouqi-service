@@ -15,7 +15,7 @@ class Jwt{
      * @return mixed
      */
     public function handle(Request $request, Closure $next){
-        User::Token();
+        // User::Token();
         return $next($request);
     }
 }
