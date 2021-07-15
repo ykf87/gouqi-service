@@ -31,7 +31,7 @@ class Controller extends BaseController{
     	$rs 	= [
     		'code'		=> $code,
     		'data'		=> $data,
-    		'msg'		=> $msgm
+    		'msg'		=> $msg
     	];
     	return response()->json($rs, $respcode ? $respcode : $code);
     }

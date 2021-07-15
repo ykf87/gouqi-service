@@ -14,10 +14,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([
-    'prefix'        => '',
+    'prefix'        => '/',
     'namespace'     => 'App\Http\Controllers\Api',
     'middleware'    => [],
     'as'            => 'api.'
 ], function(){
-    Route::get('', 'ExcelController@index')->name('index');
+    Route::get('config', 'IndexController@config')->name('config');
+    Route::get('cate', 'IndexController@cate')->name('cate');
+
+    // 需要权限认证的请求
+    Route::group([
+	    'prefix'        => '',
+	    'namespace'     => 'Users',
+	    'middleware'    => ['jwt'],
+	    'as'            => 'user.'
+	], function(){
+	    Route::get('sigin', 'UserController@sigin')->name('sigin');
+	    Route::post('logoin', 'UserController@login')->name('login');
+	});
 });
