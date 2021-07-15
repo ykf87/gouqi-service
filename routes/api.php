@@ -15,12 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix'        => '',
-    'namespace'     => 'App\Http\Controllers',
+    'namespace'     => 'App\Http\Controllers\Api',
     'middleware'    => [],
     'as'            => 'api.'
 ], function(){
     Route::get('', 'ExcelController@index')->name('index');
-    Route::post('reader', 'ExcelController@reader')->name('reader');
-    Route::post('import', 'ExcelController@imports')->name('import');
-    Route::post('output', 'ExcelController@output')->name('output');
 });
