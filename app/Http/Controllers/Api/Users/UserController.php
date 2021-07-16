@@ -18,7 +18,7 @@ class UserController extends Controller{
 		$pwd 		= $request->input('password');
 		$isReg 		= $request->input('reg', 0);// 不存在是否直接注册
 
-		$user 		= self::where('telphone', $phone)->first();
+		$user 		= User::where('telphone', $phone)->first();
 		if(!$user){
 			if($isReg == 1){
 				return $this->success(User::sigin($username, $pwd));
@@ -38,7 +38,7 @@ class UserController extends Controller{
 		$phone 			= $request->input($this->usernameKey);
 		$pwd 			= $request->input('password');
 
-		$user 			= self::where('telphone', $phone)->first();
+		$user 			= User::where('telphone', $phone)->first();
 		if($user){
 			if(password_verify($pwd, $user->password)){
 				$this->error(__('用户已存在!'));
