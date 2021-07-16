@@ -27,9 +27,8 @@ Route::group([
 
     // 需要权限认证的请求
     Route::group([
-	    'prefix'        => '',
 	    'namespace'     => 'Users',
-	    'middleware'    => ['jwt'],
+	    // 'middleware'    => ['jwt'],
 	    'as'            => 'user.'
 	], function(){
 	    Route::post('logoin', 'UserController@login')->name('login');
