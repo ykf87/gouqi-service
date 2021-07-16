@@ -50,19 +50,34 @@ class User extends Authenticatable{
     ];
 
     /**
-     * 用户登录
+     * 用户注册
      */
-    public static function sigin($request){
+    public static function sigin($username, $pwd){
+        $user           = new self;
+        $user->phone    = $username;
+        $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
 
+        $user->save();
+        return $this->login($user);
     }
 
     /**
-     * 用户注册
+     * 用户登录
      */
-    public static function login($request){
-
+    public static function login(self $user){
+        return self::users($user);
     }
 
+    /**
+     * 最终返回的user数组
+     */
+    public static function users(self $user){
+        $arr                = [];
+        $arr['id']          = $user->id;
+        $arr['nickname']    = $user->nickname;
+        $arr['token']       = self::token($user);
+        return $arr;
+    }
 
     /**
      * 构造 config

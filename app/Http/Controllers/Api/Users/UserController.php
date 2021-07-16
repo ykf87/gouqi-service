@@ -5,42 +5,48 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\User;
+
 class UserController extends Controller{
 	private $usernameKey 	= 'email';
 	/**
-	 * 用户注册
+	 * 用户登录
 	 */
 	public function login(Request $request){
 		$arr 		= [];
 		$phone 		= $request->input($this->usernameKey);
 		$pwd 		= $request->input('password');
-		$isReg 		= $request->input('reg', 0);
+		$isReg 		= $request->input('reg', 0);// 不存在是否直接注册
 
 		$user 		= self::where('telphone', $phone)->first();
 		if(!$user){
 			if($isReg == 1){
-				
+				return $this->success(User::sigin($username, $pwd));
 			}else{
-				$arr['code']	= 404;
-				$arr['msg']		= __('用户不存在,请先注册!');
+				return $this->errro(__('用户不存在,请先注册!'));
 			}
 		}
+		$arr 		= User::login($user);
 
 		return $this->success($arr);
 	}
 
 	/**
-	 * 用户登录
+	 * 用户注册
 	 */
 	public function sigin(Request $request){
-		$phone 		= $request->input($this->usernameKey);
-		$pwd 		= $request->input('password');
+		$phone 			= $request->input($this->usernameKey);
+		$pwd 			= $request->input('password');
 
-		$user 		= self::where('telphone', $phone)->first();
-		if(!$user){
-
+		$user 			= self::where('telphone', $phone)->first();
+		if($user){
+			if(password_verify($pwd, $user->password)){
+				$this->error(__('用户已存在!'));
+			}
+			return $this->success(User::users($user));
+		}else{
+			$arr 		= User::sigin($phone, $pwd);
 		}
-		$arr 		= [];
 
 		return $this->success($arr);
 	}
