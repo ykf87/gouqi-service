@@ -6,12 +6,18 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Signer\Key\InMemory;
 
 class User extends Authenticatable{
     use HasFactory, Notifiable;
+    private static $configObj   = null;
+    private static $secret = 'Le$Sshidy!sV$IUfMF4Z@0zwdzcJ9y4KIO28oBwBkTPcZxO^E7uqB39nbOx&X!ucww';
+    private static $type   = 'Bearer ';
 
     /**
      * The attributes that are mass assignable.
@@ -44,36 +50,88 @@ class User extends Authenticatable{
     ];
 
     /**
-     * 根据用户生成token
+     * 用户登录
      */
-    public static function Token(self $user){
-        // $config = $container->get(Configuration::class);
-        // assert($config instanceof Configuration);
-        $config = Configuration::forSymmetricSigner(
-            // You may use any HMAC variations (256, 384, and 512)
-            new Sha256(),
-            // replace the value below with a key of your own!
-            InMemory::base64Encoded('mBC5v1sOKVvbdEitdSBenu59nfNfhwkedkJVNabosTw=')
-            // You may also override the JOSE encoder/decoder if needed by providing extra arguments here
-        );
+    public static function sigin($request){
 
-        $token = $config->builder()
-                        ->issuedBy(env('APP_NAME'))
-                        ->withClaim('uid', $user->id)
-                        ->withHeader('gouqi', 'yhc')
-                        ->getToken($config->signer(), $config->signingKey());
+    }
 
-        $token->headers(); // Retrieves the token headers
-        $token->claims(); // Retrieves the token claims
 
-        // echo $token->headers()->get('foo'); // will print "bar"
-        // echo $token->claims()->get('iss'); // will print "http://example.com"
-        // echo $token->claims()->get('uid'); // will print "1"
-
-        echo $token->toString();
+    /**
+     * 构造 config
+     */
+    public static function getConfig(){
+        if(self::$configObj === null){
+            $key = InMemory::plainText(SELF::$secret);
+            self::$configObj = Configuration::forSymmetricSigner(
+                // You may use any HMAC variations (256, 384, and 512)
+                new Sha256(),
+                // replace the value below with a key of your own!
+                $key
+                // You may also override the JOSE encoder/decoder if needed by providing extra arguments here
+            );
+            // self::$configObj    = Configuration::forSymmetricSigner(
+            //     new Sha256(),
+            //     InMemory::base64Encoded('mBC5v1sOKVvbdEitdSBenu59nfNfhwkedkJVNabosTw=')
+            // );
+        }
+        return self::$configObj;
     }
 
     /**
-     * 验证token是否正确
+     * 根据用户生成token
      */
+    public static function token($user, $ttl = '+2 year'){
+        $config         = self::getConfig();
+        $now            = new \DateTimeImmutable();
+        $token          = $config->builder()
+                            ->issuedBy(env('APP_NAME'))
+                            ->permittedFor(env('APP_URL'))
+                            ->issuedAt($now)
+                            ->canOnlyBeUsedAfter($now->modify($ttl))//'+365 day'
+                            ->withHeader('Author', config('author'));
+        if($user instanceof self){
+            $user       = $user->toArray();
+        }
+        if(is_numeric($user)){
+            $token      = $token->withClaim('id', $user);
+        }elseif(is_array($user)){
+            foreach($user as $k => $v){
+                $token      = $token->withClaim($k, $v);
+            }
+        }else{
+            return null;
+        }
+        $token      = $token->getToken($config->signer(), $config->signingKey());
+        return self::$type . $token->toString();
+    }
+
+    /**
+     * 解码 token
+     */
+    public static function decry($token = null){
+        $config             = self::getConfig();
+        if(!$token){
+            $request        = request();
+            $token          = $request->header('Authorization');
+            if(substr($token, 0, 1) == '{'){
+                $token  = json_decode($token, true);
+                $token  = $token['value'] ?? null;
+                if(!$token){
+                    return false;
+                }
+            }
+        }
+        try{
+            $token      = substr($token, (strlen(self::$type)));
+            if($token && substr_count($token, '.') >= 2){
+                $token      = $config->parser()->parse($token);
+                assert($token instanceof Plain);
+                return $token;
+            }
+        }catch (\InvalidArgumentException $e){
+            return false;
+        }
+        return false;
+    }
 }

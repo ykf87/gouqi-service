@@ -11,6 +11,19 @@ class UserController extends Controller{
 	 */
 	public function sigin(Request $request){
 		$arr 		= [];
+		$phone 		= $request->input('email');
+		$pwd 		= $request->input('password');
+		$isReg 		= $request->input('reg', 0);
+
+		$user 		= self::where('telphone', $phone)->first();
+		if(!$user){
+			if($isReg == 1){
+
+			}else{
+				$arr['code']	= 404;
+				$arr['msg']		= __('用户不存在,请先注册!');
+			}
+		}
 
 		return $this->success($arr);
 	}
