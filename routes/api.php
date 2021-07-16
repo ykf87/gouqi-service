@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix'        => '/',
     'namespace'     => 'App\Http\Controllers\Api',
-    'middleware'    => [],
+    // 'middleware'    => [],
     'as'            => 'api.'
 ], function(){
     Route::get('config', 'IndexController@config')->name('config');
@@ -28,7 +28,7 @@ Route::group([
     // 需要权限认证的请求
     Route::group([
 	    'namespace'     => 'Users',
-	    // 'middleware'    => ['jwt'],
+	    'middleware'    => ['jwt'],
 	    'as'            => 'user.'
 	], function(){
 	    Route::post('logoin', 'UserController@login')->name('login');
