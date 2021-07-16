@@ -13,7 +13,7 @@ class IndexController extends Controller{
 			'appname'	=> __('枸杞健康'),
 			'new'		=> false,
 		];
-		return $this->success();
+		return $this->success($arr);
 	}
 
 	/**
