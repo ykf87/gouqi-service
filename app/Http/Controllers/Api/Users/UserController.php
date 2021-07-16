@@ -6,19 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class UserController extends Controller{
+	private $usernameKey 	= 'email';
 	/**
 	 * 用户注册
 	 */
-	public function sigin(Request $request){
+	public function login(Request $request){
 		$arr 		= [];
-		$phone 		= $request->input('email');
+		$phone 		= $request->input($this->usernameKey);
 		$pwd 		= $request->input('password');
 		$isReg 		= $request->input('reg', 0);
 
 		$user 		= self::where('telphone', $phone)->first();
 		if(!$user){
 			if($isReg == 1){
-
+				
 			}else{
 				$arr['code']	= 404;
 				$arr['msg']		= __('用户不存在,请先注册!');
@@ -31,7 +32,14 @@ class UserController extends Controller{
 	/**
 	 * 用户登录
 	 */
-	public function login(Request $request){
+	public function sigin(Request $request){
+		$phone 		= $request->input($this->usernameKey);
+		$pwd 		= $request->input('password');
+
+		$user 		= self::where('telphone', $phone)->first();
+		if(!$user){
+
+		}
 		$arr 		= [];
 
 		return $this->success($arr);

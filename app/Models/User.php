@@ -56,6 +56,13 @@ class User extends Authenticatable{
 
     }
 
+    /**
+     * 用户注册
+     */
+    public static function login($request){
+
+    }
+
 
     /**
      * 构造 config
