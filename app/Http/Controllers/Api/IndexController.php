@@ -46,6 +46,9 @@ class IndexController extends Controller{
 		$id 		= $id ? $id : $request->get('id');
 		$arr 		= Post::info((int)$id);
 
+		if(!$arr){
+			return $this->error(__('找不到文章!'));
+		}
 		return $this->success($arr);
 	}
 }
