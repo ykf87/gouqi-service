@@ -22,7 +22,7 @@ Route::group([
     Route::get('config', 'IndexController@config')->name('config');
     Route::get('cate', 'IndexController@cate')->name('cate');
     Route::get('list', 'IndexController@list')->name('list');
-    Route::get('info', 'IndexController@cate')->name('info');
+    Route::get('info/{id}', 'IndexController@cate')->name('info')->where('id', '[0-9]+');
 	Route::get('sigin', 'UserController@sigin')->name('sigin');
 	Route::get('logoin', 'UserController@login')->name('login');
 
