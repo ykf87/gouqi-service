@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\Users;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Models\Heart;
 
 class UserController extends Controller{
 	private $usernameKey 	= 'email';
@@ -64,7 +65,7 @@ class UserController extends Controller{
 	 * 用户收藏
 	 */
 	public function watch(Request $request){
-		$arr 		= [];
+		$arr 		= Heart::list($request->get('_uid'));
 
 		return $this->success($arr);
 	}

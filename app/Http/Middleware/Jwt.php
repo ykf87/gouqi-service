@@ -23,6 +23,7 @@ class Jwt{
             if($jwt instanceof Plain){
                 $id         = $jwt->claims()->get('id');
                 if($id > 0){
+                    $request->merge(['_uid' => $id]);
                     return $next($request);
                 }
             }
