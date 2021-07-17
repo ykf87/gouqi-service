@@ -24,7 +24,7 @@ Route::group([
     Route::get('list', 'IndexController@list')->name('list');
     Route::get('info/{id}', 'IndexController@cate')->name('info')->where('id', '[0-9]+');
 	Route::get('sigin', 'UserController@sigin')->name('sigin');
-	Route::get('logoin', 'UserController@login')->name('login');
+	Route::get('login', 'UserController@login')->name('login');
 
     // 需要权限认证的请求
     Route::group([
