@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Crypt;
 
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -18,6 +19,7 @@ class User extends Authenticatable{
     private static $configObj   = null;
     private static $secret = 'Le$Sshidy!sV$IUfMF4Z@0zwdzcJ9y4KIO28oBwBkTPcZxO^E7uqB39nbOx&X!ucww';
     private static $type   = 'Bearer ';
+    public static $usernameKey = 'phone';
 
     /**
      * The attributes that are mass assignable.
@@ -118,7 +120,12 @@ class User extends Authenticatable{
         if(is_numeric($user)){
             $token      = $token->withClaim('id', $user);
         }elseif(is_array($user)){
-            foreach($user as $k => $v){
+            $narr           = [
+                'id'        => $user['id'],
+                'phone'     => Crypt::encryptString($user[self::$usernameKey]),
+                'status'    => $user['status'],
+            ];
+            foreach($narr as $k => $v){
                 $token      = $token->withClaim($k, $v);
             }
         }else{

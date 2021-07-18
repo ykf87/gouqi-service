@@ -9,13 +9,12 @@ use App\Models\User;
 use App\Models\Heart;
 
 class UserController extends Controller{
-	private $usernameKey 	= 'phone';
 	/**
 	 * 用户登录
 	 */
 	public function login(Request $request){
 		$arr 		= [];
-		$phone 		= $request->input($this->usernameKey);
+		$phone 		= $request->input(User::$usernameKey);
 		$pwd 		= $request->input('password');
 		$isReg 		= $request->input('reg', 0);// 不存在是否直接注册
 		if(!$phone || !$pwd){
@@ -39,14 +38,14 @@ class UserController extends Controller{
 	 * 用户注册
 	 */
 	public function sigin(Request $request){
-		$phone 			= $request->input($this->usernameKey);
+		$phone 			= $request->input(User::$usernameKey);
 		$pwd 			= $request->input('password');
 
 		if(empty($phone) || empty($pwd)){
 			return $this->error(__('用户名或密码错误!'));
 		}
 
-		$user 			= User::where('telphone', $phone)->first();
+		$user 			= User::where(User::$usernameKey, $phone)->first();
 		if($user){
 			if(password_verify($pwd, $user->password)){
 				$this->error(__('用户已存在!'));
