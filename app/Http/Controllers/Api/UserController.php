@@ -21,7 +21,7 @@ class UserController extends Controller{
 			return $this->error(__('用户名或密码错误!'));
 		}
 
-		$user 		= User::where('telphone', $phone)->first();
+		$user 		= User::where(User::$usernameKey, $phone)->first();
 		if(!$user){
 			if($isReg == 1){
 				return $this->success(User::sigin($username, $pwd));
