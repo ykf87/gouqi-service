@@ -18,8 +18,12 @@ class Post extends Model{
     	if($page < 1) $page = 1;
     	$limit 		= (int)$limit;
     	if($limit < 1) $limit 	= env('PAGE_LIMIT', 10);
+        $now        = time();
 
-    	$obj 		= self::orderBy('id', 'DESC');
+    	$obj 		= self::select('id', 'cover', 'title', 'key', 'viewed', 'created_at')
+                        ->whereRaw('if(stime>0, stime <= now(), 1)')->whereRaw('if(etime>0, etime >= now(), 1)')
+                        ->where('status', 1)
+                        ->orderBy('sort', 'DESC')->orderBy('id', 'DESC');
     	if($cateId > 0){
     		$obj 	= $obj->where('cid', $cateId);
     	}
@@ -30,7 +34,9 @@ class Post extends Model{
      * 详情
      */
     public static function info($id){
-    	$row 		= self::find($id);
+    	$row 		= self::select('id', 'cover', 'title', 'key', 'viewed', 'created_at', 'content')
+                        ->whereRaw('if(stime>0, stime <= now(), 1)')->whereRaw('if(etime>0, etime >= now(), 1)')
+                        ->where('status', 1)->find($id);
 
     	if(!$row){
     		return false;

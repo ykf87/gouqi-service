@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\Heart;
+use App\Models\History;
+use App\Models\Adv;
 
 class UserController extends Controller{
 	/**
@@ -70,7 +72,7 @@ class UserController extends Controller{
 	}
 
 	/**
-	 * 用户收藏
+	 * 用户收藏列表
 	 */
 	public function watch(Request $request){
 		$arr 		= Heart::list($request->get('_uid'));
@@ -79,10 +81,10 @@ class UserController extends Controller{
 	}
 
 	/**
-	 * 历史记录
+	 * 浏览记录
 	 */
 	public function history(Request $request){
-		$arr 		= [];
+		$arr 		= History::list($request->get('_uid'));
 
 		return $this->success($arr);
 	}
@@ -91,17 +93,39 @@ class UserController extends Controller{
 	 * 添加收藏
 	 */
 	public function heart(Request $request){
-		$arr 		= [];
+		$pid 		= (int)$request->input('id', 0);
+		$uid 		= $request->get('_uid', 0);
 
-		return $this->success($arr);
+		$rs         = Heart::where('id', $uid)->where('pid', $pid)->first();
+		if($rs){
+			if(Heart::where('id', $uid)->where('pid', $pid)->delete()){
+				return $this->success([], __('成功取消收藏!'));
+			}else{
+				return $this->error(__('取消失败!'));
+			}
+		}
+		if(Heart::insert(['id' => $uid, 'pid' => $pid, 'addtime' => time()])){
+			return $this->success([], __('添加成功!'));
+		}
+
+		return $this->error(__('添加失败!'));
 	}
 
 	/**
 	 * 广告播放完成回调
 	 */
 	public function palied(Request $request){
-		$arr 			= [];
+		$uid 			= $request->get('_uid');
+		$last 			= Adv::where('uid', $uid)->orderBy('addtime', 'DESC')->first();
+		if($last){
+			if((time() - $last->addtime) < 10){
+				return $this->error(__('请等待广告加载!'));
+			}
+		}
+		if(!Adv::insert(['uid' => $uid, 'addtime' => time()])){
+			return $this->error(__('广告添加失败!'));
+		}
 
-		return $this->success($arr);
+		return $this->success([], __('奖励成功!'));
 	}
 }
