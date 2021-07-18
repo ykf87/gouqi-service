@@ -47,8 +47,7 @@ class UserController extends Controller{
 
 		$user 			= User::where(User::$usernameKey, $phone)->first();
 		if($user){
-			dd($user);
-			if(password_verify($pwd, $user->pwd)){
+			if(!password_verify($pwd, $user->pwd)){
 				return $this->error(__('用户已存在!'));
 			}
 			return $this->success(User::users($user));
