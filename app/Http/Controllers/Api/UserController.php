@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Heart;
 use App\Models\History;
 use App\Models\Adv;
+use App\Models\Post;
 
 class UserController extends Controller{
 	/**
@@ -103,12 +104,14 @@ class UserController extends Controller{
 		$rs         = Heart::where('id', $uid)->where('pid', $pid)->first();
 		if($rs){
 			if(Heart::where('id', $uid)->where('pid', $pid)->delete()){
+				Post::find($pid)->decrement('hearted');
 				return $this->success([], __('成功取消收藏!'));
 			}else{
 				return $this->error(__('取消失败!'));
 			}
 		}
 		if(Heart::insert(['id' => $uid, 'pid' => $pid, 'addtime' => time()])){
+			Post::find($pid)->increment('hearted');
 			return $this->success([], __('添加成功!'));
 		}
 

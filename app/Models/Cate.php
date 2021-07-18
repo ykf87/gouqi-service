@@ -17,7 +17,7 @@ class Cate extends Model{
     	$limit 		= (int)$limit;
     	if($limit < 1) $limit 	= env('PAGE_LIMIT', 10);
 
-    	$obj 		= self::orderBy('id', 'DESC')->forPage($page)->limit($limit)->get();
+    	$obj 		= self::select('id', 'name')->orderBy('id', 'DESC')->forPage($page)->limit($limit)->get();
     	return $obj;
     }
 }

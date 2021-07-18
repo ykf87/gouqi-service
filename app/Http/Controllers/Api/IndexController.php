@@ -75,5 +75,7 @@ class IndexController extends Controller{
 	/**
 	 * 采集
 	 */
+	public function spider(Request $request){
 
+	}
 }
