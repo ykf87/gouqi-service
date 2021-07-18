@@ -60,7 +60,7 @@ class User extends Authenticatable{
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
 
         $user->save();
-        return $this->login($user);
+        return self::login($user);
     }
 
     /**
