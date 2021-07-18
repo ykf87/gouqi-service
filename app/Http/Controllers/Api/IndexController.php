@@ -46,8 +46,13 @@ class IndexController extends Controller{
 	 * 文章详情
 	 */
 	public function info(Request $request, $id = null){
-		$id 		= $id ? $id : $request->get('id');
-		$arr 		= Post::info((int)$id);
+		$jwt        = User::decry();
+		$uid 		= 0;
+        if($jwt instanceof Plain){
+            $uid    = $jwt->claims()->get('_uid');
+        }
+		$id 		= $id ? $id : $request->get('_uid');
+		$arr 		= Post::info((int)$id, $uid);
 
 		if(!$arr){
 			return $this->error(__('找不到文章!'));
@@ -55,19 +60,20 @@ class IndexController extends Controller{
     	$arr->viewed 	+= 1;
     	$arr->save();
 
-		$jwt        = User::decry();
-        if($jwt instanceof Plain){
-            $uid    = $jwt->claims()->get('id');
-            if($uid > 0){
-            	$isview = History::where('id', $uid)->where('pid', $pid)->first();
-            	if($isview){
-            		History::where('id', $uid)->where('pid', $pid)->update(['addtime' => time()]);
-            	}else{
-                	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
-            	}
-            }
+    	if($uid > 0){
+        	$isview = History::where('id', $uid)->where('pid', $pid)->first();
+        	if($isview){
+        		History::where('id', $uid)->where('pid', $pid)->update(['addtime' => time()]);
+        	}else{
+            	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
+        	}
         }
 
 		return $this->success($arr);
 	}
+
+	/**
+	 * 采集
+	 */
+
 }
