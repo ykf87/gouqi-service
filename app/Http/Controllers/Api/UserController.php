@@ -28,6 +28,8 @@ class UserController extends Controller{
 			}else{
 				return $this->errro(__('用户不存在,请先注册!'));
 			}
+		}elseif(!password_verify($pwd, $user->pwd)){
+			return $this->errro(__('用户名或密码错误!'));
 		}
 		$arr 		= User::login($user);
 
