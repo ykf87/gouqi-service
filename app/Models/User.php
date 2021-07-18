@@ -82,7 +82,7 @@ class User extends Authenticatable{
         $arr['sex']         = $user->sex;
         $arr['parent']      = $user->parent;
         $arr['username']    = $user->username;
-        $arr['reg_time']    = string($user->created_at);
+        $arr['reg_time']    = (string)$user->created_at;
         $arr['token']       = self::token($user);
         return $arr;
     }
