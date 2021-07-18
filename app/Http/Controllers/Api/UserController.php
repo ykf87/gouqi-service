@@ -96,6 +96,10 @@ class UserController extends Controller{
 		$pid 		= (int)$request->input('id', 0);
 		$uid 		= $request->get('_uid', 0);
 
+		if($pid < 1){
+			return $this->error(__('请选择文章!'));
+		}
+
 		$rs         = Heart::where('id', $uid)->where('pid', $pid)->first();
 		if($rs){
 			if(Heart::where('id', $uid)->where('pid', $pid)->delete()){

@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 use App\Models\Cate;
 use App\Models\Post;
+use App\Models\User;
+use App\Models\History;
+use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
 	public function config(Request $request){
@@ -49,6 +52,22 @@ class IndexController extends Controller{
 		if(!$arr){
 			return $this->error(__('找不到文章!'));
 		}
+    	$arr->viewed 	+= 1;
+    	$arr->save();
+
+		$jwt        = User::decry();
+        if($jwt instanceof Plain){
+            $uid    = $jwt->claims()->get('id');
+            if($uid > 0){
+            	$isview = History::where('id', $uid)->where('pid', $pid)->first();
+            	if($isview){
+            		History::where('id', $uid)->where('pid', $pid)->update(['addtime' => time()]);
+            	}else{
+                	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
+            	}
+            }
+        }
+
 		return $this->success($arr);
 	}
 }

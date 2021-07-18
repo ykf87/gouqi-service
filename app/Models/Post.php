@@ -41,8 +41,6 @@ class Post extends Model{
     	if(!$row){
     		return false;
     	}
-    	$row->viewed 	+= 1;
-    	$row->save();
     	return $row;
     }
 }
