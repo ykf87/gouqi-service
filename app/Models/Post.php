@@ -13,7 +13,7 @@ class Post extends Model{
     	$limit 		= request()->get('limit');
     	$cateId 	= request()->get('cid');
         $q          = trim(request()->get('q'), '');
-    	$cateId 	= (int)$cid;
+    	$cateId 	= (int)$cateId;
 
     	$page 		= (int)$page;
     	if($page < 1) $page = 1;
