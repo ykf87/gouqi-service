@@ -77,6 +77,11 @@ class User extends Authenticatable{
         $arr                = [];
         $arr['id']          = $user->id;
         $arr['nickname']    = $user->nickname;
+        $arr['avatar']      = $user->avatar;
+        $arr['level']       = $user->level;
+        $arr['sex']         = $user->sex;
+        $arr['parent']      = $user->parent;
+        $arr['username']    = $user->username;
         $arr['token']       = self::token($user);
         return $arr;
     }
