@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\Heart;
 
 class UserController extends Controller{
-	private $usernameKey 	= 'email';
+	private $usernameKey 	= 'phone';
 	/**
 	 * 用户登录
 	 */

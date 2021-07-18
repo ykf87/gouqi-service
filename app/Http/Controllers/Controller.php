@@ -33,6 +33,7 @@ class Controller extends BaseController{
     		'data'		=> $data,
     		'msg'		=> $msg,
     	];
-    	return response()->json($rs, $respcode ? $respcode : $code);
+        return json_encode($rs, JSON_UNESCAPED_UNICODE);
+    	// return response()->json($rs, $respcode ? $respcode : $code);
     }
 }
