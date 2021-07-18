@@ -23,8 +23,8 @@ Route::group([
     Route::get('cate', 'IndexController@cate')->name('cate');
     Route::get('list', 'IndexController@list')->name('list');
     Route::get('info/{id}', 'IndexController@cate')->name('info')->where('id', '[0-9]+');
-	Route::get('sigin', 'UserController@sigin')->name('sigin');
-	Route::get('login', 'UserController@login')->name('login');
+	Route::post('sigin', 'UserController@sigin')->name('sigin');
+	Route::post('login', 'UserController@login')->name('login');
 
     // 需要权限认证的请求
     Route::group([
