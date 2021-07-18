@@ -37,7 +37,7 @@ class IndexController extends Controller{
 	public function list(Request $request){
 		$page 		= $request->input('page', 1);
 		$limit 		= $request->input('limit', env('PAGE_LIMIT', 10));
-		$arr 		= [];
+		$arr 		= Post::list();
 
 		return $this->success($arr);
 	}
