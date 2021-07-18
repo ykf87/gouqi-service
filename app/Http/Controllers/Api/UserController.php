@@ -26,7 +26,7 @@ class UserController extends Controller{
 			if($isReg == 1){
 				return $this->success(User::sigin($username, $pwd));
 			}else{
-				return $this->errro(__('用户不存在,请先注册!'));
+				return $this->error(__('用户不存在,请先注册!'));
 			}
 		}elseif(!password_verify($pwd, $user->pwd)){
 			return $this->errro(__('用户名或密码错误!'));
