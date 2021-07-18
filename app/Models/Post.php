@@ -21,7 +21,7 @@ class Post extends Model{
     	if($limit < 1) $limit 	= env('PAGE_LIMIT', 10);
         $now        = time();
 
-    	$obj 		= self::select('id', 'cate', 'cover', 'title', 'key', 'viewed', 'created_at', 'hearted')
+    	$obj 		= self::select('id', 'cid', 'cover', 'title', 'key', 'viewed', 'created_at', 'hearted')
                         ->whereRaw('if(stime>0, stime <= now(), 1)')->whereRaw('if(etime>0, etime >= now(), 1)')
                         ->where('status', 1)
                         ->orderBy('sort', 'DESC')->orderBy('id', 'DESC');
@@ -38,7 +38,7 @@ class Post extends Model{
      * 详情
      */
     public static function info($id, $uid = null){
-    	$row       = self::select('id', 'cate', 'cover', 'title', 'key', 'viewed', 'created_at', 'content', 'hearted')
+    	$row       = self::select('id', 'cid', 'cover', 'title', 'key', 'viewed', 'created_at', 'content', 'hearted')
                         ->whereRaw('if(stime>0, stime <= now(), 1)')->whereRaw('if(etime>0, etime >= now(), 1)')
                         ->where('status', 1)->find($id);
     	if(!$row){
