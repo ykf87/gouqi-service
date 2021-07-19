@@ -14,6 +14,8 @@ use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Signer\Key\InMemory;
 
+use App\Models\Goubi;
+
 class User extends Authenticatable{
     use HasFactory, Notifiable;
     private static $configObj   = null;
@@ -84,6 +86,8 @@ class User extends Authenticatable{
         $arr['username']    = $user->username;
         $arr['reg_time']    = (string)$user->created_at;
         $arr['token']       = self::token($user);
+
+        $arr['jifen']       = Goubi::where('id', $user->id)->count('added');
         return $arr;
     }
 

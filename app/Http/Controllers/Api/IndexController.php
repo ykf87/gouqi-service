@@ -9,6 +9,8 @@ use App\Models\Cate;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\History;
+use App\Models\Adv;
+use App\Models\Goubi;
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
@@ -66,6 +68,9 @@ class IndexController extends Controller{
         		History::where('id', $uid)->where('pid', $pid)->update(['addtime' => time()]);
         	}else{
             	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
+	        	$times		= Adv::fanbeiTimes($uid);
+	        	$time 		= date('Y-m-d H:i:s');
+	        	Goubi::insert(['uid' => $uid, 'added' => $times, 'created_at' => $time, 'updated_at' => $time]);
         	}
         }
 

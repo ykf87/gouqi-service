@@ -123,14 +123,22 @@ class UserController extends Controller{
 	 */
 	public function palied(Request $request){
 		$uid 			= $request->get('_uid');
+		$type 			= (int)$request->get('type', 1);
+		if(!$type){
+			$type 		= 1;
+		}
 		$last 			= Adv::where('uid', $uid)->orderBy('addtime', 'DESC')->first();
 		if($last){
 			if((time() - $last->addtime) < 10){
 				return $this->error(__('请等待广告加载!'));
 			}
 		}
-		if(!Adv::insert(['uid' => $uid, 'addtime' => time()])){
+		if(!Adv::insert(['uid' => $uid, 'addtime' => time(), 'type' => $type])){
 			return $this->error(__('广告添加失败!'));
+		}
+
+		if($type == 2){
+			Adv::addGoubi($uid);
 		}
 
 		return $this->success([], __('奖励成功!'));
