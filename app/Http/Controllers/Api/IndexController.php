@@ -59,8 +59,11 @@ class IndexController extends Controller{
 		if(!$arr){
 			return $this->error(__('找不到文章!'));
 		}
+		$isheart 		= $arr->is_heart;
+		unset($arr->is_heart);
     	$arr->viewed 	+= 1;
     	$arr->save();
+    	$arr->is_heart 	= $isheart;
 
     	if($uid > 0){
         	$isview = History::where('id', $uid)->where('pid', $pid)->first();
