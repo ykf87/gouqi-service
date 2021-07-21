@@ -45,11 +45,10 @@ class Post extends Model{
     	if(!$row){
     		return false;
     	}
+        $row->is_heart      = false;
         if($uid > 0){
             if(Hearts::where('id', $uid)->where('pid', $id)->first()){
                 $row->is_heart      = true;
-            }else{
-                $row->is_heart      = false;
             }
         }
     	return $row;
