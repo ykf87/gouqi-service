@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Post extends Model{
     use HasFactory;
@@ -11,10 +12,10 @@ class Post extends Model{
     public static function list(){
     	$page		= request()->get('page');
     	$limit 		= request()->get('limit');
+
     	$cateId 	= request()->get('cid');
         $q          = trim(request()->get('q'), '');
     	$cateId 	= (int)$cateId;
-
     	$page 		= (int)$page;
     	if($page < 1) $page = 1;
     	$limit 		= (int)$limit;
@@ -31,7 +32,7 @@ class Post extends Model{
         if($q){
             $obj    = $obj->where('title', 'like', "%$q%");
         }
-    	return $obj->forPage($page)->limit($limit)->get();
+    	return $obj->forPage($page, $limit)->get();
     }
 
     /**

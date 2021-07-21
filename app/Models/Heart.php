@@ -24,6 +24,6 @@ class Heart extends Model{
                         ->select('p.id', 'p.cover', 'p.title', 'p.key', 'p.viewed', 'p.created_at')
                         ->where('h.id', $uid)->where('p.status', 1);
         $obj        = $obj->orderBy('h.addtime', 'DESC');
-    	return $obj->forPage($page)->limit($limit)->get();
+    	return $obj->forPage($page, $limit)->get();
     }
 }
