@@ -169,7 +169,7 @@ class UserController extends Controller{
 		if(!$name || mb_strlen($name, 'utf-8') > 16){
 			return $this->error(__('请填写真实姓名!'));
 		}
-		if(!is_number($phone) || strlen($phone) != 11){
+		if(!is_numeric($phone) || strlen($phone) != 11){
 			return $this->error(__('请填写电话!'));
 		}
 		$number 		= str_replace(' ', '', $number);
