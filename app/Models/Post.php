@@ -46,8 +46,8 @@ class Post extends Model{
     		return false;
     	}
         $row->is_heart      = false;
-        if($uid > 0){
             echo $uid;
+        if($uid > 0){
             $isheart        = Hearts::where('id', $uid)->where('pid', $id)->first();
             if($isheart){
                 dd($isheart);
