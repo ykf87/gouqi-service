@@ -9,6 +9,7 @@ use App\Models\Goubi;
 class Adv extends Model{
     use HasFactory;
     private static $beishu 	= 1;
+    public $timestamps = false;
 
     /**
      * 根据看广告次数,计算今日看文章获得积分数量

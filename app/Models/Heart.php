@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 class Heart extends Model{
     use HasFactory;
+    public $timestamps = false;
     /**
      * 收藏
      */

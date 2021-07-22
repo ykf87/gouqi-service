@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Goubi extends Model{
     use HasFactory;
+    public $timestamps = false;
 
     public static function list($uid){
     	$page		= request()->get('page');

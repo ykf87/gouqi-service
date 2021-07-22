@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cate extends Model{
     use HasFactory;
+    public $timestamps = false;
 
    	public static function list(){
     	$page		= request()->get('page');
