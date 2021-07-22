@@ -266,4 +266,13 @@ class UserController extends Controller{
 		}
 		return $this->error('提现失败,请联系客服!');
 	}
+
+	/**
+	 * 提现记录
+	 */
+	public function withdraw(Request $request){
+		$arr 		= Withdraw::list($request->get('_uid'));
+
+		return $this->success($arr);
+	}
 }
