@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Models\History;
 use App\Models\Adv;
 use App\Models\Goubi;
-use App\Models\Reback
+use App\Models\Reback;
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
