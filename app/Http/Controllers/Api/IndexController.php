@@ -48,13 +48,13 @@ class IndexController extends Controller{
 	/**
 	 * 文章详情
 	 */
-	public function info(Request $request, $id = null){
+	public function info(Request $request, $id){
 		$jwt        = User::decry();
 		$uid 		= 0;
         if($jwt instanceof Plain){
             $uid    = $jwt->claims()->get('_uid');
         }
-		$id 		= $id ? $id : $request->get('_uid');
+        dd($uid);
 		$arr 		= Post::info((int)$id, $uid);
 
 		if(!$arr){
