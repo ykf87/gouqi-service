@@ -103,7 +103,7 @@ class IndexController extends Controller{
         $model->phone 	= $phone;
         $model->uid 	= $uid;
         $model->title 	= $title;
-        $model->cont 	= $cont;
+        $model->content = $cont;
         if($model->save()){
         	return $this->success(__('反馈成功!'));
         }
