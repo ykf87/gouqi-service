@@ -73,7 +73,7 @@ class IndexController extends Controller{
             	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
 	        	$times		= Adv::fanbeiTimes($uid);
 	        	$time 		= date('Y-m-d H:i:s');
-	        	Goubi::insert(['uid' => $uid, 'added' => $times, 'created_at' => $time, 'updated_at' => $time]);
+	        	Goubi::insert(['id' => $uid, 'added' => $times, 'created_at' => $time, 'updated_at' => $time]);
         	}
         }
 
