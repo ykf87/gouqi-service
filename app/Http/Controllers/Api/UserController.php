@@ -10,6 +10,7 @@ use App\Models\Heart;
 use App\Models\History;
 use App\Models\Adv;
 use App\Models\Post;
+use App\Models\Goubi;
 
 class UserController extends Controller{
 	/**
@@ -142,5 +143,14 @@ class UserController extends Controller{
 		}
 
 		return $this->success([], __('奖励成功!'));
+	}
+
+	/**
+	 * 积分记录
+	 */
+	public function jifen(Request $request){
+		$arr 		= Goubi::list($request->get('_uid'));
+
+		return $this->success($arr);
 	}
 }

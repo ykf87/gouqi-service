@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\History;
 use App\Models\Adv;
 use App\Models\Goubi;
+use App\Models\Reback
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
@@ -78,6 +79,35 @@ class IndexController extends Controller{
         }
 
 		return $this->success($arr);
+	}
+
+	/**
+	 * 帮助反馈
+	 */
+	public function help(Request $rquest){
+		$phone 		= trim($request->input('phone', ''));
+		$title 		= trim($request->input('title', ''));
+		$cont 		= trim($request->input('cont', ''));
+
+		if(empty($phone) || empty($title)){
+			return $this->error(__('请填写完整!'));
+		}
+
+		$jwt        = User::decry();
+		$uid 		= 0;
+        if($jwt instanceof Plain){
+            $uid    = $jwt->claims()->get('_uid');
+        }
+
+        $model 		= new Reback;
+        $model->phone 	= $phone;
+        $model->uid 	= $uid;
+        $model->title 	= $title;
+        $model->cont 	= $cont;
+        if($model->save()){
+        	return $this->success(__('反馈成功!'));
+        }
+        return $this->error(__('提交失败!'));
 	}
 
 	/**

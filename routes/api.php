@@ -25,6 +25,7 @@ Route::group([
     Route::get('info/{id}', 'IndexController@info')->name('info')->where('id', '[0-9]+');
 	Route::post('sigin', 'UserController@sigin')->name('sigin');
 	Route::post('login', 'UserController@login')->name('login');
+	Route::post('help', 'IndexController@help')->name('help');
 
     // 需要权限认证的请求
     Route::group([
@@ -37,5 +38,6 @@ Route::group([
 	    Route::get('heart', 'UserController@watch')->name('watch');
 	    Route::post('heart', 'UserController@heart')->name('heart');
 	    Route::post('palied', 'UserController@palied')->name('palied');
+	    Route::get('jifen', 'UserController@jifen')->name('jifen');
 	});
 });
