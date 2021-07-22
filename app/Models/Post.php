@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
+use App\Models\Heart;
+
 class Post extends Model{
     use HasFactory;
 
@@ -47,7 +49,7 @@ class Post extends Model{
     	}
         $row->is_heart      = false;
         if($uid > 0){
-            $isheart        = Hearts::where('id', $uid)->where('pid', $id)->first();
+            $isheart        = Heart::where('id', $uid)->where('pid', $id)->first();
             if($isheart){
                 $row->is_heart      = true;
             }
