@@ -35,7 +35,7 @@ Route::group([
 	    Route::post('reset', 'UserController@reset')->name('reset');
 	    Route::get('watch', 'UserController@watch')->name('watch');
 	    Route::get('history', 'UserController@history')->name('history');
-	    Route::get('heart', 'UserController@watch')->name('watch');
+	    Route::get('heart', 'UserController@watch')->name('heart');
 	    Route::post('heart', 'UserController@heart')->name('heart');
 	    Route::post('palied', 'UserController@palied')->name('palied');
 	    Route::get('jifen', 'UserController@jifen')->name('jifen');
