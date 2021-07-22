@@ -66,9 +66,9 @@ class IndexController extends Controller{
     	$arr->is_heart 	= $isheart;
 
     	if($uid > 0){
-        	$isview = History::where('id', $uid)->where('pid', $pid)->first();
+        	$isview = History::where('id', $uid)->where('pid', $id)->first();
         	if($isview){
-        		History::where('id', $uid)->where('pid', $pid)->update(['addtime' => time()]);
+        		History::where('id', $uid)->where('pid', $id)->update(['addtime' => time()]);
         	}else{
             	History::insert(['id' => $uid, 'pid' => $id, 'addtime' => time()]);
 	        	$times		= Adv::fanbeiTimes($uid);
