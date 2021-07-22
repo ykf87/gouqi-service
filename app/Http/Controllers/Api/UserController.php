@@ -13,6 +13,7 @@ use App\Models\Post;
 use App\Models\Goubi;
 use App\Models\Withdraw;
 use App\Models\UserCard;
+use App\Models\Bank;
 
 class UserController extends Controller{
 	/**
@@ -157,9 +158,17 @@ class UserController extends Controller{
 	}
 
 	/**
+	 * 银行列表
+	 */
+	public function bank(){
+		
+	}
+
+	/**
 	 * 添加银行卡
 	 */
 	public function card(Request $request){
+		$id 			= (int)$request->input('id', 0);
 		$name 			= trim($request->input('name', ''));
 		$phone 			= trim($request->input('telphone', ''));
 		$bankName 		= (int)$request->input('type', 0);
@@ -176,21 +185,47 @@ class UserController extends Controller{
 		if(!is_numeric($number)){
 			return $this->error(__('请正确填写银行卡号!'));
 		}
+		if(!$bankName){
+			return $this->error('请选择银行!');
+		}
+		$bankObj 		= Bank::find($bankName);
+		if(!$bankObj){
+			return $this->error('请选择银行!');
+		}
 
-		$count 			= UserCard::where('uid', $uid)->count();
-		if($count >= User::$maxCard){
-			return $this->error(__('银行卡不允许超过' . User::$maxCard . '张!'));
+
+		if($id < 1){
+			$count 			= UserCard::where('uid', $uid)->count();
+			if($count >= User::$maxCard){
+				return $this->error(__('银行卡不允许超过' . User::$maxCard . '张!'));
+			}
+			$obj 			= new UserCard;
+			$obj->uid 		= $uid;
+			$obj->name 		= $name;
+			$obj->phone 	= $phone;
+			$obj->number 	= $number;
+			$obj->type 		= $bankName;
+			if($obj->save()){
+				return $this->success(__('银行卡添加成功!'));
+			}
+			return $this->error(__('添加失败,请联系客服!'));
+		}else{
+			$obj 			= UserCard::find($id);
+			if(!$obj){
+				return $this->error(__('找不到记录!'));
+			}
+			if($obj->uid != $uid){
+				return $this->error(__('非法请求!'));
+			}
+			$obj->name 		= $name;
+			$obj->phone 	= $phone;
+			$obj->number 	= $number;
+			$obj->type 		= $bankName;
+			if($obj->save()){
+				return $this->success(__('更新成功!'));
+			}
+			return $this->error(__('更新失败!'));
 		}
-		$obj 			= new UserCard;
-		$obj->uid 		= $uid;
-		$obj->name 		= $name;
-		$obj->phone 	= $phone;
-		$obj->number 	= $number;
-		$obj->type 		= $bankName;
-		if($obj->save()){
-			return $this->success(__('银行卡添加成功!'));
-		}
-		return $this->error(__('添加失败,请联系客服!'));
 	}
 
 	/**
