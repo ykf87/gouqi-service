@@ -11,6 +11,8 @@ use App\Models\History;
 use App\Models\Adv;
 use App\Models\Post;
 use App\Models\Goubi;
+use App\Models\Withdraw;
+use App\Models\UserCard;
 
 class UserController extends Controller{
 	/**
@@ -152,5 +154,43 @@ class UserController extends Controller{
 		$arr 		= Goubi::list($request->get('_uid'));
 
 		return $this->success($arr);
+	}
+
+	/**
+	 * 提现申请
+	 */
+	public function tixian(Request $request){
+		$jine 		= (float)$request->input('jine', 0.0);
+		$cardid 	= (int)$request->input('cardid', 0);
+		$uid 		= $request->get('_uid');
+		if($jine < User::$minTixian){
+			return $this->error(__('金额不能小于'.User::$minTixian.'元'));
+		}
+		if($cardid < 1){
+			return $this->error(__('请选择提现银行卡!'));
+		}
+
+		$user_card 	= UserCard::find($cardid);
+		if(!$user_card){
+			return $this->error(__('卡号不存在!'));
+		}
+		if($user_card->uid != $uid){
+			return $this->error('错误!');
+		}
+
+		$total 		= Goubi::userJifen($uid);
+		if($total < $jine){
+			return $this->error(__('金额不足!'));
+		}
+
+		$obj 			= new Withdraw;
+		$obj->jine 		= $jine;
+		$obj->cardid 	= $cardid;
+		$obj->uid 		= $uid;
+		if($obj->save()){
+			// Goubi::insert(['id' => $uid, 'added' => ]);
+			return $this->success(__('提现申请成功!'));
+		}
+		return $this->error('提现失败,请联系客服!');
 	}
 }

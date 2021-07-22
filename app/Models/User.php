@@ -22,6 +22,7 @@ class User extends Authenticatable{
     private static $secret = 'Le$Sshidy!sV$IUfMF4Z@0zwdzcJ9y4KIO28oBwBkTPcZxO^E7uqB39nbOx&X!ucww';
     private static $type   = 'Bearer ';
     public static $usernameKey = 'phone';
+    public static $minTixian    = 20;
 
     /**
      * The attributes that are mass assignable.
@@ -87,7 +88,7 @@ class User extends Authenticatable{
         $arr['reg_time']    = (string)$user->created_at;
         $arr['token']       = self::token($user);
 
-        $arr['jifen']       = Goubi::where('id', $user->id)->count('added');
+        $arr['jifen']       = Goubi::userJifen($user->id);
         return $arr;
     }
 

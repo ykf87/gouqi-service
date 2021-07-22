@@ -39,5 +39,7 @@ Route::group([
 	    Route::post('heart', 'UserController@heart')->name('heart');
 	    Route::post('palied', 'UserController@palied')->name('palied');
 	    Route::get('jifen', 'UserController@jifen')->name('jifen');
+
+	    Route::post('tixian', 'UserController@tixian')->name('tixian');
 	});
 });
