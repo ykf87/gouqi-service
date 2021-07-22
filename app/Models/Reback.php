@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reback extends Model{
     use HasFactory;
-    public $timestamp = false;
+    public $timestamps = false;
 }
