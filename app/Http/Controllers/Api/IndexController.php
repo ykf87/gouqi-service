@@ -52,9 +52,8 @@ class IndexController extends Controller{
 		$jwt        = User::decry();
 		$uid 		= 0;
         if($jwt instanceof Plain){
-            $uid    = $jwt->claims()->get('_uid');
+            $uid    = $jwt->claims()->get('id');
         }
-        dd($uid);
 		$arr 		= Post::info((int)$id, $uid);
 
 		if(!$arr){
