@@ -84,7 +84,7 @@ class IndexController extends Controller{
 	/**
 	 * 帮助反馈
 	 */
-	public function help(Request $rquest){
+	public function help(Request $request){
 		$phone 		= trim($request->input('phone', ''));
 		$title 		= trim($request->input('title', ''));
 		$cont 		= trim($request->input('cont', ''));
