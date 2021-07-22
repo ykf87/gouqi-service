@@ -161,7 +161,8 @@ class UserController extends Controller{
 	 * 银行列表
 	 */
 	public function bank(){
-		
+		$arr 		= Bank::list();
+		return $this->success($arr);
 	}
 
 	/**

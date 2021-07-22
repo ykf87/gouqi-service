@@ -42,5 +42,6 @@ Route::group([
 
 	    Route::post('tixian', 'UserController@tixian')->name('tixian');
 	    Route::post('card', 'UserController@card')->name('card');
+	    Route::get('bank', 'UserController@bank')->name('bank');
 	});
 });
