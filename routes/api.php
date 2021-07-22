@@ -41,5 +41,6 @@ Route::group([
 	    Route::get('jifen', 'UserController@jifen')->name('jifen');
 
 	    Route::post('tixian', 'UserController@tixian')->name('tixian');
+	    Route::post('card', 'UserController@card')->name('card');
 	});
 });

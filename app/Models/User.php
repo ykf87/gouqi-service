@@ -23,6 +23,7 @@ class User extends Authenticatable{
     private static $type   = 'Bearer ';
     public static $usernameKey = 'phone';
     public static $minTixian    = 20;
+    public static $maxCard      = 5;
 
     /**
      * The attributes that are mass assignable.

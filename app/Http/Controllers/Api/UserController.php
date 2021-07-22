@@ -157,6 +157,43 @@ class UserController extends Controller{
 	}
 
 	/**
+	 * 添加银行卡
+	 */
+	public function card(Request $request){
+		$name 			= trim($request->input('name', ''));
+		$phone 			= trim($request->input('telphone', ''));
+		$bankName 		= (int)$request->input('type', 0);
+		$number 		= trim($request->input('number', ''));
+		$uid 			= $request->get('_uid');
+
+		if(!$name || mb_strlen($name, 'utf-8') > 16){
+			return $this->error(__('请填写真实姓名!'));
+		}
+		if(!is_number($phone) || strlen($phone) != 11){
+			return $this->error(__('请填写电话!'));
+		}
+		$number 		= str_replace(' ', '', $number);
+		if(!is_numeric($number)){
+			return $this->error(__('请正确填写银行卡号!'));
+		}
+
+		$count 			= UserCard::where('uid', $uid)->count();
+		if($count >= User::$maxCard){
+			return $this->error(__('银行卡不允许超过' . User::$maxCard . '张!'));
+		}
+		$obj 			= new UserCard;
+		$obj->uid 		= $uid;
+		$obj->name 		= $name;
+		$obj->phone 	= $phone;
+		$obj->number 	= $number;
+		$obj->type 		= $bankName;
+		if($obj->save()){
+			return $this->success(__('银行卡添加成功!'));
+		}
+		return $this->error(__('添加失败,请联系客服!'));
+	}
+
+	/**
 	 * 提现申请
 	 */
 	public function tixian(Request $request){
