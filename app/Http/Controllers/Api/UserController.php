@@ -39,6 +39,7 @@ class UserController extends Controller{
 		$phone 		= $request->input(User::$usernameKey);
 		$pwd 		= $request->input('password');
 		$isReg 		= $request->input('reg', 0);// 不存在是否直接注册
+		$name 		= trim($request->input('name', ''));
 		if(!$phone || !$pwd){
 			return $this->error(__('用户名或密码错误!'));
 		}
@@ -46,7 +47,7 @@ class UserController extends Controller{
 		$user 		= User::where(User::$usernameKey, $phone)->first();
 		if(!$user){
 			if($isReg == 1){
-				return $this->success(User::sigin($username, $pwd));
+				return $this->success(User::sigin($username, $pwd, $name));
 			}else{
 				return $this->error(__('用户不存在,请先注册!'));
 			}
@@ -64,6 +65,7 @@ class UserController extends Controller{
 	public function sigin(Request $request){
 		$phone 			= $request->input(User::$usernameKey);
 		$pwd 			= $request->input('password');
+		$name 			= trim($request->input('name', ''));
 
 		if(empty($phone) || empty($pwd)){
 			return $this->error(__('用户名或密码错误!'));
@@ -76,7 +78,7 @@ class UserController extends Controller{
 			}
 			return $this->success(User::users($user));
 		}else{
-			$arr 		= User::sigin($phone, $pwd);
+			$arr 		= User::sigin($phone, $pwd, $name);
 		}
 
 		return $this->success($arr);

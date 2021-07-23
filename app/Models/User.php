@@ -58,10 +58,11 @@ class User extends Authenticatable{
     /**
      * 用户注册
      */
-    public static function sigin($username, $pwd){
+    public static function sigin($username, $pwdm, $name = ''){
         $user           = new self;
         $user->phone    = $username;
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
+        $user->nickname = $name;
 
         $user->save();
         return self::login($user);
