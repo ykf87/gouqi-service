@@ -62,7 +62,7 @@ class User extends Authenticatable{
         $user           = new self;
         $user->phone    = $username;
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
-        $user->nickname = $name;
+        $user->nickname = $name ? $name : '游客' . rand(1000, 99999);
 
         $user->save();
         return self::login($user);
