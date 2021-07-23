@@ -22,8 +22,12 @@ class UserController extends Controller{
 	public function index(Request $request){
 		$uid 		= $request->get('_uid');
 
-
-		$arr 		= User::users($uid, false);
+		$user 		= User::find($uid);
+		if($user){
+			$arr 		= User::users($user, false);
+		}else{
+			$arr 		= [];
+		}
 		return $this->success($arr);
 	}
 
