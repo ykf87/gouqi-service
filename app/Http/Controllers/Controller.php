@@ -28,6 +28,13 @@ class Controller extends BaseController{
      * json 的返回通用接口
      */
     public function resp($data = null, $msg = '', $code = 200, $respcode = 200){
+        if(is_array($data)){
+            foreach($data as $k => $v){
+                if(is_null($v)){
+                    $data[$k]   = '';
+                }
+            }
+        }
     	$rs 	= [
     		'code'		=> $code,
     		'data'		=> $data,
