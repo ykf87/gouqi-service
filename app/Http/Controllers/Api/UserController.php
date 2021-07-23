@@ -17,6 +17,17 @@ use App\Models\Bank;
 
 class UserController extends Controller{
 	/**
+	 * 用户数据返回
+	 */
+	public function index(Request $request){
+		$uid 		= $request->get('_uid');
+
+
+		$arr 		= User::users($uid, false);
+		return $this->success($arr);
+	}
+
+	/**
 	 * 用户登录
 	 */
 	public function login(Request $request){

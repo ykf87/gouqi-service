@@ -77,7 +77,7 @@ class User extends Authenticatable{
     /**
      * 最终返回的user数组
      */
-    public static function users(self $user){
+    public static function users(self $user, $token = true){
         $arr                = [];
         $arr['id']          = $user->id;
         $arr['nickname']    = $user->nickname;
@@ -87,7 +87,10 @@ class User extends Authenticatable{
         $arr['parent']      = $user->parent;
         $arr['username']    = $user->username;
         $arr['reg_time']    = (string)$user->created_at;
-        $arr['token']       = self::token($user);
+
+        if($token === true){
+            $arr['token']       = self::token($user);
+        }
 
         $arr['jifen']       = Goubi::userJifen($user->id);
         return $arr;

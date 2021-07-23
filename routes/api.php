@@ -32,6 +32,7 @@ Route::group([
 	    'middleware'    => ['jwt'],
 	    // 'as'            => 'user.'
 	], function(){
+	    Route::get('center', 'UserController@index')->name('index');
 	    Route::post('reset', 'UserController@reset')->name('reset');
 	    Route::get('watch', 'UserController@watch')->name('watch');
 	    Route::get('history', 'UserController@history')->name('history');
