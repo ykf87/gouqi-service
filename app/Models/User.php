@@ -15,6 +15,7 @@ use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Signer\Key\InMemory;
 
 use App\Models\Goubi;
+use App\Models\UserCard;
 
 class User extends Authenticatable{
     use HasFactory, Notifiable;
@@ -88,6 +89,17 @@ class User extends Authenticatable{
         $arr['parent']      = $user->parent;
         $arr['username']    = $user->username;
         $arr['reg_time']    = (string)$user->created_at;
+
+        // 用户银行卡信息
+        $uc                 = UserCard::select('user_cards.*', 'banks.name as bankname', 'banks.ico')
+                                ->rightJoin('banks', 'user_cards.type', '=', 'banks.id')
+                                ->where('user_cards.uid', $user->id)
+                                ->orderBy('user_cards.id', 'DESC')->first();
+        if($uc){
+            $arr['bank']    = $uc;
+        }else{
+            $arr['bank']    = '';
+        }
 
         if($token === true){
             $arr['token']       = self::token($user);
