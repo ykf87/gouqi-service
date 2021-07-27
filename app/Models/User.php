@@ -91,7 +91,7 @@ class User extends Authenticatable{
         $arr['reg_time']    = (string)$user->created_at;
 
         // 用户银行卡信息
-        $uc                 = UserCard::select('user_cards.*', 'banks.name as bankname', 'banks.ico')
+        $uc                 = UserCard::select('user_cards.id','user_cards.name','user_cards.phone','user_cards.number', 'banks.name as bankname', 'banks.ico')
                                 ->rightJoin('banks', 'user_cards.type', '=', 'banks.id')
                                 ->where('user_cards.uid', $user->id)
                                 ->orderBy('user_cards.id', 'DESC')->first();
