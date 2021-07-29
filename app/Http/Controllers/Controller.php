@@ -28,13 +28,7 @@ class Controller extends BaseController{
      * json 的返回通用接口
      */
     public function resp($data = null, $msg = '', $code = 200, $respcode = 200){
-        if(is_array($data)){
-            foreach($data as $k => $v){
-                if(is_null($v)){
-                    $data[$k]   = '';
-                }
-            }
-        }
+        $data           = $this->setEmpty($data);
     	$rs 	= [
     		'code'		=> $code,
     		'data'		=> $data,
@@ -42,5 +36,20 @@ class Controller extends BaseController{
     	];
         return json_encode($rs, JSON_UNESCAPED_UNICODE);
     	// return response()->json($rs, $respcode ? $respcode : $code);
+    }
+
+    public function setEmpty($data){
+        if(is_array($data)){
+            foreach($data as $k => $v){
+                if(is_null($v)){
+                    $data[$k]   = '';
+                }elseif(is_array($v)){
+                    $data[$k]   = $this->setEmpty($v);
+                }
+            }
+        }elseif(is_null($data)){
+            $data       = '';
+        }
+        return $data;
     }
 }
