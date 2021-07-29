@@ -97,8 +97,6 @@ class User extends Authenticatable{
                                 ->orderBy('user_cards.id', 'DESC')->first();
         if($uc){
             $arr['bank']    = $uc;
-        }else{
-            $arr['bank']    = '';
         }
 
         if($token === true){
