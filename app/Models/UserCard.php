@@ -17,7 +17,7 @@ class UserCard extends Model{
     	$limit 		= (int)$limit;
     	if($limit < 1) $limit 	= env('PAGE_LIMIT', 10);
 
-    	$obj 		= self::select('a.id', 'a.name', 'a.phone', 'a.number', 'a.created_at', 'b.name as bankname', 'b.icon')->from('user_cards as a')
+    	$obj 		= self::select('a.id', 'a.name', 'a.phone', 'a.number', 'a.created_at', 'b.name as bankname', 'b.ico')->from('user_cards as a')
     					->rightJoin('banks as b', 'b.id', '=', 'a.type')->where('a.uid', $uid);
 
     	return $obj->orderBy('a.id', 'ASC')->forPage($page, $limit)->get();
