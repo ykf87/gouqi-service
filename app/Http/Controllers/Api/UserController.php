@@ -183,13 +183,21 @@ class UserController extends Controller{
 	}
 
 	/**
+	 * 我的银行卡列表
+	 */
+	public function mycard(){
+		$arr 		= UserCard::list();
+		return $this->success($arr);
+	}
+
+	/**
 	 * 添加银行卡
 	 */
 	public function card(Request $request){
 		$id 			= (int)$request->input('id', 0);
 		$name 			= trim($request->input('name', ''));
 		$phone 			= trim($request->input('telphone', ''));
-		$bankName 		= (int)$request->input('type', 0);
+		$bankName 		= $request->input('type');
 		$number 		= trim($request->input('number', ''));
 		$uid 			= $request->get('_uid');
 
@@ -206,9 +214,19 @@ class UserController extends Controller{
 		if(!$bankName){
 			return $this->error('请选择银行!');
 		}
-		$bankObj 		= Bank::find($bankName);
-		if(!$bankObj){
-			return $this->error('请选择银行!');
+
+		// 判断是否是选择银行
+		if(!is_numeric($bankName)){
+			$bankObj 	= Bank::where('name', $bankName)->first();
+			if(!$bankObj){
+				return $this->error('暂不支持 ' . $bankName . ' 提现!');
+			}
+			$bankName 	= $bankObj->id;
+		}else{
+			$bankObj 	= Bank::find($bankName);
+			if(!$bankObj){
+				return $this->error('请选择银行!');
+			}
 		}
 
 
