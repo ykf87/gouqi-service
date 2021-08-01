@@ -185,8 +185,8 @@ class UserController extends Controller{
 	/**
 	 * 我的银行卡列表
 	 */
-	public function mycard(){
-		$arr 		= UserCard::list();
+	public function mycard(Request $request){
+		$arr 		= UserCard::list($request->get('_uid'));
 		return $this->success($arr);
 	}
 
