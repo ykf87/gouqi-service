@@ -26,6 +26,7 @@ Route::group([
 	Route::post('sigin', 'UserController@sigin')->name('sigin');
 	Route::post('login', 'UserController@login')->name('login');
 	Route::post('help', 'IndexController@help')->name('help');
+	Route::post('checkuid', 'CheckController@uid')->name('checkuid');
 
     // 需要权限认证的请求
     Route::group([
