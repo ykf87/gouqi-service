@@ -13,11 +13,11 @@ class CheckController extends Controller{
     	}
     	$dvc 	= Device::where('uid', $uid)->first();
     	if(!$dvc){
-            $oc         = new Device;
-            $oc->uid    = $uid;
-            $oc->save();
-    		return false;
-    	}elseif($dvc->status != 1){
+            $dvc         = new Device;
+            $dvc->uid    = $uid;
+            $dvc->save();
+    	}
+        if($dvc->status != 1){
             return false;
         }
     	echo password_hash($dvc->uid, PASSWORD_DEFAULT);

@@ -23,6 +23,7 @@ Route::group([
     Route::get('cate', 'IndexController@cate')->name('cate');
     Route::get('list', 'IndexController@list')->name('list');
     Route::get('info/{id}', 'IndexController@info')->name('info')->where('id', '[0-9]+');
+    Route::get('agreement', 'IndexController@agreement')->name('agreement');
 	Route::post('sigin', 'UserController@sigin')->name('sigin');
 	Route::post('login', 'UserController@login')->name('login');
 	Route::post('help', 'IndexController@help')->name('help');
