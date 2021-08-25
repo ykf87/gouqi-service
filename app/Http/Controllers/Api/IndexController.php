@@ -87,7 +87,7 @@ class IndexController extends Controller{
 		$key 		= trim($request->input('key', ''));
 		echo $key;
 		$arr 		= Post::where('key', $key)->first();
-		print_r($arr->toArray());
+		print_r($arr);
 		if(!$arr){
 			return $this->error(__('找不到文章!'));
 		}
