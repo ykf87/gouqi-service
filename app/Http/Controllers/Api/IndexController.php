@@ -84,7 +84,7 @@ class IndexController extends Controller{
 	 * 一些协议内容
 	 */
 	public function agreement(Request $request){
-		$key 		= trim($request->get('key', ''));
+		$key 		= trim($request->input('key', ''));
 		$arr 		= Post::where('key', $key)->first();
 		if(!$arr){
 			return $this->error(__('找不到文章!'));
