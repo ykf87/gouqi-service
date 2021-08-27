@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Crypt;
 
@@ -17,8 +17,8 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use App\Models\Goubi;
 use App\Models\UserCard;
 
-class User extends Authenticatable{
-    use HasFactory, Notifiable;
+class User extends Model{
+    use HasFactory;
     private static $configObj   = null;
     private static $secret = 'Le$Sshidy!sV$IUfMF4Z@0zwdzcJ9y4KIO28oBwBkTPcZxO^E7uqB39nbOx&X!ucww';
     private static $type   = 'Bearer ';
