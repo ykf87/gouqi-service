@@ -21,6 +21,7 @@ class IndexController extends Controller{
 			'versions'	=> '100',
 			'appname'	=> __('枸杞健康'),
 			'new'		=> false,
+			'isadv'		=> false,// 是否开启广告
 		];
 		return $this->success($arr);
 	}
