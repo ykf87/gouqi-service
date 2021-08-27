@@ -63,7 +63,7 @@ class User extends Model{
         $user           = new self;
         $user->phone    = $username;
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
-        $user->nickname = $name ? $name : '游客' . rand(1000, 99999);
+        $user->username = $name ? $name : '游客' . rand(1000, 99999);
 
         $user->save();
         return self::login($user);

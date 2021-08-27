@@ -22,6 +22,7 @@ class IndexController extends Controller{
 			'appname'	=> __('枸杞健康'),
 			'new'		=> false,
 			'isadv'		=> false,// 是否开启广告
+			'service'	=> 'http://45.77.216.241/service.jpg',
 		];
 		return $this->success($arr);
 	}
