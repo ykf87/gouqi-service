@@ -59,7 +59,7 @@ class User extends Model{
     /**
      * 用户注册
      */
-    public static function sigin($username, $pwdm, $name = ''){
+    public static function sigin($username, $pwd, $name = ''){
         $user           = new self;
         $user->phone    = $username;
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
