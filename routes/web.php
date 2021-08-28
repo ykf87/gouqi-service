@@ -45,9 +45,12 @@ Route::get('/rpurl', function () {
     	if($item->cover){
     		$item->cover 	= str_replace('http://www.gouqi.com', env('APP_URL'), $item->cover);
     	}
-    	$item->content 		= str_replace('http://www.gouqi.com', env('APP_URL'), $item->content);
-    	$item->content 		= str_replace(["\r\n", "\r", "\n", '<p></p>', '  '], '', $item->content);
-    	$item->save();
+    	// $item->content 		= str_replace('http://www.gouqi.com', env('APP_URL'), $item->content);
+    	// $item->content 		= str_replace(["\r\n", "\r", "\n", '<p></p>', '  '], '', $item->content);
+    	if(!$item->stime){
+    		$item->stime 	= rand('1626775402', time());
+    		$item->save();
+    	}
     }
 });
 
