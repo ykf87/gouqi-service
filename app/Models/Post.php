@@ -34,7 +34,13 @@ class Post extends Model{
         if($q){
             $obj    = $obj->where('title', 'like', "%$q%");
         }
-    	return $obj->forPage($page, $limit)->get();
+        $res        = $obj->forPage($page, $limit)->get();
+        foreach($res as &$item){
+            if(!$item->cover){
+                $item->cover    = env('APP_URL');
+            }
+        }
+    	return $res;
     }
 
     /**
@@ -55,9 +61,6 @@ class Post extends Model{
             }
         }
         $row->content       = str_replace('\\','',$row->content);
-        if(!$row->cover){
-            $row->cover     = 'null';
-        }
     	return $row;
     }
 }
