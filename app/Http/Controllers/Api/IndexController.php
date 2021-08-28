@@ -12,18 +12,20 @@ use App\Models\History;
 use App\Models\Adv;
 use App\Models\Goubi;
 use App\Models\Reback;
+use App\Models\Config;
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
 	public function config(Request $request){
-		$arr 		= [
-			'version'	=> '1.0.0',
-			'versions'	=> '100',
-			'appname'	=> __('枸杞健康'),
-			'new'		=> false,
-			'isadv'		=> false,// 是否开启广告
-			'service'	=> 'http://45.77.216.241/service.jpg',
-		];
+		// $arr 		= [
+		// 	'version'	=> '1.0.0',
+		// 	'versions'	=> '100',
+		// 	'appname'	=> __('枸杞健康'),
+		// 	'new'		=> false,
+		// 	'isadv'		=> false,// 是否开启广告
+		// 	'service'	=> 'http://45.77.216.241/service.jpg',
+		// ];
+		$arr 		= Config::where('status', 1)->pluck('val', 'key');
 		return $this->success($arr);
 	}
 
