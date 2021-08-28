@@ -15,7 +15,7 @@ class Post extends Model{
     	$page		= request()->get('page');
     	$limit 		= request()->get('limit');
 
-    	$cateId 	= request()->get('cid');
+    	$cateId 	= request()->get('cate');
         $q          = trim(request()->get('q'), '');
     	$cateId 	= (int)$cateId;
     	$page 		= (int)$page;
