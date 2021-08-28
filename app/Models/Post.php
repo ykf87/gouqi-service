@@ -26,7 +26,7 @@ class Post extends Model{
 
     	$obj 		= self::select('id', 'cid', 'cover', 'title', 'key', 'viewed', 'created_at', 'hearted')
                         ->whereRaw('if(stime>0, stime <= now(), 1)')->whereRaw('if(etime>0, etime >= now(), 1)')
-                        ->where('status', 1)->whereRaw('key is null')
+                        ->where('status', 1)->whereRaw('`key` is null')
                         ->orderBy('sort', 'DESC')->orderBy('stime', 'DESC');
     	if($cateId > 0){
     		$obj 	= $obj->where('cid', $cateId);
