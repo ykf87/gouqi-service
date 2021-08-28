@@ -55,6 +55,9 @@ class Post extends Model{
             }
         }
         $row->content       = str_replace('\\','',$row->content);
+        if(!$row->cover){
+            $row->cover     = 'null';
+        }
     	return $row;
     }
 }
