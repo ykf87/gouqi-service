@@ -54,7 +54,7 @@ class Post extends Model{
                 $row->is_heart      = true;
             }
         }
-        $row->content       = stripslashes($row->content);
+        $row->content       = str_replace('\\','',$row->content);
     	return $row;
     }
 }
