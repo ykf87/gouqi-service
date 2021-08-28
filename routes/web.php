@@ -39,20 +39,35 @@ Route::get('/', function () {
     // return view('welcome');
 });
 
+
+// 采集完成后做替换等操作
 Route::get('/rpurl', function () {
-    $post 	= Post::where('cid', '>', 0)->get();
+    $post 		= Post::where('cid', '>', 0)->orderBy('stime', 'ASC')->get();
+    $cidLast 	= $post->pluck('stime', 'cid');
     foreach($post as $item){
-    	if($item->cover){
-    		$item->cover 	= str_replace('http://www.gouqi.com', env('APP_URL'), $item->cover);
-    	}
+    	// if($item->cover){
+    	// 	$item->cover 	= str_replace('http://www.gouqi.com', env('APP_URL'), $item->cover);
+    	// }
     	// $item->content 		= str_replace('http://www.gouqi.com', env('APP_URL'), $item->content);
     	// $item->content 		= str_replace(["\r\n", "\r", "\n", '<p></p>', '  '], '', $item->content);
     	if(!$item->stime){
-    		$item->stime 	= rand('1626775402', time());
-    		$item->save();
+    		if(isset($cidLast[$item->cid])){
+    			$cateStime 		= $cidLast[$item->cid];
+    			$toStime 		= time()+86400;
+    		}else{
+    			$cateStime 		= '1626775402';
+    			$toStime 		= time();
+    		}
+    		// $cateStime 		= $cidLast[$item->cid] ?? '1626775402';
+    		$item->stime 	= rand($cateStime, $toStime);
+    		if(isset($cidLast[$item->cid]) && $cidLast[$item->cid] < $item->stime){
+    			$cidLast[$item->cid] 	= $item->stime;
+    		}
     	}
+    	$item->save();
     }
 });
+
 
 Route::get('/spider', function () {
 	set_time_limit(0);
