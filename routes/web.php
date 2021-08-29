@@ -34,6 +34,13 @@ function fmtUrl($fromUrl, $url){
 	return $url;
 }
 
+function httpget($url){
+	$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
+	$res = $client->request('GET', $url);
+	$data = $res->getBody();
+	return $data;
+}
+
 Route::get('/', function () {
     abort(404);
     // return view('welcome');
@@ -41,6 +48,10 @@ Route::get('/', function () {
 
 
 // 采集完成后做替换等操作
+//{"https://nan.99.com.cn/changshi/":{"func":"get99","last":""}}
+//{"https://nv.99.com.cn/baojian/":{"func":"get99","last":""}}
+//
+
 Route::get('/rpurl', function () {
     $post 		= Post::where('cid', '>', 0)->orderBy('stime', 'ASC')->get();
     $cidLast 	= $post->pluck('stime', 'cid');
@@ -72,6 +83,7 @@ Route::get('/rpurl', function () {
 Route::get('/spider', function () {
 	set_time_limit(0);
 	$cates 			= Cate::whereRaw('spider is not null')->get();
+	// dd($cates);
 	foreach($cates as $item){
 		$spiders 	= json_decode($item->spider, true);
 		if(!is_array($spiders)){
@@ -105,14 +117,16 @@ Route::get('/spider', function () {
 });
 
 function get99($url, $lastGet, $cid, $first = false){
-	$response 	= Http::get($url);
-	$res 		= $response->body();
+	// $response 	= Http::get($url);
+	// $res 		= $response->body();
+	$res 			= httpget($url);
 
 	$arrs 		= [];
 	$links 		= [];
 	preg_match_all('`DlistWfc[\w\W]+?<h2[\w\W]+?href="(.+?)"`', $res, $links);
 	if(isset($links[1])){
 		echo $url, '---------------------<br>';
+		$forPages 			= true;
 		foreach($links[1] as $contUrl){
 			$contUrl 		= fmtUrl($url, $contUrl);
 			if(!$contUrl){
@@ -120,6 +134,7 @@ function get99($url, $lastGet, $cid, $first = false){
 			}
 			if(isset($lastGet[$url]) && $lastGet[$url] == $contUrl){
 				echo '已取到最新消息<br>';
+				$forPages		= false;
 				break;
 			}
 			$cres 				= getConten99($contUrl, $cid);
@@ -130,7 +145,7 @@ function get99($url, $lastGet, $cid, $first = false){
 			}
 		}
 
-		if($first === true){
+		if($first === true && $forPages){
 			$i 			= 0;
 			$listfmt 	= false;
 			$max 		= 0;
@@ -164,8 +179,9 @@ function get99($url, $lastGet, $cid, $first = false){
 }
 function getConten99($url, $cateid){
 	$ykd 		= date('Ymd');
-	$response 	= Http::get($url);
-	$res 		= $response->body();
+	// $response 	= Http::get($url);
+	// $res 		= $response->body();
+	$res 			= httpget($url);
 
 	preg_match('`<meta.+?charset=(.+)"`', $res, $charset);
 	$charset 	= $charset[1] ?? null;

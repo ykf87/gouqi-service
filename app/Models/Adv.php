@@ -25,7 +25,7 @@ class Adv extends Model{
      * 看广告加积分
      * 每5次翻倍
      */
-    public static function addGoubi($uid){
+    public static function addGoubi($uid, $tid = null){
     	$base 		= 3;
     	$step 		= 2;
     	$tm 		= strtotime(date('Y-m-d'));

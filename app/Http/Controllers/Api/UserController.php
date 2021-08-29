@@ -14,6 +14,7 @@ use App\Models\Goubi;
 use App\Models\Withdraw;
 use App\Models\UserCard;
 use App\Models\Bank;
+use App\Models\Task;
 
 class UserController extends Controller{
 	/**
@@ -144,25 +145,66 @@ class UserController extends Controller{
 	 */
 	public function palied(Request $request){
 		$uid 			= $request->get('_uid');
-		$type 			= (int)$request->get('type', 1);
-		if(!$type){
-			$type 		= 1;
+		// $type 			= (int)$request->get('type', 1);
+		// if(!$type){
+		// 	$type 		= 1;
+		// }
+		// $last 			= Adv::where('uid', $uid)->orderBy('addtime', 'DESC')->first();
+		// if($last){
+		// 	if((time() - $last->addtime) < 10){
+		// 		return $this->error(__('请等待广告加载!'));
+		// 	}
+		// }
+		// if(!Adv::insert(['uid' => $uid, 'addtime' => time(), 'type' => $type])){
+		// 	return $this->error(__('广告添加失败!'));
+		// }
+		// if($type == 2){
+		// 	Adv::addGoubi($uid);
+		// }
+
+
+		$tid 		= $request->input('tid');
+		$task 		= Task::find($tid);
+		if(!$task){
+			return $this->error('非法请求');
 		}
-		$last 			= Adv::where('uid', $uid)->orderBy('addtime', 'DESC')->first();
-		if($last){
-			if((time() - $last->addtime) < 10){
-				return $this->error(__('请等待广告加载!'));
+
+		$todayStart		= strtotime(date('Y-m-d 00:00:00'));
+    	$todayEnd 		= $todayStart + 86399;
+		$times 			= Adv::where('uid', $uid)->where('tid', $tid)->whereBetween('addtime', [$todayStart, $todayEnd])->count();
+		if($times >= $task->max){
+			Adv::insert(['uid' => $uid, 'addtime' => time(), 'tid' => $tid, 'status' => 0, 'type' => 1]);
+			return $this->error('任务已完成!');
+		}
+
+		Adv::insert(['uid' => $uid, 'addtime' => time(), 'tid' => $tid, 'status' => 1, 'type' => 1]);
+		$times++;
+		$add 			= 0;
+		if($task->min <= $times){
+			$jifenHistory 		= Goubi::where('id', $uid)->where('tid', $tid)->whereBetween('created_at', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])->count();
+			$maxTimes 			= ceil($task->max / $task->min);
+			if($jifenHistory >= $maxTimes){
+				return $this->error('任务已完成.');
+			}else{
+				$tm 			= date('Y-m-d H:i:s');
+				$add 			= $task->prize;
+				Goubi::insert(['id' => $uid, 'tid' => $tid, 'added' => $task->prize, 'created_at' => $tm, 'updated_at' => $tm]);
 			}
 		}
-		if(!Adv::insert(['uid' => $uid, 'addtime' => time(), 'type' => $type])){
-			return $this->error(__('广告添加失败!'));
-		}
 
-		if($type == 2){
-			Adv::addGoubi($uid);
-		}
-
-		return $this->success([], __('奖励成功!'));
+		$rarr 		= [
+			'task' => [
+				'id' => $task->id,
+				'title' => $task->title,
+				'max' => $task->max,
+				'min' => $task->min,
+				'prize' => $task->prize,
+				'times' => $times,
+			],
+			'jifen' 	=> $add
+		];
+		return $this->success($rarr, __('广告播放成功!'));
+		// return $this->success([], __('奖励成功!'));
 	}
 
 	/**
@@ -307,6 +349,17 @@ class UserController extends Controller{
 	 */
 	public function withdraw(Request $request){
 		$arr 		= Withdraw::list($request->get('_uid'));
+
+		return $this->success($arr);
+	}
+
+	/**
+	 * 任务列表
+	 */
+	public function tasks(Request $request){
+		$uid 		= $request->get('_uid');
+		$user 		= User::find($uid);
+		$arr 		= Task::lists($user);
 
 		return $this->success($arr);
 	}

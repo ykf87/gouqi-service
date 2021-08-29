@@ -25,6 +25,7 @@ class IndexController extends Controller{
 		// 	'isadv'		=> false,// 是否开启广告
 		// 	'service'	=> 'http://45.77.216.241/service.jpg',
 		// ];
+		// dd(date('Y-m-d H:i:s', strtotime('+30days')));
 		$arr 		= Config::where('status', 1)->pluck('val', 'key');
 		return $this->success($arr);
 	}
