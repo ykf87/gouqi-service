@@ -40,7 +40,7 @@ Route::group([
 	    Route::get('history', 'UserController@history')->name('history');
 	    Route::get('heart', 'UserController@watch')->name('heart');
 	    Route::post('heart', 'UserController@heart')->name('heart');
-	    Route::post('palied', 'UserController@palied')->name('palied');
+	    Route::post('plaied', 'UserController@palied')->name('palied');
 	    Route::get('jifen', 'UserController@jifen')->name('jifen');
 	    Route::get('task', 'UserController@tasks')->name('task');
 
