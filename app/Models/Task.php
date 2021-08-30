@@ -25,7 +25,8 @@ class Task extends Model{
     	}
 
     	$arr 			= [];
-    	foreach($obj as $item){
+        $max            = 100000;
+    	foreach($obj as $index => $item){
     		if(self::fmtRule($item->rule, $user) !== true){
     			continue;
     		}
@@ -36,8 +37,13 @@ class Task extends Model{
     		unset($item->created_at);
     		unset($item->updated_at);
     		unset($item->status);
-    		$arr[] 					= $item->toArray();
+            $arrk                   = $index;
+            if($item->times >= $item->max){
+                $arrk               = $max--;
+            }
+    		$arr[$arrk] 					= $item->toArray();
     	}
+        ksort($arr);
     	return $arr;
     }
 
