@@ -87,6 +87,7 @@ class IndexController extends Controller{
 
 	/**
 	 * 一些协议内容
+	 * 45.77.216.241
 	 */
 	public function agreement(Request $request){
 		$key 		= trim($request->input('key', ''));
