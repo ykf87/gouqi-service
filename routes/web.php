@@ -42,8 +42,16 @@ function httpget($url){
 }
 
 Route::get('/', function () {
-    abort(404);
+    // abort(404);
     // return view('welcome');
+    return file_get_contents(__DIR__ . '/../public/index.html');
+});
+
+Route::get('/agreement', function () {
+    // abort(404);
+    // return view('welcome');
+    $cont 		= Post::where('key', 'agreement')->first();
+    return view('agreement', $cont);
 });
 
 
