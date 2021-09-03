@@ -13,6 +13,6 @@
 </head>
 <body>
 	<h1>{{ $title }}</h1>
-	<p>{{ stripslashes($content) }}</p>
+	<p>{{ htmlentities($content) }}</p>
 </body>
 </html>
