@@ -13,6 +13,6 @@
 </head>
 <body>
 	<h1>{{ $title }}</h1>
-	{{ htmlspecialchars_decode($content) }}
+	{{ htmlentities($content) }}
 </body>
 </html>
