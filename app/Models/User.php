@@ -82,13 +82,14 @@ class User extends Model{
     public static function users(self $user, $token = true){
         $arr                = [];
         $arr['id']          = $user->id;
-        $arr['nickname']    = $user->nickname;
+        $arr['nickname']    = $user->nickname ?? $user->username;
         $arr['avatar']      = $user->avatar;
         $arr['level']       = $user->level;
         $arr['sex']         = $user->sex;
         $arr['parent']      = $user->parent;
-        $arr['username']    = $user->username;
+        $arr['username']    = $user->username ?? $user->nickname;
         $arr['reg_time']    = (string)$user->created_at;
+        $arr['phone']       = $user->phone;
 
         // 用户银行卡信息
         $uc                 = UserCard::select('user_cards.id','user_cards.name','user_cards.phone','user_cards.number', 'banks.name as bankname', 'banks.ico')
@@ -100,7 +101,7 @@ class User extends Model{
         }
 
         if($token === true){
-            $arr['token']       = self::token($user);
+            $arr['token']   = self::token($user);
         }
 
         $arr['jifen']       = Goubi::userJifen($user->id);
