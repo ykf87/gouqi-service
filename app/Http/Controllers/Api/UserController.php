@@ -337,9 +337,10 @@ class UserController extends Controller{
 		$obj->jine 		= $jine;
 		$obj->cardid 	= $cardid;
 		$obj->uid 		= $uid;
+		$obj->money 	= $jine / 10;
 		if($obj->save()){
 			// Goubi::insert(['id' => $uid, 'added' => ]);
-			return $this->success(__('提现申请成功!'));
+			return $this->success(__('提现申请成功,预计到账金额 ' . $obj->money . ' 元!'));
 		}
 		return $this->error('提现失败,请联系客服!');
 	}
