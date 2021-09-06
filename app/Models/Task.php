@@ -44,7 +44,7 @@ class Task extends Model{
     		$arr[$arrk] 					= $item->toArray();
     	}
         ksort($arr);
-    	return $arr;
+    	return array_values($arr);
     }
 
     /**
