@@ -105,7 +105,7 @@ class Post extends Model{
             $content        = preg_replace('`height=["\'].+?["\']`', '', $content);
         }
         $data['content']    = $content;
-        $data['cover']      = array_values($imagesArr)[0] ?? null;
+        $data['cover']      = isset($data['cover']) && $data['cover'] ? $data['cover'] : (array_values($imagesArr)[0] ?? null);
         if($maxtime <= $now){
             $maxtime        = $now + 2592000;
         }

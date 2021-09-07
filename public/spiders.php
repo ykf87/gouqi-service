@@ -1,113 +1,117 @@
 <?php
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\Cate;
 use App\Models\Post;
+
+define('LARAVEL_START', microtime(true));
+
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| If the application is in maintenance / demo mode via the "down" command
+| we will load this file so that any pre-rendered content can be shown
+| instead of starting the framework, which could cause an exception.
 |
 */
 
-// /**
-//  * 根据地址拼接不完整的地址
-//  */
-// function fmtUrl($fromUrl, $url){
-// 	if(!$url){
-// 		echo $fromUrl, ' . ' . $url . ' - 连接格式化失败<br>';
-// 		return false;
-// 	}
-// 	$url 		= strtolower(trim($url));
-// 	if(substr($url, 0, 2) == '//'){
-// 		$url 	= explode(':', $fromUrl)[0] . ':' . $url;
-// 	}elseif(substr($url, 0, 1) == '/'){
-// 		// $url 	= explode(':', $fromUrl)[0] . ':' . $url;
-// 		$url 		= baseDomin($fromUrl) . $url;
-// 	}elseif(substr($url, 0, 4) != 'http'){
-// 		return (strpos($fromUrl, '.html') !== false ? dirname($fromUrl) : rtrim($fromUrl, '/')) . '/' . $url;
-// 	}
-// 	return $url;
-// }
+if (file_exists(__DIR__.'/../storage/framework/maintenance.php')) {
+    require __DIR__.'/../storage/framework/maintenance.php';
+}
 
-// /**
-//  * 获取根域名
-//  */
-// function baseDomin($url){
-// 	return substr($url, 0, strpos($url, '/', 9));
-// }
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader for
+| this application. We just need to utilize it! We'll simply require it
+| into the script here so we don't need to manually load our classes.
+|
+*/
 
-// function httpget($url){
-// 	try {
-// 		$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
-// 		$res = $client->request('GET', $url);
-// 		$data = $res->getBody();
-// 		return $data;
-// 	} catch (Exception $e) {
-// 		echo $e->getMessage(), "\r\n<br>";
-// 		return false;
-// 	}
-// }
+require __DIR__.'/../vendor/autoload.php';
 
-Route::get('/', function () {
-    // abort(404);
-    // return view('welcome');
-    return file_get_contents(__DIR__ . '/../public/index.html');
-});
+/*
+|--------------------------------------------------------------------------
+| Run The Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming request using
+| the application's HTTP kernel. Then, we will send the response back
+| to this client's browser, allowing them to enjoy our application.
+|
+*/
 
-Route::get('/agreement', function () {
-    // abort(404);
-    // return view('welcome');
-    $cont 		= Post::where('key', 'agreement')->first();
-    return view('agreement', $cont);
-});
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = tap($kernel->handle(
+    $request = Request::capture()
+))->send();
+
+$kernel->terminate($request, $response);
 
 
-// 采集完成后做替换等操作
-//{"https://nan.99.com.cn/changshi/":{"func":"get99","last":""}}
-//{"https://nv.99.com.cn/baojian/":{"func":"get99","last":""}}
-//
+
+
+
+
+
+
+
+
 
 
 /**
-Route::get('/rpurl', function () {
-    $post 		= Post::where('cid', '>', 0)->orderBy('stime', 'ASC')->get();
-    $cidLast 	= $post->pluck('stime', 'cid');
-    foreach($post as $item){
-    	// if($item->cover){
-    	// 	$item->cover 	= str_replace('http://www.gouqi.com', env('APP_URL'), $item->cover);
-    	// }
-    	// $item->content 		= str_replace('http://www.gouqi.com', env('APP_URL'), $item->content);
-    	// $item->content 		= str_replace(["\r\n", "\r", "\n", '<p></p>', '  '], '', $item->content);
-    	if(!$item->stime){
-    		if(isset($cidLast[$item->cid])){
-    			$cateStime 		= $cidLast[$item->cid];
-    			$toStime 		= time()+86400;
-    		}else{
-    			$cateStime 		= '1626775402';
-    			$toStime 		= time();
-    		}
-    		// $cateStime 		= $cidLast[$item->cid] ?? '1626775402';
-    		$item->stime 	= rand($cateStime, $toStime);
-    		if(isset($cidLast[$item->cid]) && $cidLast[$item->cid] < $item->stime){
-    			$cidLast[$item->cid] 	= $item->stime;
-    		}
-    	}
-    	$item->save();
-    }
-});
+ * 根据地址拼接不完整的地址
+ */
+function fmtUrls($fromUrl, $url){
+	if(!$url){
+		echo $fromUrl, ' . ' . $url . ' - 连接格式化失败<br>';
+		return false;
+	}
+	$url 		= strtolower(trim($url));
+	if(substr($url, 0, 2) == '//'){
+		$url 	= explode(':', $fromUrl)[0] . ':' . $url;
+	}elseif(substr($url, 0, 1) == '/'){
+		// $url 	= explode(':', $fromUrl)[0] . ':' . $url;
+		$url 		= baseDomins($fromUrl) . $url;
+	}elseif(substr($url, 0, 4) != 'http'){
+		return (strpos($fromUrl, '.html') !== false ? dirname($fromUrl) : rtrim($fromUrl, '/')) . '/' . $url;
+	}
+	return $url;
+}
+
+/**
+ * 获取根域名
+ */
+function baseDomins($url){
+	return substr($url, 0, strpos($url, '/', 9));
+}
+
+function httpget($url){
+	try {
+		$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
+		$res = $client->request('GET', $url);
+		$data = $res->getBody();
+		return $data;
+	} catch (Exception $e) {
+		echo $e->getMessage(), "\r\n<br>";
+		return false;
+	}
+}
 
 
-Route::get('/spider', function () {
 	set_time_limit(0);
-	// dd(baseDomin('https://sdwewe.com/wee/fdf.html'));
+	// dd(baseDomins('https://sdwewe.com/wee/fdf.html'));
 	$cates 			= Cate::whereRaw('spider is not null')->get();
 	// dd($cates->toArray());
 	foreach($cates as $item){
@@ -140,11 +144,6 @@ Route::get('/spider', function () {
 		}
 	}
 
-	// $lastUrl 	= ['https://ye.99.com.cn/fmdx/yej/' => 'https://ye.99.com.cn/fmdx/yej/2020/1229/764636.html'];
-	// $datas 		= get99('https://ye.99.com.cn/fmdx/yej/', $lastUrl);
-
-	// $datas 		= array_reverse($datas);
-});
 
 function get99($url, $lastGet, $cid, $first = false){
 	// $response 	= Http::get($url);
@@ -158,7 +157,7 @@ function get99($url, $lastGet, $cid, $first = false){
 		echo $url, '---------------------<br>';
 		$forPages 			= true;
 		foreach($links[1] as $contUrl){
-			$contUrl 		= fmtUrl($url, $contUrl);
+			$contUrl 		= fmtUrls($url, $contUrl);
 			if(!$contUrl){
 				continue;
 			}
@@ -192,7 +191,7 @@ function get99($url, $lastGet, $cid, $first = false){
 					$nextPage 			= $listfmt;
 					$nextPage[] 		= $max;
 					$nextUrl 			= implode('_', $nextPage) . '.html';
-					$nextUrl 			= fmtUrl($url, $nextUrl);
+					$nextUrl 			= fmtUrls($url, $nextUrl);
 					$pageCont 			= get99($nextUrl, $lastGet, $cid);
 					if($pageCont && is_array($pageCont)){
 						foreach($pageCont as $zzzrt){
@@ -279,7 +278,6 @@ function getConten99($url, $cateid){
 /**
  * 获取 “健康资讯”
  */
-/**
 function getJkzx($url, $lastGet, $cateid){
 	$res 			= httpget($url);
 
@@ -297,7 +295,7 @@ function getJkzx($url, $lastGet, $cateid){
 		if($lastPage == 1){
 			$u 		= $url;
 		}elseif($pageLink != ''){
-			$u 		= fmtUrl($url, preg_replace('`\d+`', $lastPage, $pageLink));
+			$u 		= fmtUrls($url, preg_replace('`\d+`', $lastPage, $pageLink));
 		}else{
 			break;
 		}
@@ -310,7 +308,6 @@ function getJkzx($url, $lastGet, $cateid){
 /**
  * 获取健康资讯列表
  */
-/**
 function getJkzxList($url, $cateid, $content = null){
 	if(!$content){
 		$content 		= httpget($url);
@@ -325,7 +322,7 @@ function getJkzxList($url, $cateid, $content = null){
 	$lists[1] 			= array_reverse($lists[1]);
 	$arr 				= [];
 	foreach($lists[1] as $alink){
-		$alink 			= fmtUrl($url, $alink);
+		$alink 			= fmtUrls($url, $alink);
 		$arr[] 			= getJkzxContent($alink, $cateid);
 	}
 	return $arr;
@@ -334,7 +331,6 @@ function getJkzxList($url, $cateid, $content = null){
 /**
  * 获取健康资讯内容
  */
-/**
 function getJkzxContent($url, $cateid){
 	$res 		= httpget($url);
 	preg_match('`<h1 class="entry-title">(.+?)</h1>`', $res, $title);
@@ -371,7 +367,3 @@ function getJkzxContent($url, $cateid){
 	return Post::fmtData($arr, $url, 31536000);
 	dd($title, $keyword, $description, $content);
 }
-**/
-
-
-
