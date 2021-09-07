@@ -28,6 +28,7 @@ function fmtUrl($fromUrl, $url){
 	$url 		= strtolower(trim($url));
 	if(substr($url, 0, 1) == '/'){
 		$url 	= explode(':', $fromUrl)[0] . ':' . $url;
+		// $url 		= substr($fromUrl, 0, strpos($fromUrl, '/', 2)) . $url;
 	}elseif(substr($url, 0, 4) != 'http'){
 		return (strpos($fromUrl, '.html') !== false ? dirname($fromUrl) : rtrim($fromUrl, '/')) . '/' . $url;
 	}
@@ -35,10 +36,15 @@ function fmtUrl($fromUrl, $url){
 }
 
 function httpget($url){
-	$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
-	$res = $client->request('GET', $url);
-	$data = $res->getBody();
-	return $data;
+	try {
+		$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
+		$res = $client->request('GET', $url);
+		$data = $res->getBody();
+		return $data;
+	} catch (Exception $e) {
+		echo $e->getMessage(), "\r\n<br>";
+		return false;
+	}
 }
 
 Route::get('/', function () {
@@ -91,7 +97,7 @@ Route::get('/rpurl', function () {
 Route::get('/spider', function () {
 	set_time_limit(0);
 	$cates 			= Cate::whereRaw('spider is not null')->get();
-	// dd($cates);
+	// dd($cates->toArray());
 	foreach($cates as $item){
 		$spiders 	= json_decode($item->spider, true);
 		if(!is_array($spiders)){
@@ -185,8 +191,8 @@ function get99($url, $lastGet, $cid, $first = false){
 	}
 	return $arrs;
 }
+
 function getConten99($url, $cateid){
-	$ykd 		= date('Ymd');
 	// $response 	= Http::get($url);
 	// $res 		= $response->body();
 	$res 			= httpget($url);
@@ -218,39 +224,73 @@ function getConten99($url, $cateid){
 	$content 		= preg_replace('`<a.+?>`', '', $content);
 	$content 		= preg_replace('`<p align="right">[\w\W]+?</p>`', '', $content);
 	$content 		= str_replace('</a>', '', $content);
-	preg_match_all('`<img.+?src=[\'"](.+?)[\'"]`', $content, $images);
-	$imagesArr		= [];
-	if(isset($images[1])){
-		$images 	= array_filter($images[1]);
-		$appurl 	= env('APP_URL');
-		foreach($images as $item){
-			$toFile 	= 'public/posts/' . $ykd . '/' . basename($item);
-			if(!Storage::exists($toFile)){
-				Storage::put($toFile, Http::get($item));
-			}else{
-				echo $url, ' - ', $item, ': 图片存在, 跳过更新<br>';
-			}
-			$imageUrl 	= Storage::url($toFile);
-			if(strpos($imageUrl, $appurl) === false){
-				$imageUrl 		= $appurl . $imageUrl;
-			}
-			$imagesArr[$item]	= $imageUrl;
-		}
-		$content 		= str_replace(array_keys($imagesArr), $imagesArr, $content);
-		$content 		= preg_replace('`width=".+?"`', '', $content);
-		$content 		= preg_replace('`height=["\'].+?["\']`', '', $content);
-	}
+	// preg_match_all('`<img.+?src=[\'"](.+?)[\'"]`', $content, $images);
+	// $imagesArr		= [];
+	// if(isset($images[1])){
+	// 	$images 	= array_filter($images[1]);
+	// 	$appurl 	= env('APP_URL');
+	// 	foreach($images as $item){
+	// 		$toFile 	= 'public/posts/' . $ykd . '/' . basename($item);
+	// 		if(!Storage::exists($toFile)){
+	// 			Storage::put($toFile, Http::get($item));
+	// 		}else{
+	// 			echo $url, ' - ', $item, ': 图片存在, 跳过更新<br>';
+	// 		}
+	// 		$imageUrl 	= Storage::url($toFile);
+	// 		if(strpos($imageUrl, $appurl) === false){
+	// 			$imageUrl 		= $appurl . $imageUrl;
+	// 		}
+	// 		$imagesArr[$item]	= $imageUrl;
+	// 	}
+	// 	$content 		= str_replace(array_keys($imagesArr), $imagesArr, $content);
+	// 	$content 		= preg_replace('`width=".+?"`', '', $content);
+	// 	$content 		= preg_replace('`height=["\'].+?["\']`', '', $content);
+	// }
 	$arr 			= [
 		'cid'			=> $cateid,
 		'title'			=> $title,
 		'keywords'		=> $keyword,
 		'description'	=> $description,
 		'content'		=> $content,
-		'cover'			=> array_values($imagesArr)[0] ?? null,
 		'url'			=> $url,
 	];
+
+	return Post::fmtData($arr, $url);
 	return $arr;
 }
+
+
+/**
+ * 获取 “健康资讯”
+ */
+function getJkzx($url, $cateid){
+	$res 			= httpget($url);
+
+	$lastPage 		= 1;
+	$pageLink 		= '';
+	preg_match('`class="last"[\w\W]+?href="(.+?)"`', $res, $last);
+	if(isset($last[1])){
+		$pageLink 	= $last[1];
+		preg_match('`p([0-9]+?)\.`', $last[1], $tmp);
+		$lastPage 	= $tmp[1] ?? 1;
+	}
+
+	for(;$lastPage > 0; $lastPage--){
+		if($lastPage == 1){
+			$u 		= $url;
+		}elseif($pageLink != ''){
+			$u 		= fmtUrl($url, preg_replace('`\d+`', $lastPage, $pageLink));
+		}else{
+			break;
+		}
+		echo $u, ' - http://www.keduguke.com/jknx/p2.html<br>';
+	}
+	dd($last);
+}
+
+/**
+ * 获取健康资讯列表
+ */
 
 
 
