@@ -92,7 +92,7 @@ class Post extends Model{
                 if(!Storage::exists($toFile)){
                     Storage::put($toFile, Http::get($item));
                 }else{
-                    echo $url, ' - ', $item, ': 图片存在, 跳过更新<br>';
+                    echo "跳过图片\r\n";
                 }
                 $imageUrl   = Storage::url($toFile);
                 if(strpos($imageUrl, $appurl) === false){

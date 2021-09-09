@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -126,20 +127,22 @@ function httpget($url){
 				continue;
 			}
 			if(function_exists($func)){
-				$datas 		= $func($url, [$url => $sconf['last'] ?? null], $item->id, true);
+				$datas 		= $func($url, [$url => $sconf['last'] ?? null], $item->id, true, $item);
 				if(!$datas || !is_array($datas)){
 					continue;
 				}
 				// print_r($datas);
-				if(isset($datas['reverse'])){
-					$datas 				= $datas['reverse'];
-				}else{
-					$datas 				= array_reverse($datas);
+				if(!empty($datas)){
+					if(isset($datas['reverse'])){
+						$datas 				= $datas['reverse'];
+					}else{
+						$datas 				= array_reverse($datas);
+					}
+					$nspi[$url]['last'] 	= $datas[0]['url'];
+					Post::insert($datas);
+					$item->spider 			= json_encode($nspi);
+					$item->save();
 				}
-				$nspi[$url]['last'] 	= $datas[0]['url'];
-				Post::insert($datas);
-				$item->spider 			= json_encode($nspi);
-				$item->save();
 			}
 		}
 	}
@@ -148,6 +151,7 @@ function httpget($url){
 function get99($url, $lastGet, $cid, $first = false){
 	// $response 	= Http::get($url);
 	// $res 		= $response->body();
+	// dd($lastGet);
 	$res 			= httpget($url);
 
 	$arrs 		= [];
@@ -278,7 +282,7 @@ function getConten99($url, $cateid){
 /**
  * 获取 “健康资讯”
  */
-function getJkzx($url, $lastGet, $cateid){
+function getJkzx($url, $lastGet, $cateid, $first = true, $cateObj = null){
 	$res 			= httpget($url);
 
 	$lastPage 		= 1;
@@ -291,24 +295,49 @@ function getJkzx($url, $lastGet, $cateid){
 	}
 
 	$arr 			= [];
-	for(;$lastPage > 0; $lastPage--){
-		if($lastPage == 1){
+	$spider 		= json_decode($cateObj->spider, true);
+
+	if(isset($spider[$url]['page'])){
+		$finalPage 	= $spider[$url]['page'];
+	}else{
+		$finalPage 	= $lastPage;
+	}
+	$lastUrl 		= $lastGet[$url] ?? null;
+	for(;$finalPage > 0; $finalPage--){
+		if($finalPage == 1){
 			$u 		= $url;
 		}elseif($pageLink != ''){
-			$u 		= fmtUrls($url, preg_replace('`\d+`', $lastPage, $pageLink));
+			$u 		= fmtUrls($url, preg_replace('`\d+`', $finalPage, $pageLink));
 		}else{
 			break;
 		}
-		$arr 		= array_merge($arr, getJkzxList($u, $cateid));
+		$lists 		= getJkzxList($u, $cateid, null, $lastUrl);
+		if($lists === false){
+			continue;
+		}
+		DB::beginTransaction();
+		try {
+			Post::insert($lists);
+			$spider[$url]['last'] 	= $lists[0]['url'];
+			$spider[$url]['page']	= $finalPage;
+			$cateObj->spider 		= json_encode($spider);
+			$cateObj->save();
+			DB::commit();
+		} catch (Exception $e) {
+			DB::rollBack();
+			echo $e->getMessage(), "<br>\r\n";
+		}
+		
+		// $arr 		= array_merge($arr, $lists);
 		// echo $u, ' - http://www.keduguke.com/jknx/p2.html<br>';
 	}
-	return ['reverse' => $arr];
+	return null;
 }
 
 /**
  * 获取健康资讯列表
  */
-function getJkzxList($url, $cateid, $content = null){
+function getJkzxList($url, $cateid, $content = null, $lastUrl = null){
 	if(!$content){
 		$content 		= httpget($url);
 	}
@@ -323,7 +352,22 @@ function getJkzxList($url, $cateid, $content = null){
 	$arr 				= [];
 	foreach($lists[1] as $alink){
 		$alink 			= fmtUrls($url, $alink);
-		$arr[] 			= getJkzxContent($alink, $cateid);
+		if($lastUrl == $alink){
+			return false;
+		}
+		$rs 			= getJkzxContent($alink, $cateid);
+		if($rs === false){
+			for($i = 3; $i > 0; $i--){
+				$rs 	= getJkzxContent($alink, $cateid);
+				if($rs != false){
+					break;
+				}
+			}
+			if($rs == false){
+				return false;
+			}
+		}
+		$arr[] 			= $rs;
 	}
 	return $arr;
 }
@@ -364,6 +408,6 @@ function getJkzxContent($url, $cateid){
 		'url'			=> $url,
 	];
 
-	return Post::fmtData($arr, $url, 31536000);
+	return Post::fmtData($arr, $url, time() + 31536000);
 	dd($title, $keyword, $description, $content);
 }
