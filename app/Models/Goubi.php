@@ -19,7 +19,7 @@ class Goubi extends Model{
     	$limit 		= (int)$limit;
     	if($limit < 1) $limit 	= env('PAGE_LIMIT', 10);
 
-    	$obj        = self::where('id', $uid)->orderBy('id', 'DESC');
+    	$obj        = self::where('id', $uid)->orderBy('created_at', 'DESC');
     	return $obj->forPage($page,$limit)->get();
     }
 
