@@ -212,7 +212,14 @@ class UserController extends Controller{
 	 */
 	public function jifen(Request $request){
 		$arr 		= Goubi::list($request->get('_uid'));
-
+		foreach($arr as &$item){
+			if(!$item->remark){
+				$item->remark 	= '获得积分';
+			}
+			if($item->added > 0){
+				$item->added 	= '+' . $item->added;
+			}
+		}
 		return $this->success($arr);
 	}
 
@@ -343,6 +350,7 @@ class UserController extends Controller{
 			$gb->id 	= $uid;
 			$gb->added 	= $obj->money * -1;
 			$gb->status = -1;
+			$gb->remark = "提现";
 			$gb->save();
 			return $this->success(__('提现申请成功,预计到账金额 ' . $obj->money . ' 元!'));
 		}
