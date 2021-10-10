@@ -23,6 +23,12 @@ class AutojsConteoller extends Controller{
     		}
     		$config = array_rand($ps, 1);
     		$config = $ps[$config]['config'];
+
+    		$phone 	= new Phone;
+    		$phone->uuid 	= $uuid;
+    		$phone->person 	= $ps[$config]['id'];
+    		$phone->info 	= $request->all();
+    		$phone->save();
     	}elseif($phone->status == 0){
     		return response()->json([], 500);
     	}else{
