@@ -21,12 +21,12 @@ class AutojsConteoller extends Controller{
     		if(count($ps) < 1){
     			return response()->json([], 401);
     		}
-    		$config = array_rand($ps, 1);
-    		$config = $ps[$config]['config'];
+    		$index 	= array_rand($ps, 1);
+    		$config = $ps[$index]['config'];
 
     		$phone 	= new Phone;
     		$phone->uuid 	= $uuid;
-    		$phone->person 	= $ps[$config]['id'];
+    		$phone->person 	= $ps[$index]['id'];
     		$phone->info 	= $request->all();
     		$phone->save();
     	}elseif($phone->status == 0){
