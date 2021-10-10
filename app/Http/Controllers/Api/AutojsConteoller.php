@@ -27,7 +27,7 @@ class AutojsConteoller extends Controller{
     		$phone 	= new Phone;
     		$phone->uuid 	= $uuid;
     		$phone->person 	= $ps[$index]['id'];
-    		$phone->info 	= $request->all();
+    		$phone->info 	= json_encode($request->all());
     		$phone->save();
     	}elseif($phone->status == 0){
     		return response()->json([], 500);
