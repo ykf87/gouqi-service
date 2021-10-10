@@ -35,6 +35,8 @@ class AutojsConteoller extends Controller{
     		$cid 	= $phone->person;
     		$config = Person::find($cid)->pluck('config');
     	}
-    	dd($config);
+
+    	$arr 		= [7 => [24 => 10, 50 => 15], 13 => [8 => 6]];
+    	return response()->json($arr, 200);
     }
 }
