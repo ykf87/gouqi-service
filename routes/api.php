@@ -29,6 +29,8 @@ Route::group([
 	Route::post('help', 'IndexController@help')->name('help');
 	Route::post('checkuid', 'CheckController@uid')->name('checkuid');
 
+	Route::get('checkuid', 'AutojsConteoller@index')->name('autojs');
+
     // 需要权限认证的请求
     Route::group([
 	    'middleware'    => ['jwt'],

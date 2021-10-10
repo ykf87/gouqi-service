@@ -59,7 +59,7 @@ use App\Models\Post;
 Route::get('/', function () {
     // abort(404);
     // return view('welcome');
-    return file_get_contents(__DIR__ . '/../public/index.html');
+    // return file_get_contents(__DIR__ . '/../public/index.html');
 });
 
 Route::get('/agreement', function () {

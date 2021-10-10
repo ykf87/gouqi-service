@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\Cate;
 use App\Models\Post;
+use GuzzleHttp\Client;
 
 define('LARAVEL_START', microtime(true));
 
@@ -100,12 +101,19 @@ function baseDomins($url){
 
 function httpget($url){
 	try {
-		$client = new \GuzzleHttp\Client(['base_uri' => 'https://ye.99.com.cn/']);
-		$res = $client->request('GET', $url);
+		$client = new \GuzzleHttp\Client(['base_uri' => '', 'timeout' => 30]);
+		$res = $client->request('GET', $url, [
+			'headers' => [
+				'Accept' => '*/*',
+				'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36',
+				'Accept-Encoding' => 'gzip, deflate, br',
+				'Accept-Language' => 'zh-CN,zh;q=0.9',
+			],
+		]);
 		$data = $res->getBody();
-		return $data;
+		return (string)$data;
 	} catch (Exception $e) {
-		echo $e->getMessage(), "\r\n<br>";
+		echo $e->getMessage(), "<br>\r\n";
 		return false;
 	}
 }
@@ -311,23 +319,27 @@ function getJkzx($url, $lastGet, $cateid, $first = true, $cateObj = null){
 		}else{
 			break;
 		}
-		$lists 		= getJkzxList($u, $cateid, null, $lastUrl);
-		if($lists === false){
-			continue;
-		}
-		DB::beginTransaction();
 		try {
-			Post::insert($lists);
-			$spider[$url]['last'] 	= $lists[0]['url'];
-			$spider[$url]['page']	= $finalPage;
-			$cateObj->spider 		= json_encode($spider);
-			$cateObj->save();
-			DB::commit();
+			$lists 		= getJkzxList($u, $cateid, null, $lastUrl);
+			if($lists === false){
+				continue;
+			}
+			DB::beginTransaction();
+			try {
+				Post::insert($lists);
+				$spider[$url]['last'] 	= $lists[0]['url'];
+				$spider[$url]['page']	= $finalPage;
+				$cateObj->spider 		= json_encode($spider);
+				$cateObj->save();
+				DB::commit();
+			} catch (Exception $e) {
+				DB::rollBack();
+				echo $e->getMessage(), "<br>\r\n";
+			}
 		} catch (Exception $e) {
-			DB::rollBack();
+			$finalPage++;
 			echo $e->getMessage(), "<br>\r\n";
 		}
-		
 		// $arr 		= array_merge($arr, $lists);
 		// echo $u, ' - http://www.keduguke.com/jknx/p2.html<br>';
 	}
@@ -410,4 +422,14 @@ function getJkzxContent($url, $cateid){
 
 	return Post::fmtData($arr, $url, time() + 31536000);
 	dd($title, $keyword, $description, $content);
+}
+
+function geturl($url){
+	$client 	= new Client([
+		'base_uri'	=> '',
+		'timeout'	=> 30,
+	]);
+	$response->get($url);
+	$body 		= $response->getBody();
+	return (string)$body;
 }
