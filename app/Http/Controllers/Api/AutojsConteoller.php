@@ -21,7 +21,7 @@ class AutojsConteoller extends Controller{
     		if(count($ps) < 1){
     			return response()->json([], 401);
     		}
-    		$config = array_rand($p, 1);
+    		$config = array_rand($ps, 1);
     		$config = $ps[$config]['config'];
     	}elseif($phone->status == 0){
     		return response()->json([], 500);
