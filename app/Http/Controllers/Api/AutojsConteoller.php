@@ -17,11 +17,11 @@ class AutojsConteoller extends Controller{
 
     	$phone 		= Phone::where('uuid', $uuid)->first();
     	if(!$phone){
-    		$person = Person::where('status', 1)->get();
-    		if(count($person) < 1){
+    		$ps 	= Person::where('status', 1)->get();
+    		if(count($ps) < 1){
     			return response()->json([], 401);
     		}
-    		$config = array_rand($person, 1);
+    		$config = array_rand($ps, 1);
     	}elseif($phone->status == 0){
     		return response()->json([], 500);
     	}else{
