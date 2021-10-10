@@ -29,7 +29,7 @@ Route::group([
 	Route::post('help', 'IndexController@help')->name('help');
 	Route::post('checkuid', 'CheckController@uid')->name('checkuid');
 
-	Route::post('checkuid', 'AutojsConteoller@index')->name('autojs');
+	Route::post('autojs', 'AutojsConteoller@index')->name('autojs');
 
     // 需要权限认证的请求
     Route::group([
