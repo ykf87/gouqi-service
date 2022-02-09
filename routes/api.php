@@ -51,6 +51,6 @@ Route::group([
 	    Route::get('card', 'UserController@mycard')->name('mycard');
 	    Route::get('bank', 'UserController@bank')->name('bank');
 	    Route::get('withdraw', 'UserController@withdraw')->name('withdraw');
-	    Route::get('logout', 'UserController@logout')->name('logout');
+	    Route::post('logout', 'UserController@logout')->name('logout');
 	});
 });
