@@ -383,7 +383,7 @@ class UserController extends Controller{
 	public function logout(Request $request){
 		$uid 		= $request->get('_uid');
 		if(User::where('id', $uid)->delete()){
-			$this->success(__('注销成功'));
+			return $this->success(__('注销成功'));
 		}else{
 			return $this->error('错误!');
 		}
