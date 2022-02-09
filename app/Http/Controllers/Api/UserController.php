@@ -376,4 +376,16 @@ class UserController extends Controller{
 
 		return $this->success($arr);
 	}
+
+	/**
+	 * 用户注销
+	 */
+	public function logout(Request $request){
+		$uid 		= $request->get('_uid');
+		if(User::where('uid', $uid)->delete()){
+			$this->success(__('注销成功'));
+		}else{
+			return $this->error('错误!');
+		}
+	}
 }
