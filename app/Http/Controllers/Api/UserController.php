@@ -379,10 +379,25 @@ class UserController extends Controller{
 
 	/**
 	 * 用户注销
+	 * 17700000001
+	 * 123456
 	 */
 	public function logout(Request $request){
 		$uid 		= $request->get('_uid');
-		if(User::where('id', $uid)->delete()){
+		$pwd 		= $request->input('password');
+		if(!$pwd){
+			return $this->error('请填写密码!');
+		}
+
+		$user 		= User::find($uid);
+		if(!$user){
+			return $this->error('账号不存在');
+		}
+		if(!password_verify($pwd, $user->pwd)){
+			return $this->error('密码错误!');
+		}
+		// if(User::where('id', $uid)->delete()){
+		if($user->delete()){
 			return $this->success(__('注销成功'));
 		}else{
 			return $this->error('错误!');
