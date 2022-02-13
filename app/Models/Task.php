@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Adv;
+use App\Models\Config;
 
 class Task extends Model{
     use HasFactory;
@@ -14,6 +15,11 @@ class Task extends Model{
      * 获取当前用户可做的任务列表
      */
     public static function lists($user){
+        $isadv          = Config::find(5);
+        if($isadv && $isadv->status == 1 && $isadv->val != 'true'){
+            return [];
+        }
+
     	$obj 			= self::where('status', 1)->orderBy('sorts', 'DESC')->get();
     	$todayStart		= strtotime(date('Y-m-d 00:00:00'));
     	$todayEnd 		= $todayStart + 86399;
