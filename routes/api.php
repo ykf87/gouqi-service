@@ -53,4 +53,14 @@ Route::group([
 	    Route::get('withdraw', 'UserController@withdraw')->name('withdraw');
 	    Route::post('logout', 'UserController@logout')->name('logout');
 	});
+
+    // 签到
+    Route::group([
+    	'prefix'		=> 'signins/',
+    	'namespace'		=> '\Signins',
+	    'middleware'    => ['jwt'],
+	    'as'            => 'signins.'
+	], function(){
+	    Route::post('signed', 'SigninsController@signed')->name('signed');
+	});
 });
