@@ -57,7 +57,7 @@ Route::group([
     // 签到
     Route::group([
     	'prefix'		=> 'signins/',
-    	'namespace'		=> '\Signins',
+    	'namespace'		=> 'Signins',
 	    'middleware'    => ['jwt'],
 	    'as'            => 'signins.'
 	], function(){

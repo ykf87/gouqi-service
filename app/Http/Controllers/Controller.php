@@ -34,9 +34,8 @@ class Controller extends BaseController{
     		'data'		=> $data,
     		'msg'		=> $msg,
     	];
-        return response()->json($rs);
-        return json_encode($rs, JSON_UNESCAPED_UNICODE);
-    	// return response()->json($rs, $respcode ? $respcode : $code);
+        return response()->json($rs, $respcode ? $respcode : $code);
+        return json_encode($rs, JSON_UNESCAPED_UNICODE);//JSON_FORCE_OBJECT
     }
 
     public function setEmpty($data){
@@ -52,5 +51,34 @@ class Controller extends BaseController{
             $data       = '';
         }
         return $data;
+    }
+
+    /**
+     * json 的成功返回
+     */
+    public function successjs($data = null, $msg = ''){
+        return $this->respjs($data, $msg);
+    }
+
+    /**
+     * json 的失败返回
+     */
+    public function errorjs($msg = '', $data = null){
+        return $this->respjs($data, $msg, 500);
+    }
+
+    /**
+     * json 的返回通用接口
+     */
+    public function respjs($data = null, $msg = '', $code = 200, $respcode = 200){
+        $data           = $this->setEmpty($data);
+        $rs     = [
+            'code'      => $code,
+            'data'      => $data,
+            'msg'       => $msg,
+        ];
+        header('Content-Type:application/json; charset=utf-8');
+        exit(json_encode($rs, JSON_FORCE_OBJECT));
+        return response()->json($rs, $respcode ? $respcode : $code);
     }
 }
