@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 use App\Models\SiginProduct;
+use App\Models\SiginLog;
 
 class SiginTask extends Model{
     use HasFactory;
@@ -34,6 +35,8 @@ class SiginTask extends Model{
 		$product 					= SiginProduct::select("$t2.id", "$t2.title as name", "$t2.cover", "$t2.price as sale", 'sendout', 'max_own')
 										->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->first();
 		$taskProducts['product']	= $product ? $product->toArray() : false;
+
+		$taskProducts['list']		= SiginLog::sigined($taskProducts);
 		return $taskProducts;
     }
 }
