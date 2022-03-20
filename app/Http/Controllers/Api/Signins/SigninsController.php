@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\SiginTask;
+use App\Models\SiginLog;
 
 class SigninsController extends Controller{
 	//签到首页
