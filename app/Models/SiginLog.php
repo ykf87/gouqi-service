@@ -9,16 +9,27 @@ class SiginLog extends Model{
     use HasFactory;
     public $timestamps = false;
 
-    public static function sigined($sigintask){
-    	if(!$sigintask){
-    		return [];
+    public static function sigined($task){
+    	if(!$task){
+    		return false;
     	}
-    	$start 		= $sigintask['startat'];
-    	$mustDays	= $sigintask['mustdays'];
-    	$sigined 	= self::where('sigin_task_id', $sigintask['id'])->orderByDesc('id')->get()->toArray();
-    	for($i = $mustdays; $i > 0; $i--){
-
-    	}
-    	return self::where('sigin_task_id', $sigintask['id'])->orderByDesc('id')->get()->toArray();
+    	$start 		= strtotime(date('Y-m-d 00:00:00', $task->startat));
+    	$mustDays	= $task->mustdays;
+    	$sigined 	= self::where('sigin_task_id', $task->id)->orderByAsc('index')->get();
+        $yiqiandao  = 0;
+        $duanqian   = 0;
+    	foreach($sigined as $item){
+            $st     = $item->sigin_time;
+            if($st >= $start && $st < ($start+86400)){
+                $yiqiandao++;
+            }else{
+                $duanqian++;
+            }
+            if($duanqian > 2){
+                break;
+            }
+            $start  += 86400;
+        }
+    	return self::where('sigin_task_id', $task->id)->orderByDesc('id')->get()->toArray();
     }
 }

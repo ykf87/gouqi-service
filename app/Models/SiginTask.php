@@ -18,16 +18,18 @@ class SiginTask extends Model{
 
     // 根据用户id获取签到任务信息
     public static function siginInfo($uid){
-    	$taskProducts 	= SiginTask::select('id', 'product_id', 'need_day as mustdays', 'get_time as startat')
+    	$taskProducts 	= self::select('id', 'product_id', 'need_day as mustdays', 'get_time as startat')
 							->where('user_id', $uid)
 							->where('status', '>=', 0)
 							->orderByDesc('id')
 							->first();
-		if($taskProducts){
-			$taskProducts	= $taskProducts->toArray();
-		}else{
+		if(!$taskProducts){
 			return false;
+		}else{
+			// $taskProducts	= $taskProducts->toArray();
 		}
+		$siginLog	= SiginLog::sigined($taskProducts);
+
 
 		$taskProducts['product'] 		= [];
 		$t1			= 'sigin_products';
@@ -36,7 +38,6 @@ class SiginTask extends Model{
 										->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->first();
 		$taskProducts['product']	= $product ? $product->toArray() : false;
 
-		$taskProducts['list']		= SiginLog::sigined($taskProducts);
 		return $taskProducts;
     }
 }

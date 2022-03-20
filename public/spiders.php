@@ -1,4 +1,29 @@
 <?php
+$start 	= 1647446400;
+$needTime 	= time() - $start;
+$needDay 	= ceil($needTime / 86400);
+$arr 	= [
+	[
+		'sigin_time'	=> 1647487475,
+	],[
+		'sigin_time'	=> 1647532800,
+	],[
+		'sigin_time'	=> 1647705599,
+	]
+];
+$yiqiandao	= 0;
+$duanqian 	= 0;
+// foreach($arr as $item){
+//     $st     = $item['sigin_time'];
+//     if($st >= $start && $st < ($start+86400)){
+//         $yiqiandao++;
+//     }else{
+//         $duanqian++;
+//     }
+//     $start  += 86400;
+// }
+echo $yiqiandao, '--', $duanqian, '---', $start, '--', $needDay;
+exit();
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
