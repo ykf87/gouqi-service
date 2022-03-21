@@ -17,15 +17,12 @@ class SigninsController extends Controller{
 		if(!$user){
 			return $this->error('找不到用户!');
 		}
-		$taskProducts 		= SiginTask::siginInfo($uid);
-		$sigins 			= SiginLog::sigined($taskProducts);
-		
+		$taskInfos 		= SiginTask::siginInfo($uid);
+
 		$arr 		= [
 			'user'		=> $user,
-			'signed'	=> $taskProducts,
-			'issigin'	=> false,
-			'advs'		=> 0,
-			'advs'		=> 0,
+			'signed'	=> $taskInfos,
+			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
 		];
 		return $this->success($arr);
 	}

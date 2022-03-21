@@ -30,14 +30,19 @@ class SiginTask extends Model{
 		}
 		$siginLog	= SiginLog::sigined($taskProducts);
 
+		$taskInfo 	= $taskProducts->toArray();
+		if($siginLog !== false){
+			$taskInfo['product'] 		= [];
+			$t1			= 'sigin_products';
+			$t2 		= 'products';
+			$product 					= SiginProduct::select("$t2.id", "$t2.title as name", "$t2.cover", "$t2.price as sale", 'sendout', 'max_own')
+											->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->first();
+			$taskInfo['product']		= $product ? $product->toArray() : false;
+			$taskInfo 					= array_merge($taskInfo, $siginLog);
+		}else{
+			return false;
+		}
 
-		$taskProducts['product'] 		= [];
-		$t1			= 'sigin_products';
-		$t2 		= 'products';
-		$product 					= SiginProduct::select("$t2.id", "$t2.title as name", "$t2.cover", "$t2.price as sale", 'sendout', 'max_own')
-										->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->first();
-		$taskProducts['product']	= $product ? $product->toArray() : false;
-
-		return $taskProducts;
+		return $taskInfo;
     }
 }
