@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\SiginTask;
 use App\Models\SiginLog;
 use App\Models\SiginProduct;
+use App\Models\Product;
 use App\Models\Order;
 
 class SigninsController extends Controller{
@@ -86,5 +87,83 @@ class SigninsController extends Controller{
 			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
 		];
 		return $this->success($arr);
+	}
+
+	// 商品列表
+	public function giveaways(Request $request){
+		$now 	= time();
+		$page 	= (int)$request->input('page', 1);
+		$limit 	= (int)$request->input('limit', 10);
+		if($page < 1){
+			$page 	= 1;
+		}
+		if($limit < 1){
+			$limit 	= 10;
+		}
+		$t1		= 'sigin_products';
+		$t2 	= 'products';
+		$arr 	= [];
+		$res 	= SiginProduct::select("$t2.id", "$t2.cover", "$t2.images", "$t2.title", "$t1.days", "$t1.sendout", "$t1.max_own", "$t2.sale", "$t1.collection")
+						->rightJoin("$t2", "$t1.product_id", '=', "$t2.id")
+						->where("$t1.status", 1)
+						->where("$t2.main_status", 1)
+						->whereRaw("if($t1.start_time > 0, start_time <= $now, true)")
+						->whereRaw("if($t1.end_time > 0, end_time > $now, true)")
+						->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
+		if(count($res) > 0){
+			$arr['list']	= $res;
+		}else{
+			return $this->error('暂无商品!');
+		}
+		return $this->success($arr);
+	}
+
+	// 商品详情
+	public function giveinfo(Request $request){
+		$id 	= (int)$request->input('id', 0);
+		if($id < 1){
+			return $this->error('请选择商品!');
+		}
+
+		$now 	= time();
+		$t1		= 'sigin_products';
+		$t2 	= 'products';
+		$arr 	= [];
+		$res 	= SiginProduct::select("$t2.id", "$t2.cover", "$t2.images", "$t2.title", "$t1.days", "$t1.sendout", "$t1.max_own", "$t2.sale", "$t1.collection")
+						->rightJoin("$t2", "$t1.product_id", '=', "$t2.id")
+						->where("$t1.status", 1)
+						->where("$t2.main_status", 1)
+						->whereRaw("if($t1.start_time > 0, start_time <= $now, true)")
+						->whereRaw("if($t1.end_time > 0, end_time > $now, true)")
+						->where("$t2.id", $id)
+						->first();
+		if(!$res){
+			return $this->error('找不到商品!');
+		}
+		return $this->success($res);
+	}
+
+	// 收藏商品
+	public function givecollection(Request $request){
+		$id 	= (int)$request->input('id', 0);
+		if($id < 1){
+			return $this->error('请选择要收藏的商品!');
+		}
+
+		$siginProduct 	= SiginProduct::where('product_id', $id)->first();
+		if(!$siginProduct){
+			return $this->error('找不到商品!');
+		}
+		$product 		= Product::find($id);
+	}
+
+	// 取消收藏商品
+	public function giveuncollection(Request $request){
+
+	}
+
+	// 领取商品
+	public function giveget(Request $request){
+
 	}
 }

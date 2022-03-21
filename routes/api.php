@@ -58,10 +58,18 @@ Route::group([
     Route::group([
     	'prefix'		=> 'signins/',
     	'namespace'		=> 'Signins',
-	    'middleware'    => ['jwt'],
 	    'as'            => 'signins.'
 	], function(){
-	    Route::post('signed', 'SigninsController@signed')->name('signed');
-	    Route::post('choose', 'SigninsController@choose')->name('choose');
+		Route::group([
+		    'middleware'    => ['jwt'],
+		], function(){
+		    Route::post('signed', 'SigninsController@signed')->name('signed');
+	    	Route::post('choose', 'SigninsController@choose')->name('choose');
+		});
+	    Route::get('giveaways', 'SigninsController@giveaways')->name('giveaways');
+	    Route::get('giveinfo', 'SigninsController@giveinfo')->name('giveinfo');
+	    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
+	    Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
+	    Route::post('giveget', 'SigninsController@giveget')->name('giveget');
 	});
 });
