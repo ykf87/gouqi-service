@@ -13,15 +13,15 @@ class Controller extends BaseController{
     /**
      * json 的成功返回
      */
-    public function success($data = null, $msg = ''){
+    public function success($data = null, $msg = '', $code = 200){
     	return $this->resp($data, $msg);
     }
 
     /**
      * json 的失败返回
      */
-    public function error($msg = '', $data = null){
-    	return $this->resp($data, $msg, 500);
+    public function error($msg = '', $data = null, $code = 500){
+    	return $this->resp($data, $msg, $code);
     }
 
     /**

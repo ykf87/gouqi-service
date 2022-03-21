@@ -62,5 +62,6 @@ Route::group([
 	    'as'            => 'signins.'
 	], function(){
 	    Route::post('signed', 'SigninsController@signed')->name('signed');
+	    Route::post('choose', 'SigninsController@choose')->name('choose');
 	});
 });
