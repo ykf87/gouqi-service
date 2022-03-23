@@ -54,6 +54,7 @@ Route::group([
 	    Route::post('logout', 'UserController@logout')->name('logout');
 	    Route::get('user/address', 'UserController@addresses')->name('addresses');
 	    Route::post('user/address', 'UserController@address')->name('address');
+	    Route::post('user/rmvaddr', 'UserController@rmvaddr')->name('rmvaddr');
 	});
 
     // 签到

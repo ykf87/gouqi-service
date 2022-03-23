@@ -444,4 +444,23 @@ class UserController extends Controller{
 		}
 		return $this->error('添加失败!');
 	}
+
+	/**
+	 * 删除收货地址
+	 */
+	public function rmvaddr(Request $request){
+		$uid 		= $request->get('_uid');
+		$id 		= (int)$request->input('id', 0);
+
+		$addr 		= Address::find($id);
+		if(!$addr){
+			return $this->error('没有发现地址!');
+		}else if($addr->uid != $uid){
+			return $this->error('删除失败,非法请求!');
+		}
+		if($addr->delete()){
+			return $this->success('', '删除成功!');
+		}
+		return $this->error('删除失败!');
+	}
 }
