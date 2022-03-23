@@ -14,9 +14,8 @@ class SiginLog extends Model{
     	if(!$task){
     		return false;
     	}
-    	$start 		= strtotime(date('Y-m-d 00:00:00', $task->startat));
+    	$start 		= strtotime(date('Y-m-d 00:00:00', $task->get_time));
 		$startUni 	= strtotime(date('Y-m-d', $start));
-    	$mustDays	= $task->mustdays;
     	$sigined 	= self::where('sigin_task_id', $task->id)->orderBy('index')->orderBy('id')->get()->toArray();
 
     	$yiqiandao	= 0;//已签到
@@ -27,7 +26,7 @@ class SiginLog extends Model{
 		$todayStart = strtotime(date('Y-m-d'));
 		$todayEnd 	= $todayStart + 86399;
 		$todaySign 	= false;
-		$needDay 	= $task->mustdays;
+		$needDay 	= $task->need_day;
 		for($i = 0; $i < $needDay; $i++){
 		    $dayStart 	= $startUni + $i * 86400;
 		    $dayEnd 	= $dayStart + 86399;

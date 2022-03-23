@@ -18,7 +18,7 @@ class SiginTask extends Model{
 
     // 根据用户id获取签到任务信息
     public static function siginInfo($uid){
-    	$taskProducts 	= self::select('id', 'product_id', 'need_day as mustdays', 'get_time as startat')
+    	$taskProducts 	= self::select('id', 'product_id', 'need_day', 'get_time')
 							->where('user_id', $uid)
 							->where('status', '>=', 0)
 							->orderByDesc('id')

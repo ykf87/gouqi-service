@@ -68,11 +68,11 @@ Route::group([
 		], function(){
 		    Route::post('signed', 'SigninsController@signed')->name('signed');
 	    	Route::post('choose', 'SigninsController@choose')->name('choose');
+		    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
+		    Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
+	    	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
 		});
 	    Route::get('giveaways', 'SigninsController@giveaways')->name('giveaways');
 	    Route::get('giveinfo', 'SigninsController@giveinfo')->name('giveinfo');
-	    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
-	    Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
-	    Route::post('giveget', 'SigninsController@giveget')->name('giveget');
 	});
 });
