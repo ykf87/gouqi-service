@@ -15,6 +15,7 @@ use App\Models\Withdraw;
 use App\Models\UserCard;
 use App\Models\Bank;
 use App\Models\Task;
+use App\Models\Address;
 
 class UserController extends Controller{
 	/**
@@ -402,5 +403,45 @@ class UserController extends Controller{
 		}else{
 			return $this->error('错误!');
 		}
+	}
+
+	/**
+	 * 收货地址列表
+	 */
+	public function addresses(Request $request){
+		$uid 		= $request->get('_uid');
+		$list 		= Address::where('uid', $uid)->orderByDesc('isdefault')->get();
+
+		return $this->success(['list' => $list]);
+	}
+
+	/**
+	 * 添加收货地址
+	 */
+	public function address(Request $request){
+		$uid 		= $request->get('_uid');
+		$added 		= Address::where('uid', $uid)->count();
+		if($added >= Address::$maxAdd){
+			return $this->error('最多允许添加 ' . Address::$maxAdd . ' 个地址.');
+		}
+
+		$name 		= trim($request->input('name', ''));
+		$tel 		= trim($request->input('phone', ''));
+		$addr 		= trim($request->input('address', ''));
+		$default	= (int)$request->input('default', 0);
+		if(!$name || !$tel || !$addr){
+			return $this->error('信息不完整!');
+		}
+
+		$address 		= new Address;
+		$address->uid 	= $uid;
+		$address->name 	= $name;
+		$address->tel 	= $tel;
+		$address->address 	= $addr;
+		$address->isdefault = $default == 1 ? 1 : 0;
+		if($address->save()){
+			return $this->success(null, '添加成功!');
+		}
+		return $this->error('添加失败!');
 	}
 }
