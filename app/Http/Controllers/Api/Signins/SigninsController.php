@@ -69,7 +69,7 @@ class SigninsController extends Controller{
 			return $this->error('您选的产品已结束!');
 		}
 
-		$nums 	= Order::where('status', '>=', 0)->where('user_id', $uid)->where('product_id', $product_id)->count();
+		$nums 	= Order::where('status', '>', 0)->where('user_id', $uid)->where('product_id', $product_id)->where('ctype', 1)->count();
 		if($nums >= $product->max_own){
 			return $this->error('您已经获得过该商品!');
 		}
@@ -89,6 +89,64 @@ class SigninsController extends Controller{
 			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
 		];
 		return $this->success($arr);
+	}
+
+	//签到
+	public function signe(Request $request){
+		$uid 		= $request->get('_uid');
+		$taskid 	= (int)$request->input('id');
+		if($taskid < 1){
+			return $this->error('任务不存在!');
+		}
+		$task 		= SiginTask::find($taskid);
+		if(!$task || $task->user_id != $uid){
+			return $this->error('任务不存在!');
+		}
+		if($task->status != 0){
+			$msg 			= '您的签到暂未完成!';
+			switch($task->status){
+				case 1:
+					$msg 	= '您的产品已经领取';
+				break;
+				case -1:
+					$msg 	= '您的任务已取消!';
+				break;
+				case -2:
+					$msg 	= '您的任务已过期!';
+				break;
+			}
+			return $this->error($msg);
+		}
+		$task_logs 	= SiginLog::sigined($task);
+		if($task_logs['mustdays'] <= $task_logs['days']){
+			return $this->error('您的任务已完成,请领取商品!');
+		}
+		if($task_logs['issigin']){
+			return $this->error('您今日已签到!');
+		}
+
+		$siginTime 		= time();
+		$msg 			= '签到成功!';
+		if($task_logs['mustadv'] == true){
+			$siginTime 	= strtotime(date('Y-m-d', strtotime('-1 day')));
+			$msg 		= '补签成功!';
+		}
+		$signLog 					= new SiginLog;
+		$signLog->user_id 			= $uid;
+		$signLog->sigin_task_id 	= $task->id;
+		$signLog->product_id 		= $task->product_id;
+		$signLog->index 			= $task_logs['days'] + 1;
+		$signLog->sigin_time 		= $siginTime;
+		if($signLog->save()){
+			$taskInfos 		= SiginTask::siginInfo($uid);
+			$arr 		= [
+				'user'		=> User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($uid),
+				'signed'	=> $taskInfos,
+				'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
+			];
+			return $this->success($arr, $msg);
+		}
+		return $this->error('签到失败,请联系客服!');
 	}
 
 	// 商品列表
@@ -157,16 +215,23 @@ class SigninsController extends Controller{
 		if(count($res) > 0){
 			foreach($res as $item){
 				if($item->ctype == 1){
-					return $this->error('产品已收藏!');
+					return $this->success('', '产品已收藏!');
 				}
 			}
 		}
+		$product 	= SiginProduct::where('product_id', $id);
+		if(!$product){
+			return $this->error('收藏失败,商品不存在!');
+		}
+
 		$coll 				= new Collection;
 		$coll->user_id 		= $uid;
 		$coll->product_id	= $id;
 		$coll->ctype 		= 1;
 		$coll->addtime 		= time();
 		if($coll->save()){
+			$product->collection 	+= 1;
+			$product->save();
 			return $this->success('', '收藏成功!');
 		}
 		return $this->error('收藏失败!');
@@ -178,6 +243,11 @@ class SigninsController extends Controller{
 		$id 	= (int)$request->input('id', 0);
 		$coll 	= Collection::where('user_id', $uid)->where('product_id', $id)->where('ctype', 1)->first();
 		if($coll && $coll->delete()){
+			$product 	= SiginProduct::where('product_id', $id);
+			if($product){
+				$product->collection 	-= 1;
+				$product->save();
+			}
 			return $this->success('', '取消成功!');
 		}
 		return $this->error('取消失败!');
@@ -215,6 +285,20 @@ class SigninsController extends Controller{
 			}
 			return $this->error($msg);
 		}
+		//检查商品和库存
+		$product 	= SiginProduct::where('product_id', $task->product_id)->first();
+		if(!$product){
+			return $this->error('您选择的商品已经下架!');
+		}
+		if($product->stocks < 1){
+			return $this->error('该商品库存不足!');
+		}
+		$productInfo 		= Product::find($task->product_id);
+		if(!$productInfo){
+			return $this->error('您选择的商品已经下架!');
+		}
+
+		//收货地址检查
 		$address 		= Address::find($addr_id);
 		if(!$address || $address->uid != $uid){
 			return $this->error('您选择的地址不存在!');
@@ -222,10 +306,64 @@ class SigninsController extends Controller{
 		if(!$address->name || !$address->tel || !$address->address){
 			return $this->error('请先完善您的收货地址!');
 		}
+
+		//任务完成情况检查
 		$task_logs 	= SiginLog::sigined($task);
 		if($task_logs['mustdays'] > $task_logs['days']){
 			return $this->error('签到天数未达标!');
 		}
-		
+
+
+		//检查产品是否领取上限
+		$geted 	= Order::where('status', '>', 0)->where('user_id', $uid)->where('product_id', $task->product_id)->where('ctype', 1)->count();
+		if($geted >= $product->max_own){
+			return $this->error('您已经领过该商品,无法继续领取!');
+		}
+
+		$order 				= new Order;
+		$order->user_id 	= $uid;
+		$order->product_id 	= $task->product_id;
+		$order->task_id 	= $task->id;
+		$order->ctype 		= 1;
+		$order->sale_price 	= $productInfo->sale;
+		$order->price 		= 0;
+		$order->address_id 	= $addr_id;
+		$order->num 		= 1;
+		$order->remark 		= $remark;
+		$order->status 		= 1;
+		if($order->save()){
+			$task->status 	= 1;
+			$task->save();
+			$product->sendout	+= 1;
+			$product->stocks	-= 1;
+			$product->save();
+			$productInfo->main_sendout 	+= 1;
+			$productInfo->selled 		+= 1;
+			$productInfo->main_stock 	-= 1;
+			$productInfo->save();
+			return $this->success('', '领取成功!');
+		}
+		return $this->error('领取失败,请联系客服!');
+	}
+
+	//取消签到任务
+	public function giveup(Request $request){
+		$uid 		= $request->get('_uid');
+		$taskid 	= (int)$request->get('id');
+		if($taskid < 1){
+			return $this->error('任务不存在!');
+		}
+		$task 		= SiginTask::find($taskid);
+		if(!$task || $task->user_id != $uid){
+			return $this->error('任务不存在!');
+		}
+		if($task->status == -1){
+			return $this->success('', '取消成功!');
+		}
+		$task->status 	= -1;
+		if($task->save()){
+			return $this->success('', '取消成功!');
+		}
+		return $this->error('取消失败,请联系客服!');
 	}
 }

@@ -16,7 +16,7 @@ class SiginLog extends Model{
     	}
     	$start 		= strtotime(date('Y-m-d 00:00:00', $task->get_time));
 		$startUni 	= strtotime(date('Y-m-d', $start));
-    	$sigined 	= self::where('sigin_task_id', $task->id)->orderBy('index')->orderBy('id')->get()->toArray();
+    	$sigined 	= self::where('sigin_task_id', $task->id)->orderBy('sigin_time')->orderBy('id')->get()->toArray();
 
     	$yiqiandao	= 0;//已签到
 		$duanqian 	= 0;//断开签到
@@ -46,7 +46,6 @@ class SiginLog extends Model{
 		    }
 		    if($issigind == true){
 		        $yiqiandao++;
-		        echo date('Y-m-d', $dayStart) . "<br>";
 		    }else{
 		    	if($todayEnd <= $dayEnd){
 			    	$weiqian++;
