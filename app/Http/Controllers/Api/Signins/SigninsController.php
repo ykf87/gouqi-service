@@ -47,10 +47,6 @@ class SigninsController extends Controller{
 		if($product_id < 1){
 			return $this->error('请选择产品!');
 		}
-		$hasTask 		= SiginTask::where('user_id', $uid)->where('status', 0)->orderByDesc('id')->first();
-		if($hasTask){
-			return $this->error('您有签到任务未结束!');
-		}
 		$product 		= SiginProduct::find($product_id);
 		if(!$product){
 			return $this->error('您选的产品不存在!');
@@ -72,6 +68,16 @@ class SigninsController extends Controller{
 		$nums 	= Order::where('status', '>', 0)->where('user_id', $uid)->where('product_id', $product_id)->where('ctype', 1)->count();
 		if($nums >= $product->max_own){
 			return $this->error('您已经获得过该商品!');
+		}
+
+		//领取任务时,如果已存在任务,则自动取消
+		$hasTask 		= SiginTask::where('user_id', $uid)->where('status', 0)->orderByDesc('id')->first();
+		if($hasTask){
+			$hasTask->status 	= -1;
+			if(!$hasTask->save()){
+				return $this->error('任务领取失败!');
+			}
+			// return $this->error('您有签到任务未结束!');
 		}
 		$task 	= new SiginTask;
 		$task->user_id 		= $uid;
