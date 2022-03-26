@@ -26,9 +26,11 @@ class SigninsController extends Controller{
 
 		$arr 		= [
 			'user'		=> $user,
-			'signed'	=> $taskInfos,
 			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
 		];
+		if($taskInfos){
+			$arr['signed']	= $taskInfos;
+		}
 		return $this->success($arr);
 	}
 
