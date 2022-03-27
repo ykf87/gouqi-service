@@ -266,10 +266,21 @@ class SigninsController extends Controller{
 		$uid 		= $request->get('_uid');
 		$task_id 	= (int)$request->input('id');
 		$addr_id 	= (int)$request->input('address_id');
+		$address 	= trim($request->input('address', ''));
+		$phone 		= trim($request->input('phone', ''));
+		$name 		= trim($request->input('name', ''));
 		$remark 	= $request->input('remark');
 
-		if($task_id < 1 || $addr_id < 1){
+		if($task_id < 1){
 			return $this->error('非法请求!');
+		}
+		if($addr_id < 1 && !$address){
+			return $this->error('非法请求!');
+		}
+		if($address){
+			if(!$name || !$phone){
+				return $this->error('请填写完整收货信息!');
+			}
 		}
 		$task 		= SiginTask::find($task_id);
 		if(!$task){
@@ -307,12 +318,14 @@ class SigninsController extends Controller{
 		}
 
 		//收货地址检查
-		$address 		= Address::find($addr_id);
-		if(!$address || $address->uid != $uid){
-			return $this->error('您选择的地址不存在!');
-		}
-		if(!$address->name || !$address->tel || !$address->address){
-			return $this->error('请先完善您的收货地址!');
+		if($addr_id){
+			$addrobj 		= Address::find($addr_id);
+			if(!$addrobj || $addrobj->uid != $uid){
+				return $this->error('您选择的地址不存在!');
+			}
+			if(!$addrobj->name || !$addrobj->tel || !$addrobj->address){
+				return $this->error('请先完善您的收货地址!');
+			}
 		}
 
 		//任务完成情况检查
@@ -336,6 +349,9 @@ class SigninsController extends Controller{
 		$order->sale_price 	= $productInfo->sale;
 		$order->price 		= 0;
 		$order->address_id 	= $addr_id;
+		$order->address 	= $address;
+		$order->phone 		= $phone;
+		$order->name 		= $name;
 		$order->num 		= 1;
 		$order->remark 		= $remark;
 		$order->status 		= 1;
