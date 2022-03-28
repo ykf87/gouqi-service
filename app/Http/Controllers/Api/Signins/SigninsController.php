@@ -335,6 +335,8 @@ class SigninsController extends Controller{
 		$order->ctype 		= 1;
 		$order->sale_price 	= $productInfo->sale;
 		$order->price 		= 0;
+		$order->pro_title 	= $productInfo->title;
+		$order->cover 		= $productInfo->cover;
 		$order->address_id 	= $addr_id;
 		$order->num 		= 1;
 		$order->remark 		= $remark;

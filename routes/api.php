@@ -55,6 +55,8 @@ Route::group([
 	    Route::get('user/address', 'UserController@addresses')->name('addresses');
 	    Route::post('user/address', 'UserController@address')->name('address');
 	    Route::post('user/rmvaddr', 'UserController@rmvaddr')->name('rmvaddr');
+	    Route::get('user/orders', 'UserController@orders')->name('orders');
+	    Route::get('user/order', 'UserController@order')->name('order');
 	});
 
     // 签到

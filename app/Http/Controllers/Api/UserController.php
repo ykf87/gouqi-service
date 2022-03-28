@@ -16,6 +16,7 @@ use App\Models\UserCard;
 use App\Models\Bank;
 use App\Models\Task;
 use App\Models\Address;
+use App\Models\Order;
 
 class UserController extends Controller{
 	/**
@@ -462,5 +463,73 @@ class UserController extends Controller{
 			return $this->success('', '删除成功!');
 		}
 		return $this->error('删除失败!');
+	}
+
+	/**
+	 * 查看用户订单列表
+	 */
+	public function orders(Request $request){
+		$uid 	= $request->get('_uid');
+		$page 	= (int)$request->input('page', 1);
+		$limit 	= (int)$request->input('limit', 10);
+		if($page < 1){
+			$page 	= 1;
+		}
+		if($limit < 1){
+			$limit 	= 10;
+		}
+		$orders 	= Order::select('id', 'price', 'num', 'pro_title', 'cover', 'kuaidi_num', 'status', 'created_at')
+						->where('user_id', $uid)->orderByDesc('id')->limit($limit)->forPage($page)->get();
+		return $this->success(['list' => $orders]);
+	}
+
+	/**
+	 * 查看用户订单详情
+	 */
+	public function order(Request $request){
+		$uid 		= $request->get('_uid');
+		$id 		= (int)$request->input('id', 0);
+		if($id < 1){
+			return $this->error('非法请求!!');
+		}
+		$order 		= Order::find($id);
+		if(!$order || $order->user_id != $uid){
+			return $this->error('非法请求!');
+		}
+		if($order->address_id > 0){
+			$addr_obj 	= Address::find($order->address_id);
+			if($addr_obj){
+				if(!$order->address){
+					$order->address 	= $addr_obj->address;
+				}
+				if(!$order->phone){
+					$order->phone 		= $addr_obj->tel;
+				}
+				if(!$order->name){
+					$order->name 		= $addr_obj->name;
+				}
+			}
+		}
+		$arr 	= [
+			'id'			=> $order->id,
+			'product_id'	=> $order->product_id,
+			'ctype'			=> $order->ctype,
+			'task_id'		=> $order->task_id,
+			'sale_price'	=> $order->sale_price,
+			'price'			=> $order->price,
+			'num'			=> $order->num,
+			'pro_title'		=> $order->pro_title,
+			'cover'			=> $order->cover,
+			'address'		=> $order->address,
+			'phone'			=> $order->phone,
+			'name'			=> $order->name,
+			'kuaidi'		=> $order->kuaidi,
+			'kuaidi_num'	=> $order->kuaidi_num,
+			'remark'		=> $order->remark,
+			'status'		=> $order->status,
+			'created_at'	=> $order->created_at,
+		];
+
+		return $this->success($arr);
 	}
 }
