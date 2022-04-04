@@ -20,7 +20,7 @@ class SiginTask extends Model{
     public static function siginInfo($uid){
     	$taskProducts 	= self::select('id', 'product_id', 'need_day', 'get_time')
 							->where('user_id', $uid)
-							->where('status', '>=', 0)
+							->where('status', 0)
 							->orderByDesc('id')
 							->first();
 		if(!$taskProducts){
