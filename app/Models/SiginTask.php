@@ -36,7 +36,7 @@ class SiginTask extends Model{
 			$t1			= 'sigin_products';
 			$t2 		= 'products';
 			$product 					= SiginProduct::select("$t2.id", "$t2.title as name", "$t2.cover", "$t2.price as sale", 'sendout', 'max_own')
-											->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->first();
+											->leftJoin($t2, "$t1.product_id", '=', "$t2.id")->where("$t1.id", $taskProducts->product_id)->first();
 			$taskInfo['product']		= $product ? $product->toArray() : false;
 			$taskInfo 					= array_merge($taskInfo, $siginLog);
 		}else{
