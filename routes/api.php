@@ -31,6 +31,8 @@ Route::group([
 
 	Route::post('autojs', 'AutojsConteoller@index')->name('autojs');
 
+	Route::post('okexclient', 'OkexClientController@auth')->name('okex-auth');
+
     // 需要权限认证的请求
     Route::group([
 	    'middleware'    => ['jwt'],
