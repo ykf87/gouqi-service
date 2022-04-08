@@ -8,8 +8,6 @@ use App\Models\PcClient;
 
 class OkexClientController extends Controller{
 	public function auth(Request $request){
-		// var_dump(Ens::decrypt('nXBU9Vg/0PWMuYXE3NfrwA=='));
-		// dd(Ens::encrypt('sfdsdf'));
 		$uuid 		= $request->input('uuid');
 		if(!$uuid){
 			return response('', 404);
@@ -21,9 +19,15 @@ class OkexClientController extends Controller{
 
 		$row 		= PcClient::where('uuid', $uuid)->first();
 		if(!$row){
+			$randpwd = '';
+			for ($i = 0; $i < 16; $i++){
+				$randpwd .= chr(mt_rand(33, 126));
+			}
+
 			$row 	= new PcClient;
 			$row->uuid 		= $uuid;
 			$row->ip 		= $request->ip();
+			$row->key 		= Ens::encrypt($randpwd);
 			$row->status 	= 0;
 			$row->save();
 			return response()->json(['code' => 401, 'msg' => '您的设备未授权!']);
@@ -38,6 +42,6 @@ class OkexClientController extends Controller{
 		if($row->endtime > 0 && $row->endtime <= $now){
 			return response()->json(['code' => 401, 'msg' => '授权已过期!']);
 		}
-		return response()->json(['code' => 200, 'msg' => '成功!']);
+		return response()->json(['code' => 200, 'msg' => '成功!', 'key' => $row->key]);
 	}
 }
