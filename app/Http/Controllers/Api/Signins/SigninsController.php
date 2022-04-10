@@ -66,6 +66,12 @@ class SigninsController extends Controller{
 			return $this->error('您选的产品库存不足!');
 		}
 		$now 	= time();
+		if(!is_numeric($product->start_time)){
+			$product->start_time	= strtotime($product->start_time);
+		}
+		if(!is_numeric($product->end_time)){
+			$product->end_time		= strtotime($product->end_time);
+		}
 		if($product->start_time && $product->start_time > $now){
 			return $this->error('您选的产品还未开始参与活动!');
 		}
