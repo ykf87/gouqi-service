@@ -18,8 +18,8 @@ class Product extends Model{
     	1 	=> '正常',
     ];
     public static $statusLabel 	= [
-    	-1	=> 'warning',
-    	0	=> 'default',
+    	-1	=> 'default',
+    	0	=> 'warning',
     	1 	=> 'success',
     ];
 
