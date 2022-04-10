@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Admin\Actions\Post\SiginPost;
 
 class ProductController extends AdminController
 {
@@ -25,26 +26,34 @@ class ProductController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Product());
+        $grid->model()->orderByDesc('id');
 
-        $grid->column('id', __('Id'));
-        $grid->column('type', __('商品类型'));
-        $grid->column('title', __('Title'));
-        $grid->column('price', __('Price'));
-        $grid->column('sale', __('Sale'));
-        $grid->column('pricein', __('Pricein'));
-        $grid->column('desc', __('Desc'));
-        $grid->column('cover', __('Cover'));
-        $grid->column('images', __('Images'));
-        $grid->column('days', __('Days'));
-        $grid->column('sendout', __('Sendout'));
-        $grid->column('maxown', __('Maxown'));
-        $grid->column('collection', __('Collection'));
-        $grid->column('probability', __('Probability'));
-        $grid->column('guanggao', __('Guanggao'));
-        $grid->column('stock', __('Stock'));
-        $grid->column('sort', __('Sort'));
-        $grid->column('status', __('Status'));
+        $grid->column('id', __('Id'))->filter('range');
+        $grid->column('title', __('产品名称'))->editable()->filter('like');
+        $grid->column('price', __('市场价'))->editable()->filter('range')->sortable();
+        $grid->column('sale', __('售价'))->editable()->filter('range')->sortable();
+        $grid->column('pricein', __('进货价'))->hide()->editable()->filter('range')->sortable();
+        $grid->column('desc', __('简介'))->hide()->display(function($val){
+            $val    = preg_replace('`<.+?>`', '', $val);
+            $len    = mb_strlen($val, 'utf-8');
+            if($len > 10){
+                $val    = mb_substr(trim($val), 0, 10, 'utf-8') . '...';
+            }
+            return $val;
+        });
+        $grid->column('cover', __('首图'))->image(50,50);
+        $grid->column('images', __('图集'))->hide();
+        $grid->column('selled', __('已售'))->editable()->filter('range')->sortable();
+        $grid->column('main_sendout', __('已送出'))->hide()->editable()->filter('range')->sortable();
+        $grid->column('main_maxown', __('最多领取'))->editable()->filter('range')->sortable();
+        $grid->column('main_collection', __('收藏人数'))->hide()->editable()->filter('range')->sortable();
+        $grid->column('main_stock', __('总库存'))->editable()->filter('range')->sortable();
+        $grid->column('main_status', __('状态'))->using(Product::$status)->label(Product::$statusLabel)->filter(Product::$status);
+        $grid->column('url', __('Url'))->hide()->editable();
 
+        $grid->actions(function ($actions) {
+            $actions->add(new SiginPost);
+        });
         return $grid;
     }
 
@@ -56,28 +65,25 @@ class ProductController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Product::findOrFail($id));
+        // $show = new Show(Product::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('type', __('Type'));
-        $show->field('title', __('Title'));
-        $show->field('price', __('Price'));
-        $show->field('sale', __('Sale'));
-        $show->field('pricein', __('Pricein'));
-        $show->field('desc', __('Desc'));
-        $show->field('cover', __('Cover'));
-        $show->field('images', __('Images'));
-        $show->field('days', __('Days'));
-        $show->field('sendout', __('Sendout'));
-        $show->field('maxown', __('Maxown'));
-        $show->field('collection', __('Collection'));
-        $show->field('probability', __('Probability'));
-        $show->field('guanggao', __('Guanggao'));
-        $show->field('stock', __('Stock'));
-        $show->field('sort', __('Sort'));
-        $show->field('status', __('Status'));
+        // $show->field('id', __('Id'));
+        // $show->field('title', __('Title'));
+        // $show->field('price', __('Price'));
+        // $show->field('sale', __('Sale'));
+        // $show->field('pricein', __('Pricein'));
+        // $show->field('desc', __('Desc'));
+        // $show->field('cover', __('Cover'));
+        // $show->field('images', __('Images'));
+        // $show->field('selled', __('Selled'));
+        // $show->field('main_sendout', __('Main sendout'));
+        // $show->field('main_maxown', __('Main maxown'));
+        // $show->field('main_collection', __('Main collection'));
+        // $show->field('main_stock', __('Main stock'));
+        // $show->field('main_status', __('Main status'));
+        // $show->field('url', __('Url'));
 
-        return $show;
+        // return $show;
     }
 
     /**
@@ -89,23 +95,20 @@ class ProductController extends AdminController
     {
         $form = new Form(new Product());
 
-        $form->number('type', __('Type'));
-        $form->text('title', __('Title'));
-        $form->decimal('price', __('Price'))->default(0.00);
-        $form->decimal('sale', __('Sale'))->default(0.00);
-        $form->decimal('pricein', __('Pricein'))->default(0.00);
-        $form->textarea('desc', __('Desc'));
-        $form->image('cover', __('Cover'));
-        $form->textarea('images', __('Images'));
-        $form->number('days', __('Days'));
-        $form->number('sendout', __('Sendout'));
-        $form->number('maxown', __('Maxown'))->default(1);
-        $form->number('collection', __('Collection'));
-        $form->switch('probability', __('Probability'));
-        $form->switch('guanggao', __('Guanggao'));
-        $form->number('stock', __('Stock'));
-        $form->number('sort', __('Sort'));
-        $form->switch('status', __('Status'));
+        $form->text('title', __('产品标题'));
+        $form->decimal('price', __('市场价'))->default(0.00);
+        $form->decimal('sale', __('售价'))->default(0.00);
+        $form->decimal('pricein', __('进货价'))->default(0.00);
+        $form->textarea('desc', __('简介'));
+        $form->image('cover', __('封面'));
+        $form->multipleImage('images', __('图集'));
+        $form->number('selled', __('已售'));
+        $form->number('main_sendout', __('已送出'));
+        $form->number('main_maxown', __('最多领取'))->default(1);
+        $form->number('main_collection', __('已收藏'));
+        $form->number('main_stock', __('总库存'));
+        $form->switch('main_status', __('状态'))->default(1);
+        $form->url('url', __('Url'));
 
         return $form;
     }
