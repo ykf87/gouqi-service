@@ -69,7 +69,7 @@ class SigninsController extends Controller{
 		if($product->start_time && $product->start_time > $now){
 			return $this->error('您选的产品还未开始参与活动!');
 		}
-		if($product->end_time && $product->end_time < $now){
+		if($product->end_time > 0 && $product->end_time <= $now){
 			return $this->error('您选的产品已结束!');
 		}
 
