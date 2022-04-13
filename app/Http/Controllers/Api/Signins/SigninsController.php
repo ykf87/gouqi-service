@@ -23,9 +23,15 @@ class SigninsController extends Controller{
 			return $this->error('找不到用户!');
 		}
 		$taskInfos 		= SiginTask::siginInfo($uid);
+		$getedObj 		= Order::select('name', 'pro_title')->orderByDesc('id')->limit(20)->get();
+		$geted 			= [];
+		foreach($getedObj as $item){
+			$geted[] 	= '恭喜 ' . mb_substr($item->name, 0, 1, 'utf-8') . '** 获得 ' . $item->pro_title;
+		}
 
 		$arr 		= [
 			'user'		=> $user,
+			'geted'		=> $geted,
 			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
 		];
 		if($taskInfos){
@@ -60,10 +66,18 @@ class SigninsController extends Controller{
 			return $this->error('您选的产品库存不足!');
 		}
 		$now 	= time();
-		if($product->start_time && $product->start_time > $now){
+		$starttime 		= $product->start_time;
+		$endtime 		= $product->end_time;
+		if(!is_numeric($starttime)){
+			$starttime	= strtotime($starttime);
+		}
+		if(!is_numeric($endtime)){
+			$endtime		= strtotime($endtime);
+		}
+		if($starttime && $starttime > $now){
 			return $this->error('您选的产品还未开始参与活动!');
 		}
-		if($product->end_time && $product->end_time < $now){
+		if($endtime > 0 && $endtime <= $now){
 			return $this->error('您选的产品已结束!');
 		}
 

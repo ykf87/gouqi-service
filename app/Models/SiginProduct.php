@@ -12,4 +12,17 @@ class SiginProduct extends Model{
     public function getImagesAttribute($val){
     	return explode(',', $val);
     }
+    public function getStartTimeAttribute($val){
+    	return $val > 0 ? date('Y-m-d H:i:s', $val) : null;
+    }
+    public function setStartTimeAttribute($val){
+    	return $val ? strtotime($val) : 0;
+    }
+    public function getEndTimeAttribute($val){
+    	// dd($val);
+    	return $val > 0 ? date('Y-m-d H:i:s', $val) : null;
+    }
+    public function setEndTimeAttribute($val){
+    	return $val ? strtotime($val) : 0;
+    }
 }
