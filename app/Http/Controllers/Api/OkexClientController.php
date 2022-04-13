@@ -42,6 +42,6 @@ class OkexClientController extends Controller{
 		if($row->endtime > 0 && $row->endtime <= $now){
 			return response()->json(['code' => 401, 'msg' => '授权已过期!']);
 		}
-		return response()->json(['code' => 200, 'msg' => '成功!', 'key' => $row->key]);
+		return response()->json(['code' => 200, 'msg' => '成功!', 'key' => $row->key, 'endtime' => (int)$row->endtime]);
 	}
 }
