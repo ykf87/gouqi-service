@@ -191,7 +191,8 @@ class SigninsController extends Controller{
 						->where("$t2.main_status", 1)
 						->whereRaw("if($t1.start_time > 0, start_time <= $now, true)")
 						->whereRaw("if($t1.end_time > 0, end_time > $now, true)")
-						->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
+						->inRandomOrder()->limit($limit)->forPage($page)->get();
+						// ->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
 		if(count($res) > 0){
 			$arr['list']	= $res;
 		}else{
