@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Collection;
 use App\Models\Address;
+use Illuminate\Support\Facades\Storage;
 
 class SigninsController extends Controller{
 	//签到首页
@@ -194,12 +195,17 @@ class SigninsController extends Controller{
 						->inRandomOrder()->limit($limit)->forPage($page)->get();
 						// ->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
 		if(count($res) > 0){
+			foreach($res as &$item){
+		        if(substr($item->cover, 0, 4) != 'http'){
+		            $item->cover    = Storage::disk('public')->url($item->cover);
+		        }
+		    }
 			$arr['list']	= $res;
 		}else{
 			return $this->error('暂无商品!');
 		}
 		return $this->success($arr);
-	}
+	}//Storage
 
 	// 商品详情
 	public function giveinfo(Request $request){
