@@ -193,7 +193,7 @@ class SigninsController extends Controller{
 						->whereRaw("if($t1.start_time > 0, start_time <= $now, true)")
 						->whereRaw("if($t1.end_time > 0, end_time > $now, true)")
 						// ->inRandomOrder()->limit($limit)->forPage($page)->get();
-						->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
+						->orderByDesc("$t1.sortby")->orderByDESC("$t2.id")->limit($limit)->forPage($page)->get();
 		if(count($res) > 0){
 			// foreach($res as &$item){
 		 //        if(substr($item->cover, 0, 4) != 'http'){
