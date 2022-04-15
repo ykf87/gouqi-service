@@ -195,11 +195,11 @@ class SigninsController extends Controller{
 						->inRandomOrder()->limit($limit)->forPage($page)->get();
 						// ->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
 		if(count($res) > 0){
-			foreach($res as &$item){
-		        if(substr($item->cover, 0, 4) != 'http'){
-		            $item->cover    = Storage::disk('public')->url($item->cover);
-		        }
-		    }
+			// foreach($res as &$item){
+		 //        if(substr($item->cover, 0, 4) != 'http'){
+		 //            $item->cover    = Storage::disk('public')->url($item->cover);
+		 //        }
+		 //    }
 			$arr['list']	= $res;
 		}else{
 			return $this->error('暂无商品!');
