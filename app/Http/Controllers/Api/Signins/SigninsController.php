@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Collection;
 use App\Models\Address;
+use Illuminate\Support\Facades\Storage;
 
 class SigninsController extends Controller{
 	//签到首页
@@ -174,8 +175,8 @@ class SigninsController extends Controller{
 	// 商品列表
 	public function giveaways(Request $request){
 		$now 	= time();
-		$page 	= (int)$request->input('page', 1);
-		$limit 	= (int)$request->input('limit', 10);
+		$page 	= (int)$request->get('page', 1);
+		$limit 	= (int)$request->get('limit', 10);
 		if($page < 1){
 			$page 	= 1;
 		}
@@ -189,16 +190,17 @@ class SigninsController extends Controller{
 						->rightJoin("$t2", "$t1.product_id", '=', "$t2.id")
 						->where("$t1.status", 1)
 						->where("$t2.main_status", 1)
-						->whereRaw("if($t1.start_time > 0, start_time <= $now, true)")
-						->whereRaw("if($t1.end_time > 0, end_time > $now, true)")
-						->orderByDesc("$t1.sortby")->limit($limit)->forPage($page)->get();
+						->whereRaw("if($t1.start_time > 0, start_time <= $now, 1)")
+						->whereRaw("if($t1.end_time > 0, end_time > $now, 1)")
+						// ->inRandomOrder()->limit($limit)->forPage($page)->get();
+						->orderByDesc("$t1.sortby")->orderByDESC("$t2.id")->limit($limit)->offset(($page-1)*$limit)->get();
 		if(count($res) > 0){
 			$arr['list']	= $res;
 		}else{
 			return $this->error('暂无商品!');
 		}
 		return $this->success($arr);
-	}
+	}//Storage
 
 	// 商品详情
 	public function giveinfo(Request $request){
