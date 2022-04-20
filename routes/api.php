@@ -32,6 +32,8 @@ Route::group([
 	Route::post('autojs', 'AutojsConteoller@index')->name('autojs');
 
 	Route::post('okexclient', 'OkexClientController@auth')->name('okex-auth');
+	
+	Route::post('xinliangxiang', 'AdbsCallbackController@xinliangxiang')->name('xinliangxiang');
 
     // 需要权限认证的请求
     Route::group([

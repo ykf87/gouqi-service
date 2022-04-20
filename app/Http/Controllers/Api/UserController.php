@@ -147,6 +147,37 @@ class UserController extends Controller{
 	 */
 	public function palied(Request $request){
 		$uid 			= $request->get('_uid');
+		$tid 			= $request->input('tid');
+		$tagid 			= $request->input('tagid');
+
+		$todayStart		= strtotime(date('Y-m-d 00:00:00'));
+    	$todayEnd 		= $todayStart + 86399;
+		if($tagid){
+			$goubi 		= Goubi::where('tagid', $tagid)->first();
+			if(!$goubi){
+				return $this->error('非法请求!');
+			}
+			if($tid != $goubi->tid){
+				return $this->error('非法请求.');
+			}
+			$task 		= Task::find($goubi->tid);
+			if(!$task){
+				return $this->error('非法请求');
+			}
+			$times 		= Adv::where('uid', $uid)->where('tid', $tid)->whereBetween('addtime', [$todayStart, $todayEnd])->count();
+			$rarr 		= [
+				'task' => [
+					'id' 	=> $task->id,
+					'title' => $task->title,
+					'max' 	=> $task->max,
+					'min' 	=> $task->min,
+					'prize' => $goubi->added,
+					'times' => $times,
+				],
+				'jifen' 	=> $goubi->added
+			];
+			return $this->success($rarr, __('广告播放成功!'));
+		}
 		// $type 			= (int)$request->get('type', 1);
 		// if(!$type){
 		// 	$type 		= 1;
@@ -165,21 +196,32 @@ class UserController extends Controller{
 		// }
 
 
-		$tid 		= $request->input('tid');
 		$task 		= Task::find($tid);
 		if(!$task){
 			return $this->error('非法请求');
 		}
 
-		$todayStart		= strtotime(date('Y-m-d 00:00:00'));
-    	$todayEnd 		= $todayStart + 86399;
+		//获取最后一次广告增益数据
+		$last 		= Adv::where('uid', $uid)->orderByDesc('id')->first();
+		if((time() - $last->addtime) <= 10){
+			return $this->error('请求太频繁!');
+		}
+
 		$times 			= Adv::where('uid', $uid)->where('tid', $tid)->whereBetween('addtime', [$todayStart, $todayEnd])->count();
+		// $advObj 		= Adv::insert(['uid' => $uid, 'addtime' => time(), 'tid' => $tid, 'status' => 0, 'type' => 1, 'biadd' => 1]);
+		$advObj 			= new Adv;
+		$advObj->uid 		= $uid;
+		$advObj->addtime 	= time();
+		$advObj->tid 		= $tid;
+		$advObj->status		= 0;
+		$advObj->type 		= 1;
+		$advObj->biadd 		= 1;
+		$advObj->save();
+
 		if($times >= $task->max){
-			Adv::insert(['uid' => $uid, 'addtime' => time(), 'tid' => $tid, 'status' => 0, 'type' => 1]);
 			return $this->error('任务已完成!');
 		}
 
-		Adv::insert(['uid' => $uid, 'addtime' => time(), 'tid' => $tid, 'status' => 1, 'type' => 1]);
 		$times++;
 		$add 			= 0;
 		if($task->min <= $times){
@@ -190,16 +232,16 @@ class UserController extends Controller{
 			}else{
 				$tm 			= date('Y-m-d H:i:s');
 				$add 			= $task->prize;
-				Goubi::insert(['id' => $uid, 'tid' => $tid, 'added' => $task->prize, 'created_at' => $tm, 'updated_at' => $tm]);
+				Goubi::insert(['id' => $uid, 'tid' => $tid, 'added' => $add, 'created_at' => $tm, 'updated_at' => $tm, 'advid' => $advObj->id]);
 			}
 		}
 
 		$rarr 		= [
 			'task' => [
-				'id' => $task->id,
+				'id' 	=> $task->id,
 				'title' => $task->title,
-				'max' => $task->max,
-				'min' => $task->min,
+				'max' 	=> $task->max,
+				'min' 	=> $task->min,
 				'prize' => $task->prize,
 				'times' => $times,
 			],
