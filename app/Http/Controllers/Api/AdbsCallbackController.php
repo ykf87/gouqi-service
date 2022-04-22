@@ -10,6 +10,7 @@ use App\Models\Goubi;
 
 class AdbsCallbackController extends Controller{
 	public function xinliangxiang(Request $request){
+		file_put_contents(__DIR__ . '/yuyun.txt', json_encode($request->all()));
 		$appSec 	= 'FYJo5V7G83U7C2POcBMlbyGkrW3s1hHu';
 		$time 		= $request->input('time');
 		$sign 		= $request->input('sign');
