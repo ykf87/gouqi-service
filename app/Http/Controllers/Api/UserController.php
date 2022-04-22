@@ -176,7 +176,7 @@ class UserController extends Controller{
 				],
 				'jifen' 	=> $goubi->added
 			];
-			return $this->success($rarr, __('广告播放成功!'));
+			return $this->success($rarr, __('广告播放成功!!'));
 		}
 		// $type 			= (int)$request->get('type', 1);
 		// if(!$type){
@@ -203,7 +203,7 @@ class UserController extends Controller{
 
 		//获取最后一次广告增益数据
 		$last 		= Adv::where('uid', $uid)->orderByDesc('id')->first();
-		if((time() - $last->addtime) <= 10){
+		if($last && (time() - $last->addtime) <= 10){
 			return $this->error('请求太频繁!');
 		}
 
