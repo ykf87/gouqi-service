@@ -155,7 +155,7 @@ class UserController extends Controller{
 		if($tagid){
 			$goubi 		= Goubi::where('tagid', $tagid)->first();
 			if(!$goubi){
-				return $this->error('非法请求!');
+				return $this->error('未找到广告!');
 			}
 			if($tid != $goubi->tid){
 				return $this->error('非法请求.');
