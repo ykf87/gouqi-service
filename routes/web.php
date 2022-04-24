@@ -69,6 +69,25 @@ Route::get('/agreement', function () {
     return view('agreement', $cont);
 });
 
+// 抽奖
+Route::group([
+	'prefix'		=> 'sweepstake/',
+	'namespace'		=> 'App\Http\Controllers\sweepstake',
+    'as'            => 'sweepstake.'
+], function(){
+	// Route::group([
+	//     'middleware'    => ['jwt'],
+	// ], function(){
+ //    	Route::post('choose', 'SigninsController@choose')->name('choose');
+	//     Route::post('signe', 'SigninsController@signe')->name('signe');
+	//     Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
+	//     Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
+ //    	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
+ //    	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
+	// });
+	Route::get('', 'SweepstakeController@index')->name('index');
+});
+
 
 // 采集完成后做替换等操作
 //{"https://nan.99.com.cn/changshi/":{"func":"get99","last":""}}

@@ -100,6 +100,6 @@ Route::group([
 	    	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
 	    	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
 		});
-		Route::post('', 'SweepstakeController@signed')->name('index');
+		Route::post('', 'SweepstakeController@index')->name('index');
 	});
 });
