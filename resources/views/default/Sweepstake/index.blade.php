@@ -24,7 +24,7 @@
 	</div>
 </div>
 <div class="contents">
-	<div class="contBg">sfsdf</div>
+	<div class="contBg">sfsdfzzzz</div>
 </div>
 
 <script type="text/javascript">

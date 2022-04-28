@@ -224,6 +224,7 @@ class UserController extends Controller{
 
 		$times++;
 		$add 			= 0;
+		$msg 			= '奖励发放成功!';
 		if($task->min <= $times){
 			$jifenHistory 		= Goubi::where('id', $uid)->where('tid', $tid)->whereBetween('created_at', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])->count();
 			$maxTimes 			= ceil($task->max / $task->min);
@@ -234,6 +235,9 @@ class UserController extends Controller{
 				$add 			= $task->prize;
 				Goubi::insert(['id' => $uid, 'tid' => $tid, 'added' => $add, 'created_at' => $tm, 'updated_at' => $tm, 'advid' => $advObj->id]);
 			}
+		}else{
+			$cha 	= $task->min - $times;
+			$msg 	= '再完成 ' . $cha . ' 次获得 ' . $task->prize . ' 币';
 		}
 
 		$rarr 		= [
@@ -247,7 +251,7 @@ class UserController extends Controller{
 			],
 			'jifen' 	=> $add
 		];
-		return $this->success($rarr, __('广告播放成功!'));
+		return $this->success($rarr, $msg);
 		// return $this->success([], __('奖励成功!'));
 	}
 

@@ -5,7 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SweepstakeProduct extends Model
-{
-    use HasFactory;
+class SweepstakeProduct extends Model{
+	use HasFactory;
+	public static function list($page = 1, $limit = 10){
+		$t1 	= 'products';
+		$t2 	= 'sweepstake_products';
+		$now 	= time();
+		return self::select("$t1.title", "$t1.price", "$t1.sale", "$t1.cover", "$t1.main_sendout", "$t2.stocks")
+			->rightJoin($t1, "$t1.id", '=', "$t2.id")
+			->where("$t1.main_status", 1)->where("$t2.status", 1)
+			->whereRaw("if($t2.start > 0, $t2.start <= $now, 1)")
+			->whereRaw("if($t2.end > 0, $t2.end > $now, 1)")
+			->orderByDesc("$t2.orderby")->orderByDESC("$t1.id")->limit($limit)->offset(($page-1)*$limit);
+	}
 }

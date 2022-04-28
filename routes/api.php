@@ -84,22 +84,22 @@ Route::group([
 	    Route::get('giveinfo', 'SigninsController@giveinfo')->name('giveinfo');
 	});
 
-    // 抽奖
-    Route::group([
-    	'prefix'		=> 'sweepstake/',
-    	'namespace'		=> 'sweepstake',
-	    'as'            => 'sweepstake.'
-	], function(){
-		Route::group([
-		    'middleware'    => ['jwt'],
-		], function(){
-	    	Route::post('choose', 'SigninsController@choose')->name('choose');
-		    Route::post('signe', 'SigninsController@signe')->name('signe');
-		    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
-		    Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
-	    	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
-	    	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
-		});
-		Route::post('', 'SweepstakeController@index')->name('index');
-	});
+ //    // 抽奖
+ //    Route::group([
+ //    	'prefix'		=> 'sweepstake/',
+ //    	'namespace'		=> 'sweepstake',
+	//     'as'            => 'sweepstake.'
+	// ], function(){
+	// 	Route::group([
+	// 	    'middleware'    => ['jwt'],
+	// 	], function(){
+	//     	Route::post('choose', 'SigninsController@choose')->name('choose');
+	// 	    Route::post('signe', 'SigninsController@signe')->name('signe');
+	// 	    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
+	// 	    Route::post('giveuncollection', 'SigninsController@giveuncollection')->name('giveuncollection');
+	//     	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
+	//     	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
+	// 	});
+	// 	Route::post('', 'SweepstakeController@index')->name('index');
+	// });
 });
