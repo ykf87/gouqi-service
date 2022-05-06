@@ -72,7 +72,7 @@ Route::get('/agreement', function () {
 // 抽奖
 Route::group([
 	'prefix'		=> 'sweepstake/',
-	'namespace'		=> 'App\Http\Controllers\sweepstake',
+	'namespace'		=> 'App\Http\Controllers\Sweepstake',
     'as'            => 'sweepstake.'
 ], function(){
 	// Route::group([
