@@ -16,6 +16,10 @@
 		.flex{
 			display: flex;
 		}
+		.flexv{
+			display: flex;
+			flex-direction: row-reverse;
+		}
 		.flex.v{
 			align-items: center;
 		}
@@ -33,8 +37,9 @@
 			height: 3.5rem;
 			z-index: 99;
 			line-height: 3.5rem;
-			background: linear-gradient(to bottom,#fafafa,#e5e5e5);
-			color: #777;
+			/*background: linear-gradient(to bottom,#fafafa,#e5e5e5);*/
+			background: transparent;
+			color: #f0f0f0;
 		}
 		.header-back  .icon-back{
 			padding: 0 0.8rem 0 1.2rem;
@@ -48,6 +53,8 @@
 			font-size: 1.6rem;
 			font-weight: bold;
 			font-family: "楷体";
+			background: url();
+			background-repeat: no-repeat;
 		}
 	</style>
 	<meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
