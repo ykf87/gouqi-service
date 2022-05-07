@@ -2,6 +2,7 @@
 @section('title', '抽奖')
 
 @section('body')
+<script src="https://cdn.jsdelivr.net/npm/lucky-canvas@1.7.20"></script>
 <style type="text/css">
 body{
 	background: #19124F;
@@ -47,12 +48,14 @@ body{
    transform-origin: 50% 100%;
 }
 .fan-text{
-	/*width: 100px;
-    height: 200px;
-    border: 1px solid black;
-    border-radius: 0 100% 100% 0/50%;
-    border-left: none;*/
-	background-color: #F0E8FC;
+	position: absolute;
+	width: 100%;
+	height: 80%;
+	margin-top: 3px;
+	clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+	-webkit-clip-path: -webkit-polygon(50% 100%, 0% 0%, 100% 0%);
+	transform-origin: 50% 100%;
+	border-radius: 58% 50% 0 0;
 }
 .container .fan-blade:nth-child(1){
     transform: rotateZ(45deg);
@@ -80,7 +83,11 @@ body{
 }
 
 .container .fan-blade:nth-child(odd){
-    background-color: #F0E8FC;
+    background-color: #B7AAF9;
+    color: #fff;
+}
+.container .fan-blade:nth-child(odd) .fan-text{
+	background: #EFE8FD;
 }
 .container .fan-blade:nth-child(even){
     background-color: #ffffff;
@@ -108,7 +115,7 @@ body{
     top: 4px;
     width: 12px;
     height: 12px;
-    border-radius: 50%;
+    border-radius: 50% 50% 0 0;
 	z-index: 9999;
     
 }
@@ -225,7 +232,8 @@ body{
 	<div class="aaabbs">
 		<div class="container">
 			<div class="content">
-				<div class="fan-blade">
+				<div class="fan-blade" style="text-align: center;">
+					<div style="margin-top: 3px;">车票红包</div>
 					<div class="fan-text">现金</div>
 					<div class="fan-img"></div>
 				</div>
@@ -254,7 +262,32 @@ body{
 	</div>
 </div>
 
+<div id="my-lucky"></div>
+
 <script type="text/javascript">
+const myLucky = new LuckyCanvas.LuckyWheel('#my-lucky', {
+    width: '200px',
+    height: '200px',
+    blocks: [{ padding: '13px', background: '#617df2' }],
+    prizes: [
+      { fonts: [{ text: '手机', top: '10%', fontSize: 12, fontColor:'#ffffff' }], background: '#B7AAF9' },
+      { fonts: [{ text: '1', top: '10%' }], background: '#b8c5f2' },
+      { fonts: [{ text: '2', top: '10%' }], background: '#e9e8fe' },
+      { fonts: [{ text: '3', top: '10%' }], background: '#b8c5f2' },
+      { fonts: [{ text: '4', top: '10%' }], background: '#e9e8fe' },
+      { fonts: [{ text: '5', top: '10%' }], background: '#b8c5f2' },
+    ],
+    buttons:[{
+    	radius: 20,
+    	pointer: true,
+    	background: '#ffffff',
+    	fonts: [{
+    		text:'开始',
+    		fontSize: 12,
+    	}]
+    }]
+  })
+myLucky.init();
 //设置一个选择器
 // let $ = function(selector){return document.querySelectorAll(selector)};
 
