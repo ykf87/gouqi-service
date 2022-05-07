@@ -56,6 +56,7 @@ body{
 	-webkit-clip-path: -webkit-polygon(50% 100%, 0% 0%, 100% 0%);
 	transform-origin: 50% 100%;
 	border-radius: 50% 50% 0 0;
+	font-size: 1.4rem;
 }
 svg{
 	overflow: visible;
@@ -273,57 +274,24 @@ svg{
 		</div>
 	</div>
 </div>
-
-<!-- <div id="my-lucky"></div> -->
-
 <script type="text/javascript">
-// const myLucky = new LuckyCanvas.LuckyWheel('#my-lucky', {
-//     width: '300px',
-//     height: '300px',
-//     blocks: [{ padding: '13px', background: '#617df2' }],
-//     prizes: [
-//       { fonts: [{ text: '手机手机手机', top: '10%', fontSize: 12, fontColor:'#ffffff' }], background: '#B7AAF9' },
-//       { fonts: [{ text: '1', top: '10%' }], background: '#b8c5f2' },
-//       { fonts: [{ text: '2', top: '10%' }], background: '#e9e8fe' },
-//       { fonts: [{ text: '3', top: '10%' }], background: '#b8c5f2' },
-//       { fonts: [{ text: '4', top: '10%' }], background: '#e9e8fe' },
-//       { fonts: [{ text: '5', top: '10%' }], background: '#b8c5f2' },
-//     ],
-//     buttons:[{
-//     	radius: 20,
-//     	pointer: true,
-//     	background: '#ffffff',
-//     	fonts: [{
-//     		text:'开始',
-//     		fontSize: 12,
-//     	}]
-//     }]
-//   })
-// myLucky.init();
-//设置一个选择器
-// let $ = function(selector){return document.querySelectorAll(selector)};
+$(document).ready(function(){
+	
+});
+
 
 let num = 8             					//个数
 let diameter = $('.container').width()      //转盘直径
 $('.container').height(diameter);
-
 let width = 0           //扇叶元素宽度
 let deg = 360 / num     //每一叶的旋转角度
-
 width = diameter * Math.tan((deg/2) * Math.PI/180)
-
-// $('.fan-blade').forEach(e=>{
-//     e.style.width = width + 'px'
-// })
 $('.fan-blade').each(function(){
 	$(this).css('width', width + 'px');
 	let svg 	= $(this).find('svg');
 	let txt 	= svg.find('tspan').text();
 	let txtLen 	= getLen(txt);
 	console.log(width - (txtLen * 12));
-
-	// var mvx		= txtLen
-	// svg.children('path').attr('d', 'M10 16 C 40 7, 60 7, 90 16.4');
 });
 
 $('.icon-iconfont-wenhao').click(function(){
