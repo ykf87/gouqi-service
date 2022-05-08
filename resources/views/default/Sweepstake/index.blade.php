@@ -338,7 +338,7 @@ svg{
 		<div class="flex v c">
 			<svg viewBox="0 0 100 20">
 				<path d="M10 25 C 40 11, 60 11, 90 24" fill="transparent" id="circle" />
-				<text font-size="9" text-anchor="middle">
+				<text text-anchor="middle" font-size="7">
 					<textPath xlink:href="#circle" startOffset="50%">
 						<tspan class="txt">%s</tspan>
 					</textPath>
