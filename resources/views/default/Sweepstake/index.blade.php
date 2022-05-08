@@ -7,6 +7,7 @@
 body{
 	background: #19124F;
 	color: #000;
+	font-size: 62.5%;
 }
 .contents{
 	margin-top: 3.5rem;
@@ -37,7 +38,7 @@ body{
    justify-content: center;
    border-radius: 50%;
    overflow: hidden;
-   animation: scccontent 180s linear infinite;
+   animation: scccontent 240s linear infinite;
 }
 .fan-blade{
    position: absolute;
@@ -73,8 +74,8 @@ body{
 	margin-bottom: 10px;
 }
 .fan-text i{
-	color: rgba(183,170,249,0.4);
-	font-size: 1.2rem;
+	color: rgba(183,170,249,0.6);
+	font-size: 1.4rem;
 }
 .fan-text > .flex{
 	height: 40%;
@@ -273,10 +274,27 @@ svg{
 	top: -10px;
 	width: 0;
 	height: 0;
+	background: transparent;
+
+	-moz-border-bottom: 15px solid #E771D6;
+	-moz-border-left: 15px solid transparent;
+	-moz-border-right: 15px solid transparent;
+
+	-khtml-border-bottom: 15px solid #E771D6;
+	-khtml-border-left: 15px solid transparent;
+	-khtml-border-right: 15px solid transparent;
+
+	-ms-border-bottom: 15px solid #E771D6;
+	-ms-border-left: 15px solid transparent;
+	-ms-border-right: 15px solid transparent;
+
+	-webkit-border-bottom: 15px solid #E771D6;
+	-webkit-border-left: 15px solid transparent;
+	-webkit-border-right: 15px solid transparent;
+
 	border-bottom: 15px solid #E771D6;
 	border-left: 15px solid transparent;
 	border-right: 15px solid transparent;
-	background: transparent;
 }
 .start > div{
 	width: 80%;
@@ -339,44 +357,7 @@ svg{
 	</div>
 </div>
 <script type="text/javascript">
-var prize = [
-	{
-		title: '谢谢',
-		text: '谢谢参与',
-		gailv: 30
-	},{
-		title: '迷你风扇卡通棒棒糖',
-		proimg: 'https://gd1.alicdn.com/imgextra/i2/2516716652/O1CN01ymuwOb1z0fKiYN20M_!!2516716652.jpg_400x400.jpg',
-		gailv: 0,
-		change: true
-	},{
-		title: '10省币',
-		icon: 'iconfont icon-jinbi2',
-		gailv: 10
-	},{
-		title: '谢谢',
-		text: '谢谢参与',
-		gailv: 30
-	},{
-		title: '儿童护眼小台灯',
-		proimg: 'https://gd3.alicdn.com/imgextra/i2/266501151/O1CN01bpfrDQ1KNCYGKvx4a_!!266501151.jpg_400x400.jpg',
-		gailv: 0,
-		change: true
-	},{
-		title: '50省币',
-		icon: 'iconfont icon-jinbi2',
-		gailv: 10
-	},{
-		title: '谢谢',
-		text: '谢谢参与',
-		gailv: 30
-	},{
-		title: '儿童护眼小台灯',
-		proimg: 'https://gd3.alicdn.com/imgextra/i2/266501151/O1CN01bpfrDQ1KNCYGKvx4a_!!266501151.jpg_400x400.jpg',
-		gailv: 10,
-		change: true
-	}
-];
+var prize = <?php echo json_encode($prize);?>;
 $(document).ready(function(){
 	let lite 		= $('.lights-content');
 	let cont 		= $('.content');
@@ -386,7 +367,7 @@ $(document).ready(function(){
 	for(var i = 0; i < l; i++){
 		liteHtml 	+= '<div class="lights"><div class="light"></div></div>';
 		let pp 		= prize[i];
-		contHtml 	+= '<div class="fan-blade"><div class="ttxt"><svg viewBox="0 0 100 20"><path d="M10 25 C 40 11, 60 11, 90 24" fill="transparent" id="circle" /><text font-size="12" text-anchor="middle"><textPath xlink:href="#circle" startOffset="50%"><tspan>'+pp.title+'</tspan></textPath></text></svg></div><div class="fan-text">';
+		contHtml 	+= '<div class="fan-blade"><div class="ttxt"><svg viewBox="0 0 100 20"><path d="M10 23 C 40 11, 60 11, 90 23" fill="transparent" id="circle" /><text font-size="12" text-anchor="middle"><textPath xlink:href="#circle" startOffset="50%"><tspan>'+pp.title+'</tspan></textPath></text></svg></div><div class="fan-text">';
 
 		if(typeof(pp['text']) != 'undefined'){
 			let zz 	= $('#v-svgs').html();
@@ -400,7 +381,6 @@ $(document).ready(function(){
 			zz 		= zz.replace('%s', pp['proimg']);
 			contHtml	+= zz;
 		}
-
 		contHtml	+= '</div></div>';
 	}
 	lite.html(liteHtml);
