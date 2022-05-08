@@ -37,7 +37,7 @@ body{
    justify-content: center;
    border-radius: 50%;
    overflow: hidden;
-   animation: scccontent 20s linear infinite;
+   animation: scccontent 180s linear infinite;
 }
 .fan-blade{
    position: absolute;
@@ -46,17 +46,38 @@ body{
    clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
    -webkit-clip-path: -webkit-polygon(50% 100%, 0% 0%, 100% 0%);
    transform-origin: 50% 100%;
+   text-align: center;
+}
+.fan-blade .ttxt{
+	font-size: 0;
 }
 .fan-text{
 	position: absolute;
 	width: 170%;
 	height: 100%;
-	margin-left: -36%;
+	margin-left: -35%;
 	clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
 	-webkit-clip-path: -webkit-polygon(50% 100%, 0% 0%, 100% 0%);
 	transform-origin: 50% 100%;
 	border-radius: 50% 50% 0 0;
 	font-size: 1.4rem;
+}
+.fan-text img{
+	max-width: 25%;
+	max-height: 25%;
+	text-align: center;
+	border-radius: 8px;
+	overflow: hidden;
+	margin-top: 15px;
+	/*box-shadow: 0px 0px 15px #777;*/
+	margin-bottom: 10px;
+}
+.fan-text i{
+	color: rgba(183,170,249,0.4);
+	font-size: 1.2rem;
+}
+.fan-text > .flex{
+	height: 40%;
 }
 svg{
 	overflow: visible;
@@ -94,8 +115,22 @@ svg{
 	background: #EFE8FD;
 }
 .container .fan-blade:nth-child(even){
-    background-color: #ffffff;
+    background-color: #EFE7FC;
 }
+.container .fan-blade:nth-child(even) .fan-text{
+	background: #ffffff;
+	color: #9F86D7;
+}
+.container .fan-blade:nth-child(odd) svg text{
+	fill: white;
+}
+.container .fan-blade:nth-child(odd) .fan-text svg text{
+	fill: tan;
+}
+.container .fan-blade:nth-child(even) svg text{
+	fill: #9F86D7;
+}
+
 .lights-content{
     position: absolute;
     top: 0;
@@ -222,6 +257,42 @@ svg{
 		background-color: #ffffff;
 	}
 }
+.start{
+	width: 20%;
+	height: 20%;
+	border-radius: 50%;
+	background: linear-gradient(#E771D6, #6054E1);
+	position: absolute;
+	left: 40%;
+	top: 40%;
+	z-index: 99999;
+	box-shadow: 0 0 20px #9D61DC;
+}
+.start > .jiantou{
+	position: absolute;
+	top: -10px;
+	width: 0;
+	height: 0;
+	border-bottom: 15px solid #E771D6;
+	border-left: 15px solid transparent;
+	border-right: 15px solid transparent;
+	background: transparent;
+}
+.start > div{
+	width: 80%;
+	height: 80%;
+	margin: 0 auto;
+	background: rgba(255,255,255,0.2);
+	border-radius: 50%;
+	color: #fff;
+	font-weight: bold;
+	font-size: 18px;
+}
+.fan-text i.icon-jinbi2{
+	color: #FBCE33;
+	font-size: 3rem;
+	margin-top: 16px;
+}
 </style>
 <div class="header-back">
 	<div class="flex v">
@@ -235,63 +306,120 @@ svg{
 <div class="contents">
 	<div class="aaabbs">
 		<div class="container">
-			<div class="content">
-				<div class="fan-blade" style="text-align: center;">
-					<div style="font-size: 0;">
-						<svg viewBox="0 0 100 12">
-							<path d="M10 16 C 40 6.5, 60 6.5, 90 16.4" fill="transparent" id="circle" />
-							<text style="fill:white;" font-size="8" text-anchor="middle">
-								<textPath xlink:href="#circle" startOffset="50%">
-									<tspan>现金</tspan>
-								</textPath>
-							</text>
-						</svg>
-					</div>
-					<div class="fan-text">现金</div>
-					<div class="fan-img"></div>
-				</div>
-				<div class="fan-blade">
-					<div class="fan-text">现金</div>
-					<div class="fan-img"></div>
-				</div>
-				<div class="fan-blade"></div>
-				<div class="fan-blade"></div>
-				<div class="fan-blade"></div>
-				<div class="fan-blade"></div>
-				<div class="fan-blade"></div>
-				<div class="fan-blade"></div>
+			<div class="start flex v c">
+				<div class="jiantou"></div>
+				<div class="flex v c">开始</div>
 			</div>
-			<div class="lights-content">
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-				<div class="lights"><div class="light"></div></div>
-			</div>
+			<div class="content"></div>
+			<div class="lights-content"></div>
 		</div>
 	</div>
 </div>
+<div style="display: none;">
+	<div id="v-svgs">
+		<div class="flex v c">
+			<svg viewBox="0 0 100 20">
+				<path d="M10 25 C 40 11, 60 11, 90 24" fill="transparent" id="circle" />
+				<text font-size="9" text-anchor="middle">
+					<textPath xlink:href="#circle" startOffset="50%">
+						<tspan class="txt">%s</tspan>
+					</textPath>
+				</text>
+			</svg>
+		</div>
+	</div>
+	<div id="v-icon">
+		<div class="flex v c">
+			<i class="iconfont icon-jinbi2"></i>
+		</div>
+	</div>
+	<div id="v-pros">
+		<img src="%s">
+		<div><i class="iconfont icon-refresh"></i></div>
+	</div>
+</div>
 <script type="text/javascript">
+var prize = [
+	{
+		title: '谢谢',
+		text: '谢谢参与',
+		gailv: 30
+	},{
+		title: '迷你风扇卡通棒棒糖',
+		proimg: 'https://gd1.alicdn.com/imgextra/i2/2516716652/O1CN01ymuwOb1z0fKiYN20M_!!2516716652.jpg_400x400.jpg',
+		gailv: 0,
+		change: true
+	},{
+		title: '10省币',
+		icon: 'iconfont icon-jinbi2',
+		gailv: 10
+	},{
+		title: '谢谢',
+		text: '谢谢参与',
+		gailv: 30
+	},{
+		title: '儿童护眼小台灯',
+		proimg: 'https://gd3.alicdn.com/imgextra/i2/266501151/O1CN01bpfrDQ1KNCYGKvx4a_!!266501151.jpg_400x400.jpg',
+		gailv: 0,
+		change: true
+	},{
+		title: '50省币',
+		icon: 'iconfont icon-jinbi2',
+		gailv: 10
+	},{
+		title: '谢谢',
+		text: '谢谢参与',
+		gailv: 30
+	},{
+		title: '儿童护眼小台灯',
+		proimg: 'https://gd3.alicdn.com/imgextra/i2/266501151/O1CN01bpfrDQ1KNCYGKvx4a_!!266501151.jpg_400x400.jpg',
+		gailv: 10,
+		change: true
+	}
+];
 $(document).ready(function(){
-	
-});
+	let lite 		= $('.lights-content');
+	let cont 		= $('.content');
+	let l 			= prize.length;
+	let liteHtml 	= '';
+	let contHtml 	= '';
+	for(var i = 0; i < l; i++){
+		liteHtml 	+= '<div class="lights"><div class="light"></div></div>';
+		let pp 		= prize[i];
+		contHtml 	+= '<div class="fan-blade"><div class="ttxt"><svg viewBox="0 0 100 20"><path d="M10 25 C 40 11, 60 11, 90 24" fill="transparent" id="circle" /><text font-size="12" text-anchor="middle"><textPath xlink:href="#circle" startOffset="50%"><tspan>'+pp.title+'</tspan></textPath></text></svg></div><div class="fan-text">';
+
+		if(typeof(pp['text']) != 'undefined'){
+			let zz 	= $('#v-svgs').html();
+			zz 		= zz.replace('%s', pp['text']);
+			contHtml	+= zz;
+		}else if(typeof(pp['icon']) != 'undefined'){
+			let zz 	= $('#v-icon').html();
+			contHtml	+= zz;
+		}else if(typeof(pp['proimg']) != 'undefined'){
+			let zz 	= $('#v-pros').html();
+			zz 		= zz.replace('%s', pp['proimg']);
+			contHtml	+= zz;
+		}
+
+		contHtml	+= '</div></div>';
+	}
+	lite.html(liteHtml);
+	cont.html(contHtml);
 
 
-let num = 8             					//个数
-let diameter = $('.container').width()      //转盘直径
-$('.container').height(diameter);
-let width = 0           //扇叶元素宽度
-let deg = 360 / num     //每一叶的旋转角度
-width = diameter * Math.tan((deg/2) * Math.PI/180)
-$('.fan-blade').each(function(){
-	$(this).css('width', width + 'px');
-	let svg 	= $(this).find('svg');
-	let txt 	= svg.find('tspan').text();
-	let txtLen 	= getLen(txt);
-	console.log(width - (txtLen * 12));
+	let num = 8             					//个数
+	let diameter = $('.container').width()      //转盘直径
+	$('.container').height(diameter);
+	let width = 0           //扇叶元素宽度
+	let deg = 360 / num     //每一叶的旋转角度
+	width = diameter * Math.tan((deg/2) * Math.PI/180)
+	$('.fan-blade').each(function(){
+		$(this).css('width', width + 'px');
+		let svg 	= $(this).find('svg');
+		let txt 	= svg.find('tspan').text();
+		let txtLen 	= getLen(txt);
+		console.log(width - (txtLen * 12));
+	});
 });
 
 $('.icon-iconfont-wenhao').click(function(){

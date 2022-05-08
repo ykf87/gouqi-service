@@ -58,7 +58,7 @@
 		}
 	</style>
 	<meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_2311559_fnulq3qrerj.css">
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_2311559_8yif6ofxsql.css">
 	<link rel="stylesheet" href="{{ asset('layui/dist/css/layui.css') }}">
 	<script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
 	<script src="{{ asset('layui/dist/layui.js') }}"></script>
