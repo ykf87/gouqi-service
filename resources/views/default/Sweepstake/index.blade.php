@@ -31,14 +31,21 @@ body{
    margin: 0 auto;
 }
 .content{
-   position: relative;
-   width: 100%;
-   height: 100%;
-   display: flex;
-   justify-content: center;
-   border-radius: 50%;
-   overflow: hidden;
-   animation: scccontent 240s linear infinite;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	border-radius: 50%;
+	overflow: hidden;
+	animation: scccontent 240s linear infinite;
+	animation-fill-mode: forwards;
+}
+.content.starcj{
+	/*animation: scccontent 1s linear;*/
+	/*animation-play-state: paused;*/
+	animation: scccontentDoing 10s linear infinite;
+	animation-fill-mode: forwards;
 }
 .fan-blade{
    position: absolute;
@@ -201,6 +208,41 @@ svg{
 		transform: rotate(0deg);
 	}
 	to{
+		transform: rotate(360deg);
+	}
+}
+@keyframes scccontentDoing{
+	0%{
+		transform: rotate(0deg);
+	}
+	10%{
+		transform: rotate(360deg);
+	}
+	20%{
+		transform: rotate(360deg);
+	}
+	30%{
+		transform: rotate(360deg);
+	}
+	40%{
+		transform: rotate(360deg);
+	}
+	50%{
+		transform: rotate(180deg);
+	}
+	60%{
+		transform: rotate(360deg);
+	}
+	70%{
+		transform: rotate(180deg);
+	}
+	80%{
+		transform: rotate(360deg);
+	}
+	90%{
+		transform: rotate(180deg);
+	}
+	100%{
 		transform: rotate(360deg);
 	}
 }
@@ -399,6 +441,13 @@ $(document).ready(function(){
 		let txt 	= svg.find('tspan').text();
 		let txtLen 	= getLen(txt);
 		console.log(width - (txtLen * 12));
+	});
+
+	$('.start').click(function(){
+		//scccontentDoing
+		$('.content').addClass('starcj');
+		// var ppp 	= $('.content');
+		// ppp.css('animation-timing-function', 'scccontentDoing');
 	});
 });
 
