@@ -8,18 +8,16 @@ body{
 	background: linear-gradient(#19124F, #6054E1, #E771D6, #ffffff);
 	color: #000;
 	font-size: 62.5%;
+	max-height: 100vh;
 }
 img{
 	max-width: 100%;
 	max-height: 100%;
 }
 .contents{
-	margin-top: 3.5rem;
+	padding-top: 1.5rem;
 }
 
-.aaabbs{
-	padding-top: 30px;
-}
 .container{
    position: relative;
    width: 80%;
@@ -34,6 +32,7 @@ img{
    background: linear-gradient(#6054E1, #E771D6);
    margin: 0 auto;
    overflow: hidden;
+   color: #7F7BAF;
 }
 .content{
 	position: relative;
@@ -370,8 +369,32 @@ svg{
 .products .title{
 	margin-top: 5px;
 }
+.tips{
+	background: linear-gradient(#9C4BD5, #A3387B);
+	position: absolute;
+	right: 2px;
+	top: 0;
+	width: 40px;
+	height: auto;
+	color: #E78FF3;
+	border-radius: 0 0 30% 30%;
+	font-size: 1.6rem;
+	text-align: center;
+	padding: 4px 8px;
+	z-index: 99999;
+}
+.slogan{
+	padding-top: 4rem;
+	text-align: center;
+	color: #FFFFFF;
+	width: 100%;
+	opacity: .7;
+}
+.slogan img{
+	width: 45%;
+}
 </style>
-<div class="header-back">
+<!-- <div class="header-back">
 	<div class="flex v">
 		<i class="iconfont icon-back"></i>
 		<div class="flex c flex1">
@@ -379,6 +402,13 @@ svg{
 		</div>
 		<i class="iconfont icon-iconfont-wenhao"></i>
 	</div>
+	<div class="tips"></div>
+</div> -->
+<div class="showgeted"></div>
+<div class="tips">活动说明</div>
+<div class="slogan">
+	<img src="/image/bbg.png">
+	<span class="sdsf">sfsdfsf</span>
 </div>
 <div class="contents">
 	<div class="aaabbs">
@@ -517,7 +547,8 @@ function setProduct(pros){
 	}
 }
 
-$('.icon-iconfont-wenhao').click(function(){
+$('.tips').click(function(){
+	$('.sdsf').addClass('animate__backInRight');
 	layer.open({
 		title: '抽奖规则',
 		shade: 0.6,
