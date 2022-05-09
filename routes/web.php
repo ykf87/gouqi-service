@@ -86,6 +86,7 @@ Route::group([
  //    	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
 	// });
 	Route::get('', 'SweepstakeController@index')->name('index');
+	Route::post('products', 'SweepstakeController@products')->name('products');
 });
 
 

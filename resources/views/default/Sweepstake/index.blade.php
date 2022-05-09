@@ -5,9 +5,13 @@
 <script src="https://cdn.jsdelivr.net/npm/lucky-canvas@1.7.20"></script>
 <style type="text/css">
 body{
-	background: #19124F;
+	background: linear-gradient(#19124F, #6054E1, #E771D6, #ffffff);
 	color: #000;
 	font-size: 62.5%;
+}
+img{
+	max-width: 100%;
+	max-height: 100%;
 }
 .contents{
 	margin-top: 3.5rem;
@@ -29,6 +33,7 @@ body{
    padding: 20px;
    background: linear-gradient(#6054E1, #E771D6);
    margin: 0 auto;
+   overflow: hidden;
 }
 .content{
 	position: relative;
@@ -38,14 +43,16 @@ body{
 	justify-content: center;
 	border-radius: 50%;
 	overflow: hidden;
-	animation: scccontent 240s linear infinite;
-	animation-fill-mode: forwards;
+	/*transition: transform 3s cubic-bezier(.2,.93,.43,1);*/
+	/*animation: scccontent 240s linear infinite;*/
+	/*animation-fill-mode: forwards;*/
+}
+.content.nomal{
+	animation: scccontent 240s linear forwards infinite;
 }
 .content.starcj{
-	/*animation: scccontent 1s linear;*/
-	/*animation-play-state: paused;*/
-	animation: scccontentDoing 10s linear infinite;
-	animation-fill-mode: forwards;
+	/*animation: scccontentDoing .6s linear forwards infinite;*/
+	/*transform:rotateZ(0deg);*/
 }
 .fan-blade{
    position: absolute;
@@ -202,6 +209,16 @@ svg{
 	background-color: #ffffff;
 	animation: lottery_light2 1.4s ease-in-out infinite;
 }
+.lights-content.starcj .lights:nth-child(odd) .light{
+    box-shadow: 0 0 7.5px #FCD340;
+	background-color: #FCD340;
+	animation: lottery_light1 .15s ease-in-out infinite;
+}
+.lights-content.starcj .lights:nth-child(even) .light{
+    box-shadow: 0 0 7.5px #ffffff;
+	background-color: #ffffff;
+	animation: lottery_light2 .15s ease-in-out infinite;
+}
 
 @keyframes scccontent{
 	from{
@@ -215,35 +232,8 @@ svg{
 	0%{
 		transform: rotate(0deg);
 	}
-	10%{
-		transform: rotate(360deg);
-	}
-	20%{
-		transform: rotate(360deg);
-	}
-	30%{
-		transform: rotate(360deg);
-	}
-	40%{
-		transform: rotate(360deg);
-	}
-	50%{
-		transform: rotate(180deg);
-	}
-	60%{
-		transform: rotate(360deg);
-	}
-	70%{
-		transform: rotate(180deg);
-	}
-	80%{
-		transform: rotate(360deg);
-	}
-	90%{
-		transform: rotate(180deg);
-	}
 	100%{
-		transform: rotate(360deg);
+		transform: rotate(720deg);
 	}
 }
 
@@ -310,6 +300,8 @@ svg{
 	top: 40%;
 	z-index: 99999;
 	box-shadow: 0 0 20px #9D61DC;
+	/*transition: transform 3s cubic-bezier(.2,.93,.43,1);*/
+	/*transition: transform*/
 }
 .start > .jiantou{
 	position: absolute;
@@ -353,6 +345,31 @@ svg{
 	font-size: 3rem;
 	margin-top: 16px;
 }
+.products{
+	/*background: linear-gradient(#E771D6, #6054E1);*/
+	margin-top: 60px;
+	background: #ffffff;
+	box-shadow: 0 -30px 50px #E771D6;
+	color: #373737;
+	border-radius: 5px 5px 0 0;
+	padding-bottom: 50px;
+}
+.products > *{
+	width: 48.5%;
+	text-align: center;
+	margin: 20px 0 0 1%;
+}
+.products .proimg{
+	width: 100%;
+	height: 170px;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+}
+.products .title{
+	margin-top: 5px;
+}
 </style>
 <div class="header-back">
 	<div class="flex v">
@@ -370,11 +387,12 @@ svg{
 				<div class="jiantou"></div>
 				<div class="flex v c">开始</div>
 			</div>
-			<div class="content"></div>
+			<div class="content nomal"></div>
 			<div class="lights-content"></div>
 		</div>
 	</div>
 </div>
+<div class="products flex break"></div>
 <div style="display: none;">
 	<div id="v-svgs">
 		<div class="flex v c">
@@ -440,16 +458,40 @@ $(document).ready(function(){
 		let svg 	= $(this).find('svg');
 		let txt 	= svg.find('tspan').text();
 		let txtLen 	= getLen(txt);
-		console.log(width - (txtLen * 12));
 	});
 
 	$('.start').click(function(){
-		//scccontentDoing
-		$('.content').addClass('starcj');
-		// var ppp 	= $('.content');
-		// ppp.css('animation-timing-function', 'scccontentDoing');
+		$('.content,.lights-content').removeClass('nomal').addClass('starcj');
+		$('.content').css('transform', 'rotateZ(0deg)');
+		setTimeout(function(){
+			$('.content').css('transition', 'transform 7s cubic-bezier(.2,.93,.43,1)').css('transform', 'rotateZ(1885deg)');
+			setTimeout(function(){
+				$('.lights-content').removeClass('starcj');
+				$('.content').css('transition', '').removeClass('starcj');
+			}, 7000);
+		}, 10);
+	});
+
+
+	var page 	= 1;
+	$.post('<?php echo route('sweepstake.products');?>', {page: page}, function(r){
+		if(r.code == 200){
+			setProduct(r.data.list)
+		}
 	});
 });
+
+function setProduct(pros){
+	var p = $('.products');
+	for(var i in pros){
+		let op 		= pros[i];
+		let html 	= '<div><div class="proimg" style="background-image:url('+op['cover']+')"></div><div class="title">'+op['title']+'</div></div>';
+		p.append(html);
+		p.append(html);
+		p.append(html);
+		p.append(html);
+	}
+}
 
 $('.icon-iconfont-wenhao').click(function(){
 	layer.open({

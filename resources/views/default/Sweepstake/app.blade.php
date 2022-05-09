@@ -16,6 +16,9 @@
 		.flex{
 			display: flex;
 		}
+		.flex.break{
+			flex-wrap: wrap;
+		}
 		.flexv{
 			display: flex;
 			flex-direction: row-reverse;

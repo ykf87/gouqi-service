@@ -177,13 +177,23 @@ class User extends Model{
                     return false;
                 }
             }
+        }else{
+            $Bearer      = strtolower(substr($token, 0, 6));
+            if($Bearer != 'bearer'){
+                $token  = 'Bearer ' . $token;
+            }
         }
         try{
             $token      = substr($token, (strlen(self::$type)));
             if($token && substr_count($token, '.') >= 2){
-                $token      = $config->parser()->parse($token);
-                assert($token instanceof Plain);
-                return $token;
+                try {
+                    $token      = $config->parser()->parse($token);
+                    assert($token instanceof Plain);
+                    return $token;
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
+                    return false; 
+                }
             }
         }catch (\InvalidArgumentException $e){
             return false;
