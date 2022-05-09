@@ -348,7 +348,7 @@ svg{
 .products{
 	/*background: linear-gradient(#E771D6, #6054E1);*/
 	margin-top: 60px;
-	background: #ffffff;
+	background: rgba(255,255,255,0.85);
 	box-shadow: 0 -30px 50px #E771D6;
 	color: #373737;
 	border-radius: 5px 5px 0 0;
@@ -417,16 +417,31 @@ svg{
 	</div>
 </div>
 <script type="text/javascript">
-var prize = <?php echo json_encode($prize);?>;
+var prize 		= <?php echo json_encode($prize);?>;
+var prizelen	= prize.length;
+var page 		= 1;
 $(document).ready(function(){
+	draw(prize);
+
+	fmtZhuanPan(prizelen);
+	$('.start').click(function(){
+		startChouJiang();
+	});
+	getProduct();
+});
+$(window).resize(function(){
+	fmtZhuanPan(prizelen);
+});
+
+// 绘制转盘
+function draw(pri){
 	let lite 		= $('.lights-content');
 	let cont 		= $('.content');
-	let l 			= prize.length;
 	let liteHtml 	= '';
 	let contHtml 	= '';
-	for(var i = 0; i < l; i++){
+	for(var i = 0; i < prizelen; i++){
 		liteHtml 	+= '<div class="lights"><div class="light"></div></div>';
-		let pp 		= prize[i];
+		let pp 		= pri[i];
 		contHtml 	+= '<div class="fan-blade"><div class="ttxt"><svg viewBox="0 0 100 20"><path d="M10 23 C 40 11, 60 11, 90 23" fill="transparent" id="circle" /><text font-size="12" text-anchor="middle"><textPath xlink:href="#circle" startOffset="50%"><tspan>'+pp.title+'</tspan></textPath></text></svg></div><div class="fan-text">';
 
 		if(typeof(pp['text']) != 'undefined'){
@@ -445,9 +460,11 @@ $(document).ready(function(){
 	}
 	lite.html(liteHtml);
 	cont.html(contHtml);
+}
 
-
-	let num = 8             					//个数
+// 格式化转盘
+function fmtZhuanPan(num){
+	// let num = prizelen;        				//个数
 	let diameter = $('.container').width()      //转盘直径
 	$('.container').height(diameter);
 	let width = 0           //扇叶元素宽度
@@ -459,36 +476,43 @@ $(document).ready(function(){
 		let txt 	= svg.find('tspan').text();
 		let txtLen 	= getLen(txt);
 	});
+}
 
-	$('.start').click(function(){
-		$('.content,.lights-content').removeClass('nomal').addClass('starcj');
-		$('.content').css('transform', 'rotateZ(0deg)');
+// 开始抽奖
+var ischou 	= false;
+function startChouJiang(){
+	if(ischou == true){
+		return;
+	}
+	ischou	= true;
+	$('.content,.lights-content').removeClass('nomal').addClass('starcj');
+	$('.content').css('transform', 'rotateZ(0deg)');
+	setTimeout(function(){
+		$('.content').css('transition', 'transform 7s cubic-bezier(.2,.93,.43,1)').css('transform', 'rotateZ(1885deg)');
 		setTimeout(function(){
-			$('.content').css('transition', 'transform 7s cubic-bezier(.2,.93,.43,1)').css('transform', 'rotateZ(1885deg)');
-			setTimeout(function(){
-				$('.lights-content').removeClass('starcj');
-				$('.content').css('transition', '').removeClass('starcj');
-			}, 7000);
-		}, 10);
-	});
+			$('.lights-content').removeClass('starcj');
+			$('.content').css('transition', '').removeClass('starcj');
+			ischou	= false;
+		}, 7000);
+	}, 10);
+}
 
-
-	var page 	= 1;
+// 获取产品列表
+function getProduct(){
 	$.post('<?php echo route('sweepstake.products');?>', {page: page}, function(r){
 		if(r.code == 200){
-			setProduct(r.data.list)
+			page++;
+			setProduct(r.data.list);
 		}
 	});
-});
+}
 
+// 设置抽奖产品
 function setProduct(pros){
 	var p = $('.products');
 	for(var i in pros){
 		let op 		= pros[i];
 		let html 	= '<div><div class="proimg" style="background-image:url('+op['cover']+')"></div><div class="title">'+op['title']+'</div></div>';
-		p.append(html);
-		p.append(html);
-		p.append(html);
 		p.append(html);
 	}
 }
