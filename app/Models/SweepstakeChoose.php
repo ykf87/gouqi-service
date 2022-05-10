@@ -72,6 +72,7 @@ class SweepstakeChoose extends Model{
 				$userPrize[$item->index] 	= [
 					'title'		=> $item->title,
 					'proimg'	=> $img,
+					'id'		=> $item->pid,
 				];
 			}
 		}

@@ -9,11 +9,11 @@ use App\Models\SweepstakeChoose;
 use App\Models\User;
 use App\Models\Order;
 use Lcobucci\JWT\Token\Plain;
+session_start();
 
 class SweepstakeController extends Controller{
 	public function index(Request $request){
 		$token 	= $request->get('token');
-        session_start();
 		if($token){
 			$jwt        = User::decry($token);
 			if($jwt instanceof Plain){
@@ -43,7 +43,10 @@ class SweepstakeController extends Controller{
 
 	// 选择产品
 	public function product(Request $request){
-
+		$uid 	= $_SESSION['_uid'];
+		if($uid < 1){
+			return $this->error('请先登录!');
+		}
 	}
 
 	// 商品列表
@@ -60,7 +63,7 @@ class SweepstakeController extends Controller{
 		$t1		= 'sweepstake_products';
 		$t2 	= 'products';
 		$arr 	= [];
-		$res 	= SweepstakeProduct::select("$t2.id","$t2.cover","$t2.images","$t2.title","$t1.probability","$t2.main_sendout as sendout","$t1.max_own","$t2.sale")
+		$res 	= SweepstakeProduct::select("$t2.id","$t2.cover","$t2.images","$t2.title","$t1.probability","$t2.main_sendout as sendout","$t1.max_own","$t2.sale","$t1.stocks")
 						->rightJoin("$t2", "$t1.id", '=', "$t2.id")
 						->where("$t1.status", 1)
 						->where("$t2.main_status", 1)

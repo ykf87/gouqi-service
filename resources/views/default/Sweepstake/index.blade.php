@@ -382,22 +382,32 @@ svg{
 	text-align: left;
 	padding: 2px 6px;
 	font-weight: bold;
+	color: #989898;
+}
+.stock-price{
+	padding: 0 6px;
 }
 .pro-btns{
 	margin-top: 8px;
 	height: 30px;
 	background: #EFE7FC;
 	color: #9F86D7;
+	font-size: 1.4rem;
 }
 .products .sale{
-	color: brown;
+	color: #febb01;
 	font-weight: bold;
+	text-align: right;
 }
 .products .sale:before{
 	content: "\e616";
 	font-family: "iconfont";
 	font-size: 1.4rem;
 	margin-right: -3px;
+}
+.nostock{
+	background: #ccc;
+	color: darkgrey;
 }
 .tips{
 	background: linear-gradient(#9C4BD5, #A3387B);
@@ -541,15 +551,13 @@ svg{
 			<i class="iconfont icon-jinbi2"></i>
 		</div>
 	</div>
-	<div id="v-pros">
-		<img src="%s">
-		<div><i class="iconfont icon-refresh"></i></div>
-	</div>
 </div>
 <script type="text/javascript">
 var prize 		= <?php echo json_encode($prize);?>;
 var prizelen	= prize.length;
 var page 		= 1;
+var chooseProIndex 	= -1;
+var chooseProLen 	= 0;
 $(document).ready(function(){
 	draw(prize);
 
@@ -564,19 +572,30 @@ $(document).ready(function(){
 		showgetedFun();
 	}, 1000);
 
-	$('.icon-refresh').click(function(){
-		var ppp 	= $(this).closest('.fan-blade');
-		var index 	= ppp.index();
-		var product = $('.products');
-		layer.msg('请挑选您心仪的产品!');
-		$('html, body').stop().animate({
-			scrollTop: product.offset().top
-		}, 300);
-	});
+	// $('.icon-refresh').click(function(){
+	// 	var ppp 		= $(this).closest('.fan-blade');
+	// 	chooseProIndex 	= ppp.index();
+	// 	var product 	= $('.products');
+	// 	layer.msg('请挑选您心仪的产品!');
+	// 	$('html, body').stop().animate({
+	// 		scrollTop: product.offset().top
+	// 	}, 300);
+	// });
 });
 $(window).resize(function(){
 	fmtZhuanPan(prizelen);
 });
+
+// 选择产品按钮点击事件
+function choosePros(t){
+	var ppp 		= $(t).closest('.fan-blade');
+	chooseProIndex 	= ppp.index();
+	var product 	= $('.products');
+	layer.msg('请挑选您心仪的产品!');
+	$('html, body').stop().animate({
+		scrollTop: product.offset().top
+	}, 300);
+}
 
 // 左上角弹出层
 function showgetedFun(){
@@ -614,9 +633,11 @@ function draw(pri){
 			let zz 	= $('#v-icon').html();
 			contHtml	+= zz;
 		}else if(typeof(pp['proimg']) != 'undefined'){
-			let zz 	= $('#v-pros').html();
-			zz 		= zz.replace('%s', pp['proimg']);
-			contHtml	+= zz;
+			let pid 	= 0;
+			if(typeof(pp['id']) != 'undefined'){
+				pid 	= pp['id'];
+			}
+			contHtml 	+= '<img src="'+pp['proimg']+'"><div data-id="'+pid+'"><i class="iconfont icon-refresh" onclick="choosePros(this);"></i></div>';
 		}
 		contHtml	+= '</div></div>';
 	}
@@ -675,18 +696,22 @@ function setProduct(pros){
 	var p = $('.products');
 	for(var i in pros){
 		let op 		= pros[i];
-		let html 	= '<div>\
+		let html 	= '<div class="pro-box" data-id="'+op['id']+'">\
 			<div class="proimg" style="background-image:url('+op['cover']+')">\
 			</div>\
-			<div class="title flex v"><div class="flex1">'+op['title']+'</div><div class="sale">'+op['sale']+'</div></div>\
-			<div class="flex v pro-btns"><div class="flex1">我要这个</div></div>\
-		</div>';
+			<div class="title flex v"><div class="flex1">'+op['title']+'</div><div class="sale flex1">'+op['sale']+'</div></div>\
+			';
+		if(op['stocks'] > 0){
+			html 	+= '<div class="flex v pro-btns"><div class="flex1" onclick="iwantyou(this);">我要这个</div></div>';
+		}else{
+			html 	+= '<div class="flex v pro-btns nostock"><div class="flex1">库存不足</div></div>';
+		}
+		html 		+= '</div>';
 		p.append(html);
 	}
 }
 
 $('.tips').click(function(){
-	$('.sdsf').addClass('animate__backInRight');
 	layer.open({
 		title: '抽奖规则',
 		shade: 0.6,
@@ -705,6 +730,28 @@ function getLen(val){
    var chineseReg=/[^\x00=\xff]/g;
    var newVal=val.replace(chineseReg,'**');
    return newVal.length;
+}
+
+// 选中产品作为奖品
+function iwantyou(t){
+	if(chooseProIndex > -1){
+		var id 		= parseInt($(t).closest('.pro-box').attr('data-id'));
+		var pid 	= parseInt($(t).parent().attr('data-id'));
+		if(pid > 0){
+			layer.confirm('是否替换已选的产品?', function(){
+				$.post('<?php echo route('sweepstake.product');?>', {id: id, index: chooseProIndex}, function(r){
+					console.log(r);
+				});
+			});
+		}else{
+			$.post('<?php echo route('sweepstake.product');?>', {id: id, index: chooseProIndex}, function(r){
+				console.log(r);
+			});
+		}
+	}else{
+
+	}
+	chooseProIndex 	= -1;
 }
 
 // 观看视频
