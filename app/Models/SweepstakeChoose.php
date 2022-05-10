@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// use App\Models\Prize;
+use App\Models\SweepstakeProduct;
 
 class SweepstakeChoose extends Model{
 	use HasFactory;
@@ -57,12 +57,13 @@ class SweepstakeChoose extends Model{
 			return self::$prizes;
 		}
 		$userPrize 		= self::$prizes;
+		// dd($pros->toArray());
 		foreach($pros as $item){
-			if($item->stock < 1){
+			if($item->stocks < 1){
 				$outTimePros[]	= $item->pid;
-			}else if($item->start > $now || $item->end <= time()){
+			}else if(($item->start > 0 && $item->start > $now) || ($item->end > 0 && $item->end <= $now)){
 				$outTimePros[]	= $item->pid;
-			}elseif($item->stock < 1 || $item->main_stock < 1){
+			}elseif($item->stocks < 1 || $item->main_stock < 1){
 				$outTimePros[]	= $item->pid;
 			}else{
 				$img 			= $item->cover;
@@ -77,5 +78,39 @@ class SweepstakeChoose extends Model{
 			}
 		}
 		return $userPrize;
+	}
+
+	//添加用户选择的商品
+	public static function addpro($product, $uid, $index){
+		$obj 				= new SweepstakeChoose;
+		$obj->id 			= $uid;
+		$obj->pid 			= $product->id;
+		$obj->index 		= $index;
+		$obj->probability 	= $product->probability;
+		if($obj->save()){
+			$product->stocks 	= $product->stocks - 1;
+			return $product->save();
+		}
+		return false;
+	}
+
+	//更新已选择的商品
+	public static function updpro($product, $uid, $index){
+		$row 		= self::where('id', $uid)->where('index', $index)->first();
+		if(!$row){
+			return false;
+		}
+		$product->stocks 	= $product->stocks - 1;
+		if($product->save()){
+			$oriPro 	= SweepstakeProduct::find($row->pid)->first();
+			if($oriPro){
+				$oriPro->stocks 	= $oriPro->stocks+1;
+				$oriPro->save();
+			}
+			$row->pid 				= $product->id;
+			$row->probability		= $product->probability;
+			return $row->save();
+		}
+		return false;
 	}
 }

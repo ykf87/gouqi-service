@@ -637,7 +637,7 @@ function draw(pri){
 			if(typeof(pp['id']) != 'undefined'){
 				pid 	= pp['id'];
 			}
-			contHtml 	+= '<img src="'+pp['proimg']+'"><div data-id="'+pid+'"><i class="iconfont icon-refresh" onclick="choosePros(this);"></i></div>';
+			contHtml 	+= '<img src="'+pp['proimg']+'"><div class="fresh-pro" data-id="'+pid+'"><i class="iconfont icon-refresh" onclick="choosePros(this);"></i></div>';
 		}
 		contHtml	+= '</div></div>';
 	}
@@ -734,24 +734,38 @@ function getLen(val){
 
 // 选中产品作为奖品
 function iwantyou(t){
+	var pid 	= parseInt($(t).closest('.pro-box').attr('data-id'));
 	if(chooseProIndex > -1){
 		var id 		= parseInt($(t).closest('.pro-box').attr('data-id'));
-		var pid 	= parseInt($(t).parent().attr('data-id'));
 		if(pid > 0){
 			layer.confirm('是否替换已选的产品?', function(){
-				$.post('<?php echo route('sweepstake.product');?>', {id: id, index: chooseProIndex}, function(r){
-					console.log(r);
-				});
+				choosePro(chooseProIndex, id, function(){chooseProIndex=-1;});
 			});
 		}else{
-			$.post('<?php echo route('sweepstake.product');?>', {id: id, index: chooseProIndex}, function(r){
-				console.log(r);
-			});
+			choosePro(chooseProIndex, id, function(){chooseProIndex=-1;});
 		}
 	}else{
+		$('.fresh-pro').each(function(){
+			var pppppid 		= parseInt($(this).attr('data-id'));
+			if(chooseProIndex < 0 && pppppid < 1){
+				chooseProIndex 	= $(this).closest('.fan-blade').index();
+			}
+		});
+		if(chooseProIndex < 0){
 
+		}else{
+			choosePro(chooseProIndex, pid, function(){chooseProIndex=-1;});
+		}
 	}
-	chooseProIndex 	= -1;
+}
+
+// ajax请求设置产品
+function choosePro(index, pid, callback){
+	$.post('<?php echo route('sweepstake.product');?>', {id: pid, index: index}, function(r){
+		if(r.code == 200){
+			callback && callback();
+		}
+	});
 }
 
 // 观看视频
