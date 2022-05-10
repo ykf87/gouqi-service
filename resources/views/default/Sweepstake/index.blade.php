@@ -655,6 +655,7 @@ function startChouJiang(){
 			$('.lights-content').removeClass('starcj');
 			$('.content').css('transition', '').removeClass('starcj');
 			ischou	= false;
+			layer.msg('很抱歉没有中奖!');
 		}, 7000);
 	}, 10);
 }
