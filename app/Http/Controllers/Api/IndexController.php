@@ -27,7 +27,6 @@ class IndexController extends Controller{
 		// ];
 		// dd(date('Y-m-d H:i:s', strtotime('+30days')));
 		$arr 		= Config::where('status', 1)->pluck('val', 'key');
-		$arr['loginimg']		= '';
 		$arr['activities']		= [[
 			'title'		=> '幸运抽奖',
 			'innerimg'	=> ''
