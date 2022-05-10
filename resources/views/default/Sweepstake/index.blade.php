@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lucky-canvas@1.7.20"></script>
 <style type="text/css">
 body{
-	background: linear-gradient(#19124F, #6054E1, #E771D6, #ffffff);
+	background: linear-gradient(#19124F, #6054E1, #E771D6);
 	color: #000;
 	font-size: 62.5%;
 	max-height: 100vh;
@@ -42,6 +42,7 @@ img{
 	justify-content: center;
 	border-radius: 50%;
 	overflow: hidden;
+	z-index: 999;
 	/*transition: transform 3s cubic-bezier(.2,.93,.43,1);*/
 	/*animation: scccontent 240s linear infinite;*/
 	/*animation-fill-mode: forwards;*/
@@ -154,14 +155,14 @@ svg{
     display: flex;
     justify-content: center;
     border-radius: 50%;
-    z-index: 9999;
+    z-index: 9;
 }
 .lights{
 	position: absolute;
 	width: 16px;
 	height: 50%;
 	transform-origin: 50% 100%;
-	z-index: 9999;
+	z-index: 9;
 }
 .light{
     position: absolute;
@@ -169,7 +170,7 @@ svg{
     width: 12px;
     height: 12px;
     border-radius: 50% 50% 0 0;
-	z-index: 9999;
+	z-index: 9;
     
 }
     
@@ -346,17 +347,27 @@ svg{
 }
 .products{
 	/*background: linear-gradient(#E771D6, #6054E1);*/
-	margin-top: 60px;
+	margin-top: 40px;
 	background: rgba(255,255,255,1);
 	box-shadow: 0 -30px 50px #E771D6;
 	color: #373737;
 	border-radius: 5px 5px 0 0;
 	padding-bottom: 50px;
+	padding-top: 10px;
 }
 .products > *{
-	width: 48.5%;
+	width: 49%;
 	text-align: center;
-	margin: 20px 0 0 1%;
+	margin: 0px 0 14px 2%;
+	box-shadow: 0 0 10px #ccc;
+	border-radius: 0 0 6px 6px;
+	overflow: hidden;
+}
+.products > *:nth-child(odd){
+	margin-left: 0;
+}
+.products > *:nth-child(even){
+	margin-right: 0;
 }
 .products .proimg{
 	width: 100%;
@@ -368,6 +379,25 @@ svg{
 }
 .products .title{
 	margin-top: 5px;
+	text-align: left;
+	padding: 2px 6px;
+	font-weight: bold;
+}
+.pro-btns{
+	margin-top: 8px;
+	height: 30px;
+	background: #EFE7FC;
+	color: #9F86D7;
+}
+.products .sale{
+	color: brown;
+	font-weight: bold;
+}
+.products .sale:before{
+	content: "\e616";
+	font-family: "iconfont";
+	font-size: 1.4rem;
+	margin-right: -3px;
 }
 .tips{
 	background: linear-gradient(#9C4BD5, #A3387B);
@@ -475,7 +505,7 @@ svg{
 		<div class="ppp"><span class="num">+15</span>%</div>
 	</div>
 	<img src="/image/bbg.png">
-	<div class="addadv flex v">
+	<div class="addadv flex v" onclick="showvideo();">
 		<i class="iconfont icon-shipintianchong" style="margin-right: 4px;font-size: 2rem;"></i>
 		<span style="font-size: 1rem;">看广告<br>涨运气</span>
 	</div>
@@ -533,6 +563,16 @@ $(document).ready(function(){
 		$('.showgeted').children('*:eq(0)').addClass('actived');
 		showgetedFun();
 	}, 1000);
+
+	$('.icon-refresh').click(function(){
+		var ppp 	= $(this).closest('.fan-blade');
+		var index 	= ppp.index();
+		var product = $('.products');
+		layer.msg('请挑选您心仪的产品!');
+		$('html, body').stop().animate({
+			scrollTop: product.offset().top
+		}, 300);
+	});
 });
 $(window).resize(function(){
 	fmtZhuanPan(prizelen);
@@ -634,7 +674,12 @@ function setProduct(pros){
 	var p = $('.products');
 	for(var i in pros){
 		let op 		= pros[i];
-		let html 	= '<div><div class="proimg" style="background-image:url('+op['cover']+')"></div><div class="title">'+op['title']+'</div></div>';
+		let html 	= '<div>\
+			<div class="proimg" style="background-image:url('+op['cover']+')">\
+			</div>\
+			<div class="title flex v"><div class="flex1">'+op['title']+'</div><div class="sale">'+op['sale']+'</div></div>\
+			<div class="flex v pro-btns"><div class="flex1">我要这个</div></div>\
+		</div>';
 		p.append(html);
 	}
 }
@@ -659,6 +704,15 @@ function getLen(val){
    var chineseReg=/[^\x00=\xff]/g;
    var newVal=val.replace(chineseReg,'**');
    return newVal.length;
+}
+
+// 观看视频
+function showvideo(){
+	try{
+		appobject.postMessage('1');
+	}catch(e){
+		layer.msg('请在app中打开!');
+	}
 }
 
 //视频看完回调
