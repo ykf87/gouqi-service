@@ -13,6 +13,7 @@ use App\Models\Adv;
 use App\Models\Goubi;
 use App\Models\Reback;
 use App\Models\Config;
+use App\Models\Active;
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
@@ -27,10 +28,7 @@ class IndexController extends Controller{
 		// ];
 		// dd(date('Y-m-d H:i:s', strtotime('+30days')));
 		$arr 		= Config::where('status', 1)->pluck('val', 'key');
-		$arr['activities']		= [[
-			'title'		=> '幸运抽奖',
-			'innerimg'	=> ''
-		]];
+		$arr['activities']		= Active::select('title', 'innerimg')->get();;
 		return $this->success($arr);
 	}
 
