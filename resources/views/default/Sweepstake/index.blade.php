@@ -717,7 +717,7 @@ function showvideo(){
 
 //视频看完回调
 function videoDone(){
-
+	layer.msg('获得奖励!');
 }
 </script>
 @endsection
