@@ -19,6 +19,7 @@ Route::group([
     // 'middleware'    => [],
     'as'            => 'api.'
 ], function(){
+    Route::get('', 'IndexController@config')->name('index');
     Route::get('config', 'IndexController@config')->name('config');
     Route::get('cate', 'IndexController@cate')->name('cate');
     Route::get('list', 'IndexController@list')->name('list');
