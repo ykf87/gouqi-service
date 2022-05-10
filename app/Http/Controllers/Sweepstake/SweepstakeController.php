@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\SweepstakeProduct;
 use App\Models\SweepstakeChoose;
 use App\Models\User;
+use App\Models\Order;
 use Lcobucci\JWT\Token\Plain;
 
 class SweepstakeController extends Controller{
@@ -26,7 +27,13 @@ class SweepstakeController extends Controller{
 		}
 		$res 	= SweepstakeProduct::list();
 		$prize 	= SweepstakeChoose::userPrize($_SESSION['_uid'] ?? null);
-		return view('default.Sweepstake.index', ['prize' => $prize]);
+
+		$getedObj 		= Order::select('name', 'pro_title')->orderByDesc('id')->limit(20)->get();
+		$geted 			= [];
+		foreach($getedObj as $item){
+			$geted[] 	= '恭喜 ' . mb_substr($item->name, 0, 1, 'utf-8') . '** 抽中 ' . $item->pro_title;
+		}
+		return view('default.Sweepstake.index', ['prize' => $prize, 'geted' => $geted]);
 	}
 
 	// 获取中奖结果

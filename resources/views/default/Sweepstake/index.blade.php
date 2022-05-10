@@ -347,7 +347,7 @@ svg{
 .products{
 	/*background: linear-gradient(#E771D6, #6054E1);*/
 	margin-top: 60px;
-	background: rgba(255,255,255,0.85);
+	background: rgba(255,255,255,1);
 	box-shadow: 0 -30px 50px #E771D6;
 	color: #373737;
 	border-radius: 5px 5px 0 0;
@@ -378,20 +378,79 @@ svg{
 	height: auto;
 	color: #E78FF3;
 	border-radius: 0 0 30% 30%;
-	font-size: 1.6rem;
+	font-size: 1.4rem;
 	text-align: center;
-	padding: 4px 8px;
+	padding: 4px 8px 6px;
 	z-index: 99999;
+	font-weight: bold;
 }
 .slogan{
 	padding-top: 4rem;
 	text-align: center;
 	color: #FFFFFF;
 	width: 100%;
-	opacity: .7;
+	position: relative;
+	min-height: 50px;
 }
 .slogan img{
 	width: 45%;
+	opacity: .7;
+}
+.showgeted{
+	position: absolute;
+	top: 0;
+	left: 0;
+	color: #ffffff;
+	width: 100%;
+	height: 40px;
+	overflow: hidden;
+}
+.showgeted > div{
+	display: none;
+	transition: all .2s;
+	position: absolute;
+	left: 100%;
+	top: 0;
+	width: auto;
+	padding: 8px;
+}
+.showgeted > div.actived{
+	display: block;
+	animation: showtips .5s ease-in-out forwards;
+}
+@keyframes showtips{
+	form{
+		left: 100%;
+	}
+	to{
+		left: 0;
+	}
+}
+
+.gailv{
+	position: absolute;
+	left: 10px;
+	top: 55px;
+	width: 70px;
+	height: 40px;
+	padding: 10px 0;
+	background: rgba(255,255,255,.1);
+	border-radius: 0 0 7px 7px;
+	opacity: .8;
+	color: #ffd60a;
+}
+.gailv .ppp{
+	font-size: 1.6rem;
+	font-weight: bolder;
+	margin-top: .8rem;
+}
+.addadv{
+	position: absolute;
+	right: 10px;
+	top: 20%;
+	opacity: .8;
+	color: #ffffff;
+	height: 100%;
 }
 </style>
 <!-- <div class="header-back">
@@ -404,11 +463,22 @@ svg{
 	</div>
 	<div class="tips"></div>
 </div> -->
-<div class="showgeted"></div>
+<div class="showgeted">
+	@foreach ($geted as $get)
+	<div class="sdsf">{{$get}}</div>
+	@endforeach
+</div>
 <div class="tips">活动说明</div>
 <div class="slogan">
+	<div class="gailv">
+		<span>运气值</span>
+		<div class="ppp"><span class="num">+15</span>%</div>
+	</div>
 	<img src="/image/bbg.png">
-	<span class="sdsf">sfsdfsf</span>
+	<div class="addadv flex v">
+		<i class="iconfont icon-shipintianchong" style="margin-right: 4px;font-size: 2rem;"></i>
+		<span style="font-size: 1rem;">看广告<br>涨运气</span>
+	</div>
 </div>
 <div class="contents">
 	<div class="aaabbs">
@@ -458,10 +528,32 @@ $(document).ready(function(){
 		startChouJiang();
 	});
 	getProduct();
+
+	setTimeout(function(){
+		$('.showgeted').children('*:eq(0)').addClass('actived');
+		showgetedFun();
+	}, 1000);
 });
 $(window).resize(function(){
 	fmtZhuanPan(prizelen);
 });
+
+// 左上角弹出层
+function showgetedFun(){
+	var showgeted 	= $('.showgeted');
+	var showChids 	= showgeted.children('*');
+	var showLen 	= showChids.length - 1;
+	setInterval(function(){
+		var n = $('.showgeted').children('.actived');
+		var index 	= n.index();
+		index++;
+		if(index >= showLen){
+			index 	= 0;
+		}
+		n.removeClass('actived');
+		$('.showgeted').children('*:eq('+index+')').addClass('actived');
+	}, 4000);
+}
 
 // 绘制转盘
 function draw(pri){
@@ -567,6 +659,11 @@ function getLen(val){
    var chineseReg=/[^\x00=\xff]/g;
    var newVal=val.replace(chineseReg,'**');
    return newVal.length;
+}
+
+//视频看完回调
+function videoDone(){
+
 }
 </script>
 @endsection
