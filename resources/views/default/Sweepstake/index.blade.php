@@ -704,7 +704,7 @@ function setProduct(pros){
 		if(op['stocks'] > 0){
 			html 	+= '<div class="flex v pro-btns"><div class="flex1" onclick="iwantyou(this);">我要这个</div></div>';
 		}else{
-			html 	+= '<div class="flex v pro-btns nostock"><div class="flex1">库存不足</div></div>';
+			html 	+= '<div class="flex v pro-btns nostock"><div class="flex1" onclick="layer.msg(\'库存不足,请选其他产品.\');">库存不足</div></div>';
 		}
 		html 		+= '</div>';
 		p.append(html);
