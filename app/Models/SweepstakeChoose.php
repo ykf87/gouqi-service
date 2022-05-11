@@ -10,7 +10,7 @@ class SweepstakeChoose extends Model{
 	use HasFactory;
 	public $timestamps = false;
 	public static $prizes = [[
-			'title'		=> '谢谢1',
+			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
 			'prize'		=> false,
 		],[
@@ -20,7 +20,7 @@ class SweepstakeChoose extends Model{
 			'title'		=> '10省币',
 			'icon'		=> 'iconfont icon-jinbi2'
 		],[
-			'title'		=> '谢谢2',
+			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
 			'prize'		=> false,
 		],[
@@ -30,7 +30,7 @@ class SweepstakeChoose extends Model{
 			'title'		=> '50省币',
 			'icon'		=> 'iconfont icon-jinbi2'
 		],[
-			'title'		=> '谢谢3',
+			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
 			'prize'		=> false,
 		],[

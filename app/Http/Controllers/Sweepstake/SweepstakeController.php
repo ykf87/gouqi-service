@@ -10,6 +10,7 @@ use App\Models\SweepstakeDay;
 use App\Models\Active;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Adv;
 use Lcobucci\JWT\Token\Plain;
 session_start();
 
@@ -48,7 +49,7 @@ class SweepstakeController extends Controller{
 	// 获取中奖结果
 	public function prize(Request $request){
 		if(!isset($_SESSION['_uid']) || $_SESSION['_uid'] < 1){
-			return $this->error('请先登录!');
+			return $this->error('请先登录!', null, 401);
 		}
 		$uid 		= $_SESSION['_uid'];
 
@@ -60,15 +61,25 @@ class SweepstakeController extends Controller{
 			}
 		}
 		$binggo 		= SweepstakeChoose::get_rand($prizegl);
-		// var_dump($binggo);
-		// dd($prizegl);
-		return $this->success($binggo);
+
+		$today 			= SweepstakeDay::getRow($uid);
+		$today->times--;
+		if($today->yunqi < 60){
+			$today->yunqi 	+= rand(1,5);
+		}
+		$today->save();
+		return $this->success(['res' => $binggo, 'today' => $today]);
+	}
+
+	// 中自选商品的奖后设置收货地址
+	public function address(Request $request){
+
 	}
 
 	// 选择产品
 	public function product(Request $request){
 		if(!isset($_SESSION['_uid']) || $_SESSION['_uid'] < 1){
-			return $this->error('请先登录!');
+			return $this->error('请先登录!', null, 401);
 		}
 		$uid 	= $_SESSION['_uid'];
 		$pid 	= (int)$request->input('id', 0);
@@ -167,5 +178,65 @@ class SweepstakeController extends Controller{
 			return $this->error('暂无商品!');
 		}
 		return $this->success($arr);
+	}
+
+	// 看广告后的回调
+	public function plaied(Request $request){
+		if(!isset($_SESSION['_uid']) || $_SESSION['_uid'] < 1){
+			return $this->error('请先登录!', null, 401);
+		}
+		$uid 	= $_SESSION['_uid'];
+
+		$whatYouWantForAdv 	= $request->input('forwhat');
+		$platform 			= $request->input('platform');
+		$msg 				= '';
+		if($whatYouWantForAdv == 1){// 增加运气值
+			$msg 			= '哇,运气瞬间好了很多!';
+			$today 			= SweepstakeDay::getRow($uid);
+			if($today->yunqi < 90){
+				if($today->yunqi < 30){
+					$yunqi 			= rand(1, 5);
+				}elseif($today->yunqi < 50){
+					$yunqi 			= rand(1, 4);
+				}elseif($today->yunqi < 80){
+					$yunqi 			= rand(1, 3);
+				}elseif($today->yunqi < 80){
+					$yunqi 			= rand(1, 2);
+				}else{
+					$yunqi 			= 1;
+				}
+				$today->yunqi 	+= $yunqi;
+				$today->save();
+			}else{
+				$msg 	= '差不多得了昂~~';
+			}
+		}elseif($whatYouWantForAdv == 2){
+			$msg 			= '抽奖次数增加了';
+			$today 			= SweepstakeDay::getRow($uid);
+			$arr 			= [
+				$today->yunqi,
+				50
+			];
+			$index 			= SweepstakeChoose::get_rand($arr);
+			$choujiangAdd 	= 1;
+			if($index == 0){
+				$choujiangAdd 	= rand(2,4);
+				$msg 		= '哇,运气爆棚,瞬间多了 ' . $choujiangAdd . ' 次抽奖!';
+			}
+			$today->times 	+= $choujiangAdd;
+			$today->save();
+		}else{
+			return $this->error('非法请求!');
+		}
+
+		$adv 			= new Adv;
+		$adv->uid 		= $uid;
+		$adv->type 		= 3;
+		$adv->status 	= 0;
+		$adv->platform 	= $platform;
+		$adv->addtime 	= time();
+		$adv->biadd 	= 0;
+		$adv->save();
+		return $this->success($today, $msg);
 	}
 }

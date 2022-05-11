@@ -528,12 +528,12 @@ svg{
 <div class="slogan flex v">
 	<div class="gailv">
 		<span>运气值</span>
-		<div class="ppp"><span class="num" id="upnum">{{ $today['yunqi'] ?? 0 }}</span></div>
+		<div class="ppp"><span class="num" id="upnum">0</span></div>
 	</div>
 	<div class="flex1 flex v c" style="height: 100%;">
 		<img src="/image/bbg.png">
 	</div>
-	<div class="addadv flex v" onclick="showvideo();">
+	<div class="addadv flex v" onclick="showvideo(1);">
 		<i class="iconfont icon-shipintianchong" style="margin-right: 4px;font-size: 2rem;"></i>
 		<span style="font-size: 1rem;">看广告<br>涨运气</span>
 	</div>
@@ -543,7 +543,7 @@ svg{
 		<div class="container">
 			<div class="start flex v c">
 				<div class="jiantou"></div>
-				<div class="flex v c">开始</div>
+				<div class="flex v c starttxt">开始</div>
 			</div>
 			<div class="content nomal"></div>
 			<div class="lights-content"></div>
@@ -578,12 +578,13 @@ var page 		= 1;
 var chooseProIndex 	= -1;
 var chooseProLen 	= 0;
 var tips 		= '<?php echo $info['tips'];?>';
+var _today 		= {!! isset($today) ? json_encode($today) : null !!};
 $(document).ready(function(){
 	draw(prize);
 
-	$('.start').click(function(){
-		startChouJiang();
-	});
+	// $('.start').click(function(){
+	// 	startChouJiang();
+	// });
 	getProduct();
 
 	setTimeout(function(){
@@ -600,8 +601,9 @@ $(document).ready(function(){
 	// 		scrollTop: product.offset().top
 	// 	}, 300);
 	// });
-	var endNum 	= parseInt($('#upnum').text());
-	new CountUp('upnum', 0, endNum, 0, 2).start();
+	// var endNum 	= parseInt($('#upnum').text());
+	// new CountUp('upnum', 0, endNum, 0, 2).start();
+	fmtStartBtn();
 });
 $(window).resize(function(){
 	fmtZhuanPan(prizelen);
@@ -683,10 +685,38 @@ function fmtZhuanPan(num){
 	});
 }
 
-// 开始抽奖
-for(var ti = 0; ti < 8; ti++){
-	console.log((360 - (ti + 1) * 45));
+// 设置开始按钮
+function fmtStartBtn(){
+	var btn 	= $('.starttxt');
+	var startTimes = 0;
+	if(typeof(_today['times']) != 'undefined'){
+		startTimes 	= parseInt(_today['times']);
+	}
+	if(startTimes > 0){
+		btn.text('开始');
+		btn.closest('.start').attr('onclick', 'startChouJiang();');
+	}else{
+		var html 	= '<div style="text-align:center;font-size:1.2rem;"><i class="iconfont icon-shipintianchong"></i><div>看视频</div></div>';
+		btn.html(html);
+		btn.closest('.start').attr('onclick', 'showvideo(2);');
+	}
+
+	//设置运气值
+	var yunqi 	= 0;
+	var oldYq 	= parseInt($('#upnum').text());
+	if(typeof(_today['yunqi']) != 'undefined'){
+		yunqi 	= parseInt(_today['yunqi']);
+	}
+	if(oldYq == yunqi){
+		return;
+	}
+	$('#upnum').text(yunqi);
+	if(yunqi > 0){
+		new CountUp('upnum', 0, yunqi, 0, 2).start();
+	}
 }
+
+// 开始抽奖
 var ischou 	= false;
 function startChouJiang(){
 	if(ischou == true){
@@ -696,9 +726,12 @@ function startChouJiang(){
 	var isdone	= false;
 	var ajax 	= $.post('<?php echo route('sweepstake.prize');?>', {}, function(r){
 		isdone	= true;
-		if(r.code == 200){
+		if(r.code == 401){
+			ischou = false;
+			return gotologin(r.msg);
+		}else if(r.code == 200){
 			let cha 	= 15;
-			let res 	= parseInt(r.data);
+			let res 	= parseInt(r.data.res);
 			let quan 	= random(10,25);
 			let deg 	= 360 / prize.length;
 
@@ -739,6 +772,8 @@ function startChouJiang(){
 							btn: ['笑纳']
 						});
 					}
+					_today 	= r.data.today;
+					fmtStartBtn(r.data.today);
 				}, coseTiem*1000);
 			}, 20);
 		}else{
@@ -873,29 +908,71 @@ function reppro(t, pid, index){
 // ajax请求设置产品
 function choosePro(index, pid, callback){
 	$.post('<?php echo route('sweepstake.product');?>', {id: pid, index: index}, function(r){
-		if(r.msg){
-			layer.msg(r.msg);
-		}
 		if(r.code == 200){
 			prize 	= r.data;
 			draw(prize);
 			callback && callback();
+		}else if(r.code == 401){
+			return gotologin(r.msg);
+		}
+		layer.msg(r.msg);
+	});
+}
+
+// 跳转登录
+function gotologin(msg){
+	if(!msg) msg = '请先登录!';
+	return layer.confirm(msg, function(){
+		try{
+			appobject.postMessage("toLogin");
+		}catch(e){
+			layer.msg('请在app中打开!');
 		}
 	});
 }
 
 // 观看视频
-function showvideo(){
+var ggtp = false;//看广告的目的, 1是增加运气值, 2是增加抽奖次数
+var sendadvid = 0;
+function showvideo(tttp, advid){
+	ggtp	= tttp;
+	if(!advid){
+		advid 	= 1;
+	}
 	try{
-		appobject.postMessage('1');
+		sendadvid = advid;
+		appobject.postMessage(advid);
 	}catch(e){
 		layer.msg('请在app中打开!');
 	}
 }
 
 //视频看完回调
-function videoDone(){
-	layer.msg('获得奖励!');
+function videoDone(forwhat, platform){
+	if(!forwhat){
+		forwhat 	= ggtp;
+	}
+	if(!platform){
+		platform 	= sendadvid;
+	}
+	var isDone 		= false;
+	var ajax 	= $.post('<?php echo route('sweepstake.plaied');?>', {forwhat: forwhat, platform: platform}, function(r){
+		isDone 		= true;
+		if(r.code == 200){
+			_today 	= r.data;
+			fmtStartBtn();
+		}else if(r.code == 401){
+			return gotologin(r.msg);
+		}
+		layer.msg(r.msg);
+	});
+	setTimeout(function(){
+		if(isDone == false){
+			ajax.abort();
+			isDone = true;
+			layer.msg('错误!');
+		}
+	}, 6000);
 }
 </script>
 @endsection

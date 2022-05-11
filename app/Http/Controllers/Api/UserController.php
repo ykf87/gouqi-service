@@ -212,6 +212,7 @@ class UserController extends Controller{
 		$advObj 			= new Adv;
 		$advObj->uid 		= $uid;
 		$advObj->addtime 	= time();
+		$advObj->platform 	= $task->platform;
 		$advObj->tid 		= $tid;
 		$advObj->status		= 0;
 		$advObj->type 		= 1;

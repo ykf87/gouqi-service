@@ -89,6 +89,7 @@ Route::group([
 	Route::post('products', 'SweepstakeController@products')->name('products');
 	Route::post('product', 'SweepstakeController@product')->name('product');
 	Route::post('prize', 'SweepstakeController@prize')->name('prize');
+	Route::post('plaied', 'SweepstakeController@plaied')->name('plaied');
 });
 
 
