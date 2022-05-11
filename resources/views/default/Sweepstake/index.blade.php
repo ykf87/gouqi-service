@@ -7,7 +7,7 @@
 body{
 	background: linear-gradient(#19124F, #6054E1, #E771D6);
 	color: #000;
-	font-size: 62.5%;
+	font-size: 100%;
 	max-height: 100vh;
 }
 img{
@@ -425,16 +425,17 @@ svg{
 	font-weight: bold;
 }
 .slogan{
-	padding-top: 4rem;
+	padding-top: 5rem;
 	text-align: center;
 	color: #FFFFFF;
 	width: 100%;
 	position: relative;
-	min-height: 50px;
+	height: 10vh;
 }
 .slogan img{
-	width: 45%;
+	max-width: 70%;
 	opacity: .7;
+	max-height: 100%;
 }
 .showgeted{
 	position: absolute;
@@ -468,29 +469,44 @@ svg{
 }
 
 .gailv{
-	position: absolute;
-	left: 10px;
-	top: 55px;
-	width: 70px;
-	height: 40px;
-	padding: 10px 0;
+	padding: 10px;
+	margin-left: 1rem;
 	background: rgba(255,255,255,.1);
 	border-radius: 0 0 7px 7px;
 	opacity: .8;
 	color: #ffd60a;
+	font-weight: bold;
+	margin-top: 1rem;
 }
 .gailv .ppp{
 	font-size: 1.6rem;
 	font-weight: bolder;
-	margin-top: .8rem;
+	margin-top: .2rem;
 }
 .addadv{
-	position: absolute;
+	/*position: absolute;
 	right: 10px;
-	top: 20%;
+	top: 20%;*/
+	margin-right: 1rem;
 	opacity: .8;
 	color: #ffffff;
 	height: 100%;
+}
+.replace-pro{
+	margin-bottom: 1rem;
+	color: #999;
+}
+.replace-pro:last-child{
+	margin-bottom: 0;
+}
+.replace-pro .rep-img{
+	width: 40px;
+	height: 40px;
+	margin-right: .8rem;
+}
+.replace-pro .rep-img img{
+	border-radius: 4px;
+	overflow: hidden;
 }
 </style>
 <!-- <div class="header-back">
@@ -509,12 +525,14 @@ svg{
 	@endforeach
 </div>
 <div class="tips">活动说明</div>
-<div class="slogan">
+<div class="slogan flex v">
 	<div class="gailv">
 		<span>运气值</span>
-		<div class="ppp"><span class="num">+15</span>%</div>
+		<div class="ppp"><span class="num" id="upnum">{{ $today['yunqi'] ?? 0 }}</span></div>
 	</div>
-	<img src="/image/bbg.png">
+	<div class="flex1 flex v c" style="height: 100%;">
+		<img src="/image/bbg.png">
+	</div>
 	<div class="addadv flex v" onclick="showvideo();">
 		<i class="iconfont icon-shipintianchong" style="margin-right: 4px;font-size: 2rem;"></i>
 		<span style="font-size: 1rem;">看广告<br>涨运气</span>
@@ -552,16 +570,17 @@ svg{
 		</div>
 	</div>
 </div>
+<script type="text/javascript" src="https://cdn.bootcss.com/countup.js/1.9.3/countUp.js"></script>
 <script type="text/javascript">
 var prize 		= <?php echo json_encode($prize);?>;
 var prizelen	= prize.length;
 var page 		= 1;
 var chooseProIndex 	= -1;
 var chooseProLen 	= 0;
+var tips 		= '<?php echo $info['tips'];?>';
 $(document).ready(function(){
 	draw(prize);
 
-	fmtZhuanPan(prizelen);
 	$('.start').click(function(){
 		startChouJiang();
 	});
@@ -581,6 +600,8 @@ $(document).ready(function(){
 	// 		scrollTop: product.offset().top
 	// 	}, 300);
 	// });
+	var endNum 	= parseInt($('#upnum').text());
+	new CountUp('upnum', 0, endNum, 0, 2).start();
 });
 $(window).resize(function(){
 	fmtZhuanPan(prizelen);
@@ -643,6 +664,7 @@ function draw(pri){
 	}
 	lite.html(liteHtml);
 	cont.html(contHtml);
+	fmtZhuanPan(prizelen);
 }
 
 // 格式化转盘
@@ -662,23 +684,79 @@ function fmtZhuanPan(num){
 }
 
 // 开始抽奖
+for(var ti = 0; ti < 8; ti++){
+	console.log((360 - (ti + 1) * 45));
+}
 var ischou 	= false;
 function startChouJiang(){
 	if(ischou == true){
 		return;
 	}
-	ischou	= true;
-	$('.content,.lights-content').removeClass('nomal').addClass('starcj');
-	$('.content').css('transform', 'rotateZ(0deg)');
+	ischou		= true;
+	var isdone	= false;
+	var ajax 	= $.post('<?php echo route('sweepstake.prize');?>', {}, function(r){
+		isdone	= true;
+		if(r.code == 200){
+			let cha 	= 15;
+			let res 	= parseInt(r.data);
+			let quan 	= random(10,25);
+			let deg 	= 360 / prize.length;
+
+			let midDeg 		= 360 - (res + 1) * deg;
+			let startDeg 	= midDeg - cha;
+			let endDeg 		= midDeg + cha;
+			let todeg		= random(startDeg, endDeg);
+
+			let findeg 		= parseInt(todeg + (quan*360));
+			let coseTiem 	= random(4, 8);
+
+			let getPrize 	= '';
+			let isgeted 	= false;
+			try{
+				getPrize 		= prize[res];
+				if(typeof(getPrize['prize']) != 'undefined' && getPrize['prize'] == false){
+					isgeted 	= false;
+				}else{
+					isgeted		= true;
+				}
+			}catch(e){
+
+			}
+			$('.content,.lights-content').removeClass('nomal').addClass('starcj');
+			$('.content').css('transform', 'rotateZ(0deg)');
+			setTimeout(function(){
+				$('.content').css('transition', 'transform '+coseTiem+'s cubic-bezier(.2,.93,.43,1)').css('transform', 'rotateZ('+findeg+'deg)');
+				setTimeout(function(){
+					$('.lights-content').removeClass('starcj');
+					$('.content').css('transition', '').removeClass('starcj');
+					ischou	= false;
+					if(isgeted == false){
+						layer.msg('很抱歉,本次没有中奖,再接再厉!');
+					}else{// 如果是商品,需要选择收货地址!
+						layer.open({
+							title: '恭喜您抽中以下奖品!',
+							content: '<div class="show-price">'+getPrize['title']+'</div>',
+							btn: ['笑纳']
+						});
+					}
+				}, coseTiem*1000);
+			}, 20);
+		}else{
+			layer.msg(r.msg);
+		}
+	});
 	setTimeout(function(){
-		$('.content').css('transition', 'transform 7s cubic-bezier(.2,.93,.43,1)').css('transform', 'rotateZ(1885deg)');
-		setTimeout(function(){
-			$('.lights-content').removeClass('starcj');
-			$('.content').css('transition', '').removeClass('starcj');
-			ischou	= false;
-			layer.msg('很抱歉没有中奖!');
-		}, 7000);
-	}, 10);
+		if(isdone != true){
+			ajax.abort();
+			ischou = false;
+			layer.msg('无法正常抽奖,请联系我们!');
+		}
+	}, 6000);
+}
+
+// 生成随机数
+function random(lower, upper) {
+	return Math.floor(Math.random() * (upper - lower)) + lower;
 }
 
 // 获取产品列表
@@ -713,12 +791,12 @@ function setProduct(pros){
 
 $('.tips').click(function(){
 	layer.open({
-		title: '抽奖规则',
+		title: '活动规则',
 		shade: 0.6,
 		shadeClose: true,
 		btn: [],
 		anim: 2,
-		content: '1.每天凌晨0点重置抽奖次数.',
+		content: tips,
 	});
 });
 $('.icon-back').click(function(){
@@ -735,14 +813,23 @@ function getLen(val){
 // 选中产品作为奖品
 function iwantyou(t){
 	var pid 	= parseInt($(t).closest('.pro-box').attr('data-id'));
+	for(var i in prize){
+		if(typeof(prize[i]['id']) != 'undefined'){
+			oopid 	= parseInt(prize[i]['id']);
+			if(oopid == pid){
+				layer.msg('您已经选择了该产品,请换其他商品试试!');
+				return;
+			}
+		}
+	}
 	if(chooseProIndex > -1){
-		var id 		= parseInt($(t).closest('.pro-box').attr('data-id'));
-		if(pid > 0){
-			layer.confirm('是否替换已选的产品?', function(){
-				choosePro(chooseProIndex, id, function(){chooseProIndex=-1;});
+		var oldid 		= typeof(prize[chooseProIndex]['id']) != 'undefined' ? prize[chooseProIndex]['id'] : 0;
+		if(oldid > 0){
+			layer.confirm('是否替换 '+prize[chooseProIndex]['title']+'?', function(){
+				choosePro(chooseProIndex, pid, function(){chooseProIndex=-1;});
 			});
 		}else{
-			choosePro(chooseProIndex, id, function(){chooseProIndex=-1;});
+			choosePro(chooseProIndex, pid, function(){chooseProIndex=-1;});
 		}
 	}else{
 		$('.fresh-pro').each(function(){
@@ -752,17 +839,46 @@ function iwantyou(t){
 			}
 		});
 		if(chooseProIndex < 0){
-
+			var html 	= '';
+			for(var i in prize){
+				let s 	= prize[i];
+				if(typeof(s['id']) != 'undefined'){
+					html 	+= '<div class="replace-pro flex v" data-index="'+i+'">\
+						<div class="rep-img flex v c"><img src="'+s['proimg']+'"></div>\
+						<div class="rep-title flex1">'+s['title']+'</div>\
+						<div class="rep-btn"><i class="iconfont icon-refresh" onclick="reppro(this, '+pid+', '+i+');"></i></div>\
+					</div>';
+				}
+			}
+			layer.open({
+				title: '选择您要替换的产品',
+				content: html,
+				shadeClose: true,
+				btn: []
+			});
 		}else{
 			choosePro(chooseProIndex, pid, function(){chooseProIndex=-1;});
 		}
 	}
 }
 
+// 替换产品
+function reppro(t, pid, index){
+	choosePro(index, pid, function(){
+		chooseProIndex=-1;
+		$(t).closest('.layui-layer').find('.layui-layer-close').click();
+	});
+}
+
 // ajax请求设置产品
 function choosePro(index, pid, callback){
 	$.post('<?php echo route('sweepstake.product');?>', {id: pid, index: index}, function(r){
+		if(r.msg){
+			layer.msg(r.msg);
+		}
 		if(r.code == 200){
+			prize 	= r.data;
+			draw(prize);
 			callback && callback();
 		}
 	});
