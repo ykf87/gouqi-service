@@ -12,30 +12,37 @@ class SweepstakeChoose extends Model{
 	public static $prizes = [[
 			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
-			'prize'		=> false,
+			'prize'		=> 0,
 		],[
 			'title'		=> '请选择商品',
-			'proimg'	=> '/image/product.png'
+			'proimg'	=> '/image/product.png',
+			'prize'		=> 2,
 		],[
 			'title'		=> '10省币',
-			'icon'		=> 'iconfont icon-jinbi2'
+			'icon'		=> 'iconfont icon-jinbi2',
+			'prize'		=> 1,
+			'val'		=> 10,
 		],[
 			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
-			'prize'		=> false,
+			'prize'		=> 0,
 		],[
 			'title'		=> '请选择商品',
-			'proimg'	=> '/image/product.png'
+			'proimg'	=> '/image/product.png',
+			'prize'		=> 2,
 		],[
 			'title'		=> '50省币',
-			'icon'		=> 'iconfont icon-jinbi2'
+			'icon'		=> 'iconfont icon-jinbi2',
+			'prize'		=> 1,
+			'val'		=> 50,
 		],[
 			'title'		=> '谢谢',
 			'text'		=> '谢谢参与',
-			'prize'		=> false,
+			'prize'		=> 0,
 		],[
 			'title'		=> '请选择商品',
-			'proimg'	=> '/image/product.png'
+			'proimg'	=> '/image/product.png',
+			'prize'		=> 2,
 		],
 	];
 	public static $gailv 	= [

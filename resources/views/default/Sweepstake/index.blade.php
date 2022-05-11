@@ -747,14 +747,12 @@ function startChouJiang(){
 			let isgeted 	= false;
 			try{
 				getPrize 		= prize[res];
-				if(typeof(getPrize['prize']) != 'undefined' && getPrize['prize'] == false){
+				if(typeof(getPrize['prize']) != 'undefined' && getPrize['prize'] == 0){
 					isgeted 	= false;
 				}else{
 					isgeted		= true;
 				}
-			}catch(e){
-
-			}
+			}catch(e){}
 			$('.content,.lights-content').removeClass('nomal').addClass('starcj');
 			$('.content').css('transform', 'rotateZ(0deg)');
 			setTimeout(function(){

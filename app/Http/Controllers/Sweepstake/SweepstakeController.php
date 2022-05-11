@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\SweepstakeProduct;
 use App\Models\SweepstakeChoose;
 use App\Models\SweepstakeDay;
+use App\Models\SweepstakePrize;
 use App\Models\Active;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Adv;
+use App\Models\Goubi;
 use Lcobucci\JWT\Token\Plain;
 session_start();
 
@@ -53,6 +55,7 @@ class SweepstakeController extends Controller{
 		}
 		$uid 		= $_SESSION['_uid'];
 
+		$prizes 	= SweepstakeChoose::userPrize();
 		$prizegl	= SweepstakeChoose::$gailv;
 		$choosed 	= SweepstakeChoose::where('id', $uid)->pluck('probability', 'index')->toArray();
 		foreach($choosed as $ind => $item){
@@ -68,6 +71,22 @@ class SweepstakeController extends Controller{
 			$today->yunqi 	+= rand(1,5);
 		}
 		$today->save();
+
+		// 检查中奖产品产品
+		if(!isset($prizes[$binggo])){
+			return $this->error('抽奖错误,抽奖次数扣除!');
+		}
+		if($prizes[$binggo]['prize'] == 1){// 抽中代币
+			SweepstakePrize::add($uid, $prizes[$binggo]);
+			$gb 				= new Goubi;
+			$gb->id 			= $uid;
+			$gb->added 			= $prizes[$binggo]['val'];
+			$gb->remark 		= '抽奖';
+			$gb->created_at 	= date('Y-m-d H:i:s');
+			$gb->save();
+		}elseif($prizes[$binggo]['prize'] == 2){// 抽中商品
+			SweepstakePrize::add($uid, $prizes[$binggo]);
+		}
 		return $this->success(['res' => $binggo, 'today' => $today]);
 	}
 
