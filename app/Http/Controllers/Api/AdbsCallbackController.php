@@ -35,10 +35,13 @@ class AdbsCallbackController extends Controller{
 			$tid 		= $arr['tid'] ?? null;
 			$tid 		= (int)$tid;
 		}
-		if(!$uid || !$type || !$tid){
+		$respArr	= ['code'=>200, 'msg'=>'success', 'data'=>true];
+		if(!$uid){
 			return response()->json([], 400);
 		}
-		$respArr	= ['code'=>200, 'msg'=>'success', 'data'=>true];
+		if(!$type || !$tid){
+			return response()->json($respArr);
+		}
 
 		if($type != 'default'){
 			return response()->json($respArr);
@@ -50,6 +53,9 @@ class AdbsCallbackController extends Controller{
 			return response()->json($respArr);
 		}
 		$tagId 		= $request->input('tagId');
+		if(!$tagId){
+			return response()->json([], 400);
+		}
 		$stepNum 	= $request->input('stepNum');
 		$icpm 		= (float)$request->input('icpm', 0);
 
