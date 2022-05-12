@@ -57,17 +57,23 @@ use App\Models\Post;
 // }
 
 Route::get('/', function () {
-    // abort(404);
-    // return view('welcome');
-    // return file_get_contents(__DIR__ . '/../public/index.html');
+	$cont 	= [
+		'title' 	=> '省得赚官网',
+		'content'	=> '<div style="background:#333; color:#fff;display:flex;align-item:center;height:100vh;"></div>',
+	];
+    return view('welcome', $cont);
 });
 
 Route::get('/agreement', function () {
-    // abort(404);
-    // return view('welcome');
     $cont 		= Post::where('key', 'agreement')->first();
     return view('agreement', $cont);
 });
+Route::get('/private', function () {
+    $cont 		= Post::where('key', 'privacy')->first();
+    return view('agreement', $cont);
+});
+
+
 
 // 抽奖
 Route::group([
