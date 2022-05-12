@@ -57,6 +57,7 @@ Route::group([
 	    Route::get('bank', 'UserController@bank')->name('bank');
 	    Route::get('withdraw', 'UserController@withdraw')->name('withdraw');
 	    Route::post('logout', 'UserController@logout')->name('logout');
+	    Route::post('siginout', 'UserController@siginout')->name('siginout');
 	    Route::get('user/address', 'UserController@addresses')->name('addresses');
 	    Route::post('user/address', 'UserController@address')->name('address');
 	    Route::post('user/rmvaddr', 'UserController@rmvaddr')->name('rmvaddr');

@@ -141,10 +141,16 @@ class User extends Model{
                             ->issuedAt($now)
                             ->canOnlyBeUsedAfter($now->modify($ttl))//'+365 day'
                             ->withHeader('Author', config('author'));
+        $lastTime       = null;
         if($user instanceof self){
+            $lastTime   = $user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : null;
             $user       = $user->toArray();
+            if(!$lastTime){
+                $lastTime     = self::select('updated_at')->find($user['id'])->updated_at->format('Y-m-d H:i:s');
+            }
         }
         if(is_numeric($user)){
+            $lastTime   = self::find($user)->updated_at->format('Y-m-d H:i:s');
             $token      = $token->withClaim('id', $user);
         }elseif(is_array($user)){
             $narr           = [
@@ -158,6 +164,8 @@ class User extends Model{
         }else{
             return null;
         }
+
+        $token      = $token->withClaim('utime', $lastTime);
         $token      = $token->getToken($config->signer(), $config->signingKey());
         return self::$type . $token->toString();
     }

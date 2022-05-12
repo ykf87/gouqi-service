@@ -63,6 +63,20 @@ class UserController extends Controller{
 	}
 
 	/**
+	 * 用户登出
+	 */
+	public function siginout(Request $request){
+		$uid 		= $request->get('_uid');
+		// $user 		= User::find($uid);
+		$user 		= $request->get('_user');
+		if($user){
+			$user->updated_at 	= date('Y-m-d H:i:s');
+			$user->save();
+		}
+		return $this->success('退出成功!');
+	}
+
+	/**
 	 * 用户注册
 	 */
 	public function sigin(Request $request){
@@ -420,8 +434,8 @@ class UserController extends Controller{
 	 */
 	public function tasks(Request $request){
 		$uid 		= $request->get('_uid');
-		$user 		= User::find($uid);
-		$arr 		= Task::lists($user);
+		// $user 		= User::find($uid);
+		$arr 		= Task::lists($request->get('_user'));
 
 		return $this->success($arr);
 	}
