@@ -19,6 +19,7 @@ class Jwt{
      */
     public function handle(Request $request, Closure $next){
         try{
+            $fenjie     = 1652343374;
             $jwt        = User::decry();
             if($jwt instanceof Plain){
                 $id         = $jwt->claims()->get('id');
@@ -27,15 +28,17 @@ class Jwt{
                     if(!$user){
                         return response()->json(['error' => 'Unauthorized', 'msg' => '用户不存在', 'code' => 401, 'data' => ['list' => null]], 401);
                     }
-                    try {
-                        $utime  = $jwt->claims()->get('utime');
-                        if($utime != $user->updated_at){
-                            return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录.', 'code' => 401, 'data' => ['list' => null]], 401);
+
+                    if(strtotime($user->updated_at->format('Y-m-d H:i:s')) > $fenjie){
+                        try {
+                            $utime  = $jwt->claims()->get('utime');
+                            if($utime != $user->updated_at){
+                                return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录.', 'code' => 401, 'data' => ['list' => null]], 401);
+                            }
+                        } catch (\Exception $e) {
+                            return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录!', 'code' => 401, 'data' => ['list' => null]], 401);
                         }
-                    } catch (\Exception $e) {
-                        return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录!', 'code' => 401, 'data' => ['list' => null]], 401);
                     }
-                    $utime  = $jwt->claims()->get('utime');
                     $request->merge(['_uid' => $id]);
                     $request->merge(['_user' => $user]);
                     return $next($request);
