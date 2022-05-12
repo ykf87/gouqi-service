@@ -56,7 +56,7 @@ class AdbsCallbackController extends Controller{
 		$todayStart		= strtotime(date('Y-m-d 00:00:00'));
     	$todayEnd 		= $todayStart + 86399;
 		$times 			= Adv::where('uid', $uid)->where('tid', $tid)->whereBetween('addtime', [$todayStart, $todayEnd])->count();
-		$userGet 		= intval($icpm / 10 * 0.4);
+		$userGet 		= intval($icpm / 10 * 0.5);
 		if($userGet < 1){
 			$userGet 	= 1;
 		}

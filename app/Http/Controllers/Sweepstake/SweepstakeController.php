@@ -21,14 +21,30 @@ class SweepstakeController extends Controller{
 		$token 	= $request->get('token');
 		if($token){
 			$jwt        = User::decry($token);
-			if($jwt instanceof Plain){
-                $id         = $jwt->claims()->get('id');
-                if($id > 0){
-                	$_SESSION['_uid']	= $id;
-                	header('Location:' . route('sweepstake.index'));
-                	exit();
-                }
-            }
+			try {
+				if($jwt instanceof Plain){
+	                $id         = $jwt->claims()->get('id');
+	                $utime 		= $jwt->claims()->get('utime');
+	                if($id > 0 && $utime){
+	                	$user 	= User::find($id);
+
+	                	$userTime 			= $user->updated_at->format('Y-m-d H:i:s');
+	                	if($userTime != $utime){
+	                		header('Location:' . route('sweepstake.index'));
+	                		exit();
+	                	}
+	                	$_SESSION['_uid']	= $id;
+	                	$_SESSION['_user']	= User::find($id);
+	                	header('Location:' . route('sweepstake.index'));
+	                	exit();
+	                }else{
+	                	header('Location:' . route('sweepstake.index'));
+	                	exit();
+	                }
+	            }
+			} catch (Exception $e) {
+				
+			}
 		}
 		$uid 	= $_SESSION['_uid'] ?? null;
 		$res 	= SweepstakeProduct::list();
