@@ -65,11 +65,11 @@ Route::get('/', function () {
 });
 
 Route::get('/agreement', function () {
-    $cont 		= Post::where('key', 'agreement')->first();
+    $cont 		= Post::where('key', 'aggs')->first();
     return view('agreement', $cont);
 });
 Route::get('/private', function () {
-    $cont 		= Post::where('key', 'privacy')->first();
+    $cont 		= Post::where('key', 'pris')->first();
     return view('agreement', $cont);
 });
 
