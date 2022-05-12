@@ -935,7 +935,7 @@ var sendadvid = 0;
 function showvideo(tttp, advid){
 	ggtp	= tttp;
 	if(!advid){
-		advid 	= 1;
+		advid 	= random(1,4);
 	}
 	try{
 		sendadvid = advid;
