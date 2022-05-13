@@ -31,6 +31,7 @@ Route::group([
 	Route::post('checkuid', 'CheckController@uid')->name('checkuid');
 
 	Route::post('autojs', 'AutojsConteoller@index')->name('autojs');
+	Route::post('zhimahttp', 'AutojsConteoller@zhimahttp')->name('zhimahttp');
 
 	Route::post('okexclient', 'OkexClientController@auth')->name('okex-auth');
 	
