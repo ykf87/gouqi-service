@@ -15,3 +15,4 @@ yarn-error.log
 /.vscode
 .DS_Store
 app/Globals/*.txt
+/public/app*
