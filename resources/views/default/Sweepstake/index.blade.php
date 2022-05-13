@@ -375,7 +375,7 @@ svg{
 	overflow: hidden;
 	background-repeat: no-repeat;
 	background-position: center;
-	background-size: cover;
+	background-size: 80%;
 }
 .products .title{
 	margin-top: 5px;
@@ -810,7 +810,7 @@ function setProduct(pros){
 		let html 	= '<div class="pro-box" data-id="'+op['id']+'">\
 			<div class="proimg" style="background-image:url('+op['cover']+')">\
 			</div>\
-			<div class="title flex v"><div class="flex1">'+op['title']+'</div><div class="sale flex1">'+op['sale']+'</div></div>\
+			<div class="title flex v"><div class="flex1">'+op['title']+'</div><div class="sale">'+op['sale']+'</div></div>\
 			';
 		if(op['stocks'] > 0){
 			html 	+= '<div class="flex v pro-btns"><div class="flex1" onclick="iwantyou(this);">我要这个</div></div>';

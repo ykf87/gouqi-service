@@ -190,23 +190,24 @@ class SweepstakeController extends Controller{
 	public function products(Request $request){
 		$now 	= time();
 		$page 	= (int)$request->get('page', 1);
-		$limit 	= (int)$request->get('limit', 10);
+		$limit 	= (int)$request->get('limit', 30);
 		if($page < 1){
 			$page 	= 1;
 		}
 		if($limit < 1){
-			$limit 	= 10;
+			$limit 	= 30;
 		}
 		$t1		= 'sweepstake_products';
 		$t2 	= 'products';
 		$arr 	= [];
-		$res 	= SweepstakeProduct::select("$t2.id","$t2.cover","$t2.images","$t2.title","$t1.probability","$t2.main_sendout as sendout","$t1.max_own","$t2.sale","$t1.stocks")
-						->rightJoin("$t2", "$t1.id", '=', "$t2.id")
-						->where("$t1.status", 1)
-						->where("$t2.main_status", 1)
-						->whereRaw("if($t1.start > 0, start <= $now, 1)")
-						->whereRaw("if($t1.end > 0, end > $now, 1)")
-						->orderByDesc("$t1.orderby")->orderByDESC("$t2.id")->limit($limit)->offset(($page-1)*$limit)->get();
+		// $res 	= SweepstakeProduct::select("$t2.id","$t2.cover","$t2.images","$t2.title","$t1.probability","$t2.main_sendout as sendout","$t1.max_own","$t2.sale","$t1.stocks")
+		// 				->rightJoin("$t2", "$t1.id", '=', "$t2.id")
+		// 				->where("$t1.status", 1)
+		// 				->where("$t2.main_status", 1)
+		// 				->whereRaw("if($t1.start > 0, start <= $now, 1)")
+		// 				->whereRaw("if($t1.end > 0, end > $now, 1)")
+		// 				->orderByDesc("$t1.orderby")->orderByDESC("$t2.id")->limit($limit)->offset(($page-1)*$limit)->get();
+		$res 	= SweepstakeProduct::list($page, $limit)->get();
 		if(count($res) > 0){
 			$arr['list']	= $res;
 		}else{

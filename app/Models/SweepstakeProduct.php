@@ -17,7 +17,8 @@ class SweepstakeProduct extends Model{
 			->where("$t1.main_status", 1)->where("$t2.status", 1)
 			->whereRaw("if($t2.start > 0, $t2.start <= $now, 1)")
 			->whereRaw("if($t2.end > 0, $t2.end > $now, 1)")
-			->orderByDesc("$t2.orderby")->orderByDESC("$t1.id")->limit($limit)->offset(($page-1)*$limit);
+			// ->orderByDesc("$t2.orderby")->orderByDESC("$t1.id")->limit($limit)->offset(($page-1)*$limit);
+			->inRandomOrder()->limit($limit)->offset(($page-1)*$limit);
 	}
 
 	// 获取抽奖产品信息
