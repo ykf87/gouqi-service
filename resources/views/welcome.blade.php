@@ -56,10 +56,14 @@
 
                     <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0" style="color: #666;">
                         <!-- Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }}) -->
-                        Copyright 福建省白兰都网络科技有限公司 旗下 《省得赚APP》 备案号: <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery?query=blandal.com" target="_blank">闽ICP备2022006342号</a>
+                        Copyright 福建省白兰都网络科技有限公司 旗下 《省得赚APP》 ICP备案号: <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery?query=blandal.com" target="_blank">闽ICP备2022006342号</a>
+                        <div style="width:300px;margin:0 auto; padding:20px 0;">
+                            <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=35078302000149" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="/image/gongan.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">闽公网安备 35078302000149号</p></a>
+                        </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     </body>
 </html>
