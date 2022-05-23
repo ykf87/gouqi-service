@@ -72,6 +72,10 @@ Route::get('/private', function () {
     $cont 		= Post::where('key', 'pris')->first();
     return view('agreement', $cont);
 });
+Route::get('/privacy', function () {
+    $cont 		= Post::where('key', 'pris')->first();
+    return view('agreement', $cont);
+});
 
 
 
