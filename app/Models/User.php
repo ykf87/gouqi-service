@@ -156,7 +156,7 @@ class User extends Model{
             $narr           = [
                 'id'        => $user['id'],
                 'phone'     => Crypt::encryptString($user[self::$usernameKey]),
-                'status'    => $user['status'],
+                'status'    => $user['status'] ?? 1,
             ];
             foreach($narr as $k => $v){
                 $token      = $token->withClaim($k, $v);
