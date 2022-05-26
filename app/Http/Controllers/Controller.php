@@ -34,6 +34,11 @@ class Controller extends BaseController{
     		'data'		=> $data,
     		'msg'		=> $msg,
     	];
+        response()->header('Access-Control-Allow-Origin: *');
+        response()->header('Access-Control-Allow-Credentials: true');
+        response()->header('Access-Control-Allow-Methods: *');
+        response()->header('Access-Control-Allow-Headers: Content-Type,Access-Token');
+        response()->header('Access-Control-Expose-Headers: *');
         return response()->json($rs, $respcode ? $respcode : $code);
         return json_encode($rs, JSON_UNESCAPED_UNICODE);//JSON_FORCE_OBJECT
     }
