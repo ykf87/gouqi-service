@@ -14,6 +14,7 @@ use App\Models\Goubi;
 use App\Models\Reback;
 use App\Models\Config;
 use App\Models\Active;
+use App\Models\AppMenu;
 use Lcobucci\JWT\Token\Plain;
 
 class IndexController extends Controller{
@@ -28,7 +29,8 @@ class IndexController extends Controller{
 		// ];
 		// dd(date('Y-m-d H:i:s', strtotime('+30days')));
 		$arr 		= Config::where('status', 1)->pluck('val', 'key');
-		$arr['activities']		= Active::select('title', 'innerimg')->get();;
+		$arr['activities']		= Active::select('title', 'innerimg')->get();
+		$arr['menu'] 			= AppMenu::select('icon', 'txt', 'url as link', 'active')->orderByDesc('sort')->limit(5)->get();
 		return $this->success($arr);
 	}
 
