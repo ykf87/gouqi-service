@@ -103,6 +103,21 @@ Route::group([
 });
 
 
+
+Route::group([
+	'namespace'		=> 'App\\Http\\Controllers\\Apps',
+	'name'			=> 'app.',
+	'prefix'		=> 'app',
+],function(){
+	Route::get('/', 'IndexController@index')->name('index');
+	Route::group([
+		'name'		=> 'user.',
+		'prefix'	=> 'user',
+	],function(){
+		Route::post('/login-signup', 'UserController@loginSignup')->name('ls');
+	});
+});
+
 // 采集完成后做替换等操作
 //{"https://nan.99.com.cn/changshi/":{"func":"get99","last":""}}
 //{"https://nv.99.com.cn/baojian/":{"func":"get99","last":""}}
