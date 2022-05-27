@@ -18,6 +18,8 @@ use App\Models\Task;
 use App\Models\Address;
 use App\Models\Order;
 
+use EasyWeChat\Factory;
+
 class UserController extends Controller{
 	/**
 	 * 用户数据返回
@@ -592,5 +594,32 @@ class UserController extends Controller{
 		];
 
 		return $this->success($arr);
+	}
+
+	// 获取微信openid
+	public function wxlogin(Request $request){
+		$code 		= $request->input('code');
+		if(!$code){
+			return $this->error('非法请求!');
+		}
+		$config = [
+			'app_id' => 'wx95883b6903531319',
+			'secret' => '9e48fc5733240f6b9c207697013a9727',
+			'response_type' => 'array',
+		];
+		$app 	= Factory::miniProgram($config);
+		$res 	= $app->auth->session($code);
+
+		if(isset($res['errcode'])){
+			if($res['errcode'] == 0){
+				$arr 	= [
+					'openid'	=> $res['openid'],
+					'unionid'	=> $res['unionid'],
+				];
+				return $this->success($arr);
+			}
+		}
+		$msg 	= $res['errmsg'] ?? '登录错误!';
+		return $this->error($msg);
 	}
 }

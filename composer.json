@@ -13,7 +13,8 @@
         "laravel-admin-ext/wang-editor": "1.*",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
-        "lcobucci/jwt": "^4.1"
+        "lcobucci/jwt": "^4.1",
+        "overtrue/wechat": "~4.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -55,7 +56,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "easywechat-composer/easywechat-composer": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

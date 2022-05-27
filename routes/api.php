@@ -27,6 +27,7 @@ Route::group([
     Route::get('agreement', 'IndexController@agreement')->name('agreement');
 	Route::post('sigin', 'UserController@sigin')->name('sigin');
 	Route::post('login', 'UserController@login')->name('login');
+	Route::post('wxlogin', 'UserController@wxlogin')->name('wxlogin');
 	Route::post('help', 'IndexController@help')->name('help');
 	Route::post('checkuid', 'CheckController@uid')->name('checkuid');
 
