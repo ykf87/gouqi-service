@@ -199,7 +199,7 @@ class User extends Model{
                     assert($token instanceof Plain);
                     return $token;
                 } catch (\Exception $e) {
-                    echo $e->getMessage();
+                    // echo $e->getMessage();
                     return false; 
                 }
             }
