@@ -30,7 +30,7 @@ class IndexController extends Controller{
 		// dd(date('Y-m-d H:i:s', strtotime('+30days')));
 		$arr 		= Config::where('status', 1)->pluck('val', 'key');
 		$arr['activities']		= Active::select('title', 'innerimg')->get();
-		// $arr['menu'] 			= AppMenu::select('icon', 'txt', 'url as link', 'active')->orderByDesc('sort')->limit(5)->get();
+		$arr['menu'] 			= AppMenu::select('icon', 'txt', 'url as link', 'active')->orderByDesc('sort')->limit(5)->get();
 		return $this->success($arr);
 	}
 
