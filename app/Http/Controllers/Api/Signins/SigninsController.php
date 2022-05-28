@@ -27,9 +27,10 @@ class SigninsController extends Controller{
         	if($jwt instanceof Plain){
 	            $id         	= $jwt->claims()->get('id');
 	            if($id > 0){
-	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($id);
+	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar', 'updated_at')->find($id);
 	                if($user){
-	                	if(strtotime($user->updated_at->format('Y-m-d H:i:s')) > $fenjie){
+	                	$user->updated_at 	= $user->updated_at->format('Y-m-d H:i:s');
+	                	if(strtotime($user->updated_at) > $fenjie){
 	                		try {
 		                        $utime  = $jwt->claims()->get('utime');
 		                        if($utime != $user->updated_at){
@@ -42,6 +43,9 @@ class SigninsController extends Controller{
 	                	$arr['user']	= $user;
 	                	$taskInfos 		= SiginTask::siginInfo($user->id);
 	                	$arr['issigin']	= $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false;
+	                	if($taskInfos){
+							$arr['signed']	= $taskInfos;
+						}
 	                }
 	            }
 	        }
