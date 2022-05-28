@@ -52,7 +52,7 @@ class UserController extends Controller{
 		$user 		= User::where(User::$usernameKey, $phone)->first();
 		if(!$user){
 			if($isReg == 1){
-				return $this->success(User::sigin($username, $pwd, $name));
+				return $this->success(User::sigin($phone, $pwd, $name));
 			}else{
 				return $this->error(__('用户不存在,请先注册!'));
 			}
