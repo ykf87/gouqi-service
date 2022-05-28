@@ -19,39 +19,16 @@ use Lcobucci\JWT\Token\Plain;
 class SigninsController extends Controller{
 	//签到首页
 	public function signed(Request $request){
-		$fenjie     = 1652343374;
-        $jwt        = User::decry();
         $arr 		= [];
-        $user 		= null;
-        try {
-        	if($jwt instanceof Plain){
-	            $id         	= $jwt->claims()->get('id');
-	            if($id > 0){
-	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar', 'updated_at')->find($id);
-	                if($user){
-	                	$user->updated_at 	= $user->updated_at->format('Y-m-d H:i:s');
-	                	if(strtotime($user->updated_at) > $fenjie){
-	                		try {
-		                        $utime  = $jwt->claims()->get('utime');
-		                        if($utime != $user->updated_at){
-		                            $user 	= null;
-		                        }
-		                    } catch (\Exception $e) {}
-	                	}
-	                }
-	                if(isset($user) && $user){
-	                	$arr['user']	= $user;
-	                	$taskInfos 		= SiginTask::siginInfo($user->id);
-	                	$arr['issigin']	= $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false;
-	                	if($taskInfos){
-							$arr['signed']	= $taskInfos;
-						}
-	                }
-	            }
-	        }
-        } catch (\Exception $e) {
-        	
-        }
+        $user 		= User::decry();
+		if($user){
+			$arr['user']	= $user;
+			$taskInfos 		= SiginTask::siginInfo($user->id);
+			$arr['issigin']	= $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false;
+			if($taskInfos){
+				$arr['signed']	= $taskInfos;
+			}
+		}
         
 
 
