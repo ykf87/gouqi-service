@@ -182,30 +182,40 @@ class User extends Model{
      */
     public static function decry($token = null){
         $config             = self::getConfig();
+        $request            = request();
         if(!$token){
-            $request        = request();
             $token          = $request->header('Authorization');
-            if(substr($token, 0, 1) == '{'){
-                $token  = json_decode($token, true);
-                $token  = $token['value'] ?? null;
-                if(!$token){
-                    $openid     = $request->header('openid');
-                    $unionid    = $request->header('unionid');
-                    if($openid){
-                        $row    = self::where('openid', $openid)->first();
-                        return $row;
-                    }
-                    // elseif($unionid){
-                    //     $row    = self::where('openid', $openid)->first();
-                    // }
+        }
+        if(!$token){
+            $openid     = $request->header('openid');
+            // $unionid    = $request->header('unionid');
+            if($openid){
+                $user   = self::where('openid', $openid)->first();
+                if(!$user){
                     return false;
                 }
+                return $user;
             }
-        }else{
-            $Bearer      = strtolower(substr($token, 0, 6));
-            if($Bearer != 'bearer'){
-                $token  = 'Bearer ' . $token;
-            }
+        }
+
+        // if(!$token){
+        //     $token          = $request->header('Authorization');
+        //     if(substr($token, 0, 1) == '{'){
+        //         $token  = json_decode($token, true);
+        //         $token  = $token['value'] ?? null;
+        //         if(!$token){
+        //             return false;
+        //         }
+        //     }
+        // }else{
+        //     $Bearer      = strtolower(substr($token, 0, 6));
+        //     if($Bearer != 'bearer'){
+        //         $token  = 'Bearer ' . $token;
+        //     }
+        // }
+        $Bearer      = strtolower(substr($token, 0, 6));
+        if($Bearer != 'bearer'){
+            $token  = 'Bearer ' . $token;
         }
         try{
             $token      = substr($token, (strlen(self::$type)));
@@ -213,9 +223,40 @@ class User extends Model{
                 try {
                     $token      = $config->parser()->parse($token);
                     assert($token instanceof Plain);
+
+
+                    // jwt移植过来
+                    // $fenjie     = 1652343374;
+                    $id         = $token->claims()->get('id');
+                    if($id > 0){
+                        $user   = self::find($id);
+                        if(!$user){
+                            // return response()->json(['error' => 'Unauthorized', 'msg' => '用户不存在', 'code' => 401, 'data' => ['list' => null]]);
+                            return false;
+                        }
+
+                        // 单点登录
+                        // if(strtotime($user->updated_at->format('Y-m-d H:i:s')) > $fenjie){
+                        try {
+                            $utime  = $jwt->claims()->get('utime');
+                            if($utime && $utime != $user->updated_at){
+                                return false;
+                                // return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录.', 'code' => 401, 'data' => ['list' => null]]);
+                            }
+                        } catch (\Exception $e) {
+                            // return response()->json(['error' => 'Unauthorized', 'msg' => '请先登录!', 'code' => 401, 'data' => ['list' => null]]);
+                        }
+                        // }
+                        // $request->merge(['_uid' => $id]);
+                        // $request->merge(['_user' => $user]);
+                        // return $next($request);
+                        return $user;
+                    }
+
+
+
                     return $token;
                 } catch (\Exception $e) {
-                    // echo $e->getMessage();
                     return false; 
                 }
             }
