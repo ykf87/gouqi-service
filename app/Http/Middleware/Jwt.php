@@ -43,6 +43,10 @@ class Jwt{
                     $request->merge(['_user' => $user]);
                     return $next($request);
                 }
+            }elseif($jwt instanceof User){
+                $request->merge(['_uid' => $jwt->id]);
+                $request->merge(['_user' => $jwt]);
+                return $next($request);
             }
         }catch(\Exception $e){
             Log::error('JWT Middleware: ' . $e->getMessage());

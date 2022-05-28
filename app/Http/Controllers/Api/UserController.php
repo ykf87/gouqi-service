@@ -45,6 +45,7 @@ class UserController extends Controller{
 		$pwd 		= $request->input('password');
 		$isReg 		= $request->input('reg', 0);// 不存在是否直接注册
 		$name 		= trim($request->input('name', ''));
+		$openid 	= $request->header('openid');
 		if(!$phone || !$pwd){
 			return $this->error(__('用户名或密码错误!'));
 		}
@@ -59,7 +60,7 @@ class UserController extends Controller{
 		}elseif(!password_verify($pwd, $user->pwd)){
 			return $this->error(__('用户名或密码错误!'));
 		}
-		$arr 		= User::login($user);
+		$arr 		= User::login($user, $openid);
 
 		return $this->success($arr);
 	}

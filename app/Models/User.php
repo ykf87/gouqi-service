@@ -64,16 +64,23 @@ class User extends Model{
         $user->phone    = $username;
         $user->pwd      = password_hash($pwd, PASSWORD_DEFAULT);
         $user->username = $name ? $name : '会员' . rand(1000, 99999);
+        $openid         = request()->header('openid');
+        if($openid){
+            $user->openid   = $openid;
+        }
 
         $user->save();
-        return self::login($user);
+        return self::login($user, $openid);
     }
 
     /**
      * 用户登录
      */
-    public static function login(self $user){
-        return self::users($user);
+    public static function login(self $user, $openid = ''){
+        if(!$user->openid && $openid){
+            User::where('id', $user->id)->update(['openid' => $openid]);
+        }
+        return self::users($user, ($openid ? false : true));
     }
 
     /**
@@ -182,6 +189,15 @@ class User extends Model{
                 $token  = json_decode($token, true);
                 $token  = $token['value'] ?? null;
                 if(!$token){
+                    $openid     = $request->header('openid');
+                    $unionid    = $request->header('unionid');
+                    if($openid){
+                        $row    = self::where('openid', $openid)->first();
+                        return $row;
+                    }
+                    // elseif($unionid){
+                    //     $row    = self::where('openid', $openid)->first();
+                    // }
                     return false;
                 }
             }
