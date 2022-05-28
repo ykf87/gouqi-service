@@ -27,7 +27,7 @@ class SigninsController extends Controller{
         	if($jwt instanceof Plain){
 	            $id         	= $jwt->claims()->get('id');
 	            if($id > 0){
-	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($id);
+	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar', 'updated_at')->find($id);
 	                if($user){
 	                	if(strtotime($user->updated_at->format('Y-m-d H:i:s')) > $fenjie){
 	                		try {
