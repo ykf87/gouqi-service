@@ -610,14 +610,12 @@ class UserController extends Controller{
 		$app 	= Factory::miniProgram($config);
 		$res 	= $app->auth->session($code);
 
-		if(isset($res['errcode'])){
-			if($res['errcode'] == 0){
-				$arr 	= [
-					'openid'	=> $res['openid'],
-					'unionid'	=> $res['unionid'],
-				];
-				return $this->success($arr);
-			}
+		if(isset($res['openid']) && $res['openid']){
+			$arr 	= [
+				'openid'	=> $res['openid'],
+				'unionid'	=> $res['unionid'] ?? null,
+			];
+			return $this->success($arr);
 		}
 		$msg 	= $res['errmsg'] ?? '登录错误!';
 		return $this->error($msg);
