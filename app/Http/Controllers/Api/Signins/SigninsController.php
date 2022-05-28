@@ -14,30 +14,73 @@ use App\Models\Order;
 use App\Models\Collection;
 use App\Models\Address;
 use Illuminate\Support\Facades\Storage;
+use Lcobucci\JWT\Token\Plain;
 
 class SigninsController extends Controller{
 	//签到首页
 	public function signed(Request $request){
-		$uid 		= $request->get('_uid');
-		$user 		= User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($uid);
-		if(!$user){
-			return $this->error('找不到用户!');
-		}
-		$taskInfos 		= SiginTask::siginInfo($uid);
+		$fenjie     = 1652343374;
+        $jwt        = User::decry();
+        $arr 		= [];
+        $user 		= null;
+        try {
+        	if($jwt instanceof Plain){
+	            $id         	= $jwt->claims()->get('id');
+	            if($id > 0){
+	                $user   	= User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($id);
+	                if($user){
+	                	if(strtotime($user->updated_at->format('Y-m-d H:i:s')) > $fenjie){
+	                		try {
+		                        $utime  = $jwt->claims()->get('utime');
+		                        if($utime != $user->updated_at){
+		                            $user 	= null;
+		                        }
+		                    } catch (\Exception $e) {}
+	                	}
+	                }
+	                if(isset($user) && $user){
+	                	$arr['user']	= $user;
+	                	$taskInfos 		= SiginTask::siginInfo($user->id);
+	                	$arr['issigin']	= $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false;
+	                }
+	            }
+	        }
+        } catch (\Exception $e) {
+        	
+        }
+        
+
+
+
+		// $uid 		= $request->get('_uid');
+		// $user 		= User::select('id', 'name as nickname', 'sex', 'level', 'avatar')->find($uid);
+		// if(!$user){
+		// 	return $this->error('找不到用户!');
+		// }
+		// $taskInfos 		= SiginTask::siginInfo($uid);
 		$getedObj 		= Order::select('name', 'pro_title')->orderByDesc('id')->limit(20)->get();
 		$geted 			= [];
 		foreach($getedObj as $item){
 			$geted[] 	= '恭喜 ' . mb_substr($item->name, 0, 1, 'utf-8') . '** 获得 ' . $item->pro_title;
 		}
-
-		$arr 		= [
-			'user'		=> $user,
-			'geted'		=> $geted,
-			'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
+		$arr['geted']	= $geted;
+		$arr['tips']	= [
+			'title'	=> '签到规则',
+			'cont'	=> "1.用户需先选择一个产品,作为签到任务完成后的奖励，不同产品对应不同签到天数，完成签到任务后即可免费获得该产品。\r\n2.若在签到过程中出现漏签,可通过观看广告进行补签，若连续漏签天数过多，则签到天数从0开始重新计算。\r\n3.完成签到任务后，需填写您的收货信息后领取商品。您可以在本页面右上角或 个人中心->我的订单 中查看。\r\n4.若用户存在违规行为（包括但不限于 虚拟交易，通过技术手段或其他作弊手段获取奖品），省得赚有权取消用户获奖资格，同时平台将依据相关法律法规进行处理。\r\n5.如出现不可抗力或情势变更的情况（包括自然灾害、政府政令、网络攻击或因系统故障停止的），则平台有权终止/结束活动。\r\n6.省得赚有权根据实际活动对活动规则进行变动和调整，相关变动和调整将另行公布，本活动最终解释权归省得赚所有!",
 		];
-		if($taskInfos){
-			$arr['signed']	= $taskInfos;
-		}
+
+		// $arr 		= [
+		// 	'user'		=> $user,
+		// 	'geted'		=> $geted,
+		// 	'issigin'	=> $taskInfos && isset($taskInfos['issigin']) ? $taskInfos['issigin'] : false,
+		// 	'tips'		=> [
+		// 		'title'	=> '签到规则',
+		// 		'cont'	=> "1.用户需先选择一个产品,作为签到任务完成后的奖励，不同产品对应不同签到天数，完成签到任务后即可免费获得该产品。\r\n2.若在签到过程中出现漏签,可通过观看广告进行补签，若连续漏签天数过多，则签到天数从0开始重新计算。\r\n3.完成签到任务后，需填写您的收货信息后领取商品。您可以在本页面右上角或 个人中心->我的订单 中查看。\r\n4.若用户存在违规行为（包括但不限于 虚拟交易，通过技术手段或其他作弊手段获取奖品），省得赚有权取消用户获奖资格，同时平台将依据相关法律法规进行处理。\r\n5.如出现不可抗力或情势变更的情况（包括自然灾害、政府政令、网络攻击或因系统故障停止的），则平台有权终止/结束活动。\r\n6.省得赚有权根据实际活动对活动规则进行变动和调整，相关变动和调整将另行公布，本活动最终解释权归省得赚所有!",
+		// 	],
+		// ];
+		// if($taskInfos){
+		// 	$arr['signed']	= $taskInfos;
+		// }
 		return $this->success($arr);
 	}
 

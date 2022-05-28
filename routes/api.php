@@ -76,7 +76,6 @@ Route::group([
 		Route::group([
 		    'middleware'    => ['jwt'],
 		], function(){
-		    Route::post('signed', 'SigninsController@signed')->name('signed');
 	    	Route::post('choose', 'SigninsController@choose')->name('choose');
 		    Route::post('signe', 'SigninsController@signe')->name('signe');
 		    Route::post('givecollection', 'SigninsController@givecollection')->name('givecollection');
@@ -84,6 +83,7 @@ Route::group([
 	    	Route::post('giveget', 'SigninsController@giveget')->name('giveget');
 	    	Route::post('giveup', 'SigninsController@giveup')->name('giveup');
 		});
+		Route::post('signed', 'SigninsController@signed')->name('signed');
 	    Route::get('giveaways', 'SigninsController@giveaways')->name('giveaways');
 	    Route::get('giveinfo', 'SigninsController@giveinfo')->name('giveinfo');
 	});
